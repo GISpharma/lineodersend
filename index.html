@@ -499,9 +499,8 @@
             const itemName = row.querySelector('[name="item_nm"]').value;
             const qty = row.querySelector('[name="qty"]').value;
             const rate = row.querySelector('[name="rate"]').value;
-            const credit = row.querySelector('[name="credit"]').value;
             const note = row.querySelector('[name="note_nm"]').value;
-            orderItems.push({ itemName, qty, rate, credit, note });
+            orderItems.push({ itemName, qty, rate, note });
         });
         const notes = document.getElementsByName("note")[0].value;
 
@@ -540,8 +539,6 @@
                         })),
                         { type: "separator", margin: "sm" },
                         { type: "text", text: `ยอดรวมทั้งสิ้น ${fTotal} บาท`, wrap: true,weight: "bold" },
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: `เครดิต ${credit}`, wrap: true,weight: "bold"},
                         { type: "separator", margin: "sm" },
                         { type: "text", text: `หมายเหตุ: ${notes}`, wrap: true,weight: "bold"}
                     ]
