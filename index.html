@@ -521,7 +521,7 @@
                     layout: "vertical",
                     spacing: "md",
                     contents: [
-                        { type: "text", text: "ข้อมูลรายการ", wrap: true, weight: "bold", size: "lg" },
+                        { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
                         { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
                         { type: "separator", margin: "sm" },
                         { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
@@ -531,18 +531,18 @@
                             spacing: "sm",
                             margin: "md",
                             contents: [
-                                { type: "text", text: item.itemName, weight: "bold", size: "md" },
+                                { type: "text", text: item.itemName, wrap: true },
                                 { type: "text", text: `จำนวน: ${item.qty} หน่วย`, wrap: true,flex: 3 },
-                                { type: "text", text: `ราคา: ${item.rate} บาท`, wrap: true, flex: 3 },
+                                { type: "text", text: `ราคาขาย: ${item.rate} บาท`, wrap: true, flex: 3 },
                                 { type: "text", text: `หมายเหตุ: ${item.note}`, wrap: true }
                             ]
                         })),
                         { type: "separator", margin: "sm" },
-                        { type: "text", text: `ยอดรวมทั้งสิ้น ${fTotal} บาท`, wrap: true,weight: "bold" },
+                        { type: "text", text: `ยอดรวมทั้งสิ้น : ${fTotal} บาท`, wrap: true,weight: "bold" },
                         { type: "separator", margin: "sm" },
-                        { type: "text", text: `เครดิต: ${credit}`, wrap: true,weight: "bold" },
+                        { type: "text", text: `เครดิต : ${credit}`, wrap: true,weight: "bold" },
                          { type: "separator", margin: "sm" },
-                        { type: "text", text: `หมายเหตุ: ${notes}`, wrap: true,weight: "bold" }
+                        { type: "text", text: `หมายเหตุ : ${notes}`, wrap: true,weight: "bold" }
                     ]
                 }
             }
