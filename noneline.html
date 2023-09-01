@@ -54,16 +54,13 @@
             body {
                 padding-top: 20px;
             }
-
             .card {
                 border: none;
                 box-shadow: none;
             }
-
             input.form-control.text-end {
                 width: 100px;
             }
-
             .table-bordered> :not(caption)>*>* {
                 border-width: 0 1px;
                 float: left;
@@ -71,8 +68,7 @@
             }
         }
     </style>
-
-    <!-- jQuery CDN -->
+     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -188,8 +184,7 @@
                             <tr id="TRow">
                                 <th scope="row" style="float: left; display: none">0</th>
                                 <td>
-                                    <select style="width: 300px" class="form-control" name="item_nm" id="itemSelect"
-                                        required>
+                                    <select  class="form-control" name="item_nm" id="itemSelect" required>
                                         <option value="">เลือกรายการสินค้า</option>
                                         <option value="AMCARDIA 5">AMCARDIA 5</option>
                                         <option value="AMCARDIA 10">AMCARDIA 10</option>
@@ -222,12 +217,9 @@
                                 <td> <input type="number" class="form-control text-end" name="amt" readonly=""
                                         style="background-color: #d1e7dd" />
                                 </td>
-                                <td class="NoPrint"> <button type="button" class="btn btn-dm btn-danger"
-                                        onclick="BtnDel(this)"> X </button></td>
-                                <td class="NoPrint"><button style="margin: 0 18px;" type="button"
-                                        class="btn btn-dm btn-success" onclick="BtnAdd()"> + </button>
-                                <td> <input style="width: 300px" type="text" placeholder="หมายเหตุ" class="form-control"
-                                        name="note_nm" /></td>
+                                <td class="NoPrint"> <button type="button" class="btn btn-dm btn-danger" onclick="BtnDel(this)"> X </button></td>
+                                <td class="NoPrint"><button style="margin: 0 18px;" type="button" class="btn btn-dm btn-success" onclick="BtnAdd()"> + </button>
+                                <td> <input type="text" placeholder="หมายเหตุ" class="form-control" name="note_nm" /></td>
                                 </td>
                             </tr>
                         </tbody>
