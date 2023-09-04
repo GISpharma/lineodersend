@@ -87,35 +87,7 @@
                 liff.login();
             }
         }
-        async function getUserProfile() {
-            try {
-                const profile = await liff.getProfile();
-                document.getElementById('userId').value = profile.userId;
-                document.getElementById('displayName').value = profile.displayName;
-            } catch (error) {
-                console.error('Error getting profile data:', error);
-            }
-        }
-        function generateKeyAndDate() {
-            var randomPart = Math.random().toString(36).substring(7);
-            // Get the current date
-            var currentDate = new Date();
-            var year = String(currentDate.getFullYear()).substring(2); // เลขหน้าของปี
-            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
-
-            // Create the key in the format "invYYMM-randomPart"
-            var key = `inv${year}${month}-${randomPart}`;
-            // Set the generated key in the "keyInput" element's value attribute
-            document.getElementById("keyInput").value = key;
-
-            var currentDate = new Date();
-            var year = currentDate.getFullYear();
-            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            var day = String(currentDate.getDate()).padStart(2, '0');
-            var formattedDate = `${year}-${month}-${day}`;
-
-            document.getElementById("dateInput").value = formattedDate;
-        }
+        
 
     </script>
 </head>
@@ -436,124 +408,42 @@
         }
     </script>
     <script>
-        const LIFF_ID = '2000460029-xyY548wb';
-        var isSubmitting = false;  // เพิ่มตัวแปรเพื่อตรวจสอบสถานะการส่งข้อมูล
+       const LIFF_ID = '2000460029-xyY548wb';
+var isSubmitting = false;
 
-        function submitForm() {
-            if (isSubmitting) {
-                return;
-            }
-
-            isSubmitting = true;
-            var submitButton = document.getElementById("submitButton");
-            submitButton.disabled = true;
-
-            var form = document.getElementById("myForm");
-            var formData = new FormData(form);
-
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        // Send LIFF message
-                        sendLIFFMessage();
-                    } else {
-                        // Show error alert
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'เกิดข้อผิดพลาด!',
-                            text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
-                        });
-
-                        submitButton.disabled = false;
-                        isSubmitting = false;
-                    }
-                }
-            };
-
-            xhr.open("POST", "https://script.google.com/macros/s/AKfycbxPPel8ZEl38TvMosaHQwsK0FV7PJujtL6VVxyWqJF6LbN648O2lZKUKF9PdAUEPspT2A/exec");  // เปลี่ยน URL ของ Web App ของคุณ
-            xhr.send(formData);
-        }
-    async function sendLIFFMessage() {
-    // Initialize LIFF
-    await liff.init({ liffId: LIFF_ID });
-
-    if (liff.isLoggedIn()) {
-        const userId = await liff.getProfile().then(profile => profile.userId);
-
-        // Get form data
-        const customer = document.getElementsByName("cust_nm")[0].value;
-        const fTotal = document.getElementById("FTotal").value;
-        const orderItems = [];
-        const rows = document.querySelectorAll("#TBody tr");
-        rows.forEach(row => {
-            const itemName = row.querySelector('[name="item_nm"]').value;
-            const qty = row.querySelector('[name="qty"]').value;
-            const rate = row.querySelector('[name="rate"]').value;
-            const note = row.querySelector('[name="note_nm"]').value;
-            orderItems.push({ itemName, qty, rate, note });
-        });
-        const credit = document.getElementsByName("credit")[0].value;
-        const notes = document.getElementsByName("note")[0].value;
-
-        const flexMessage = {
-            type: "flex",
-            altText: "มีคำสั่งซ์้อใหม่",
-            contents: {
-                type: "bubble",
-                hero: {
-                    type: "image",
-                    url: "https://img.freepik.com/free-photo/red-delivery-car-deliver-express-shipping-fast-delivery-with-arrow-graph-background-3d-rendering_56104-1906.jpg",
-                    size: "full",
-                    aspectRatio: "20:13",
-                    aspectMode: "cover"
-                },
-                body: {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "md",
-                    contents: [
-                        { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
-                        { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
-                        ...orderItems.map(item => ({
-                            type: "box",
-                            layout: "vertical",
-                            spacing: "sm",
-                            margin: "md",
-                            contents: [
-                                { type: "text", text: item.itemName, wrap: true },
-                                { type: "text", text: `จำนวน: ${item.qty} หน่วย`, wrap: true,flex: 3 },
-                                { type: "text", text: `ราคาขาย: ${item.rate} บาท`, wrap: true, flex: 3 },
-                                { type: "text", text: `หมายเหตุ: ${item.note}`, wrap: true }
-                            ]
-                        })),
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: `ยอดรวมทั้งสิ้น : ${fTotal} บาท`, wrap: true,weight: "bold" },
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: `เครดิต : ${credit}`, wrap: true,weight: "bold" },
-                         { type: "separator", margin: "sm" },
-                        { type: "text", text: `หมายเหตุ : ${notes}`, wrap: true,weight: "bold" }
-                    ]
-                }
-            }
-        };
-
-        // Send the Flex Message
-        liff.sendMessages([flexMessage]).then(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'สำเร็จ!',
-                text: 'ส่งข้อมูลสำเร็จแล้ว',
-                confirmButtonText: 'ปิด'
-            }).then(() => {
-                liff.closeWindow();
-            });
-        }).catch(error => {
-            console.error('Error sending Flex LIFF message:', error);
-        });
+function submitForm() {
+    if (isSubmitting) {
+        return;
     }
+
+    isSubmitting = true;
+    var submitButton = document.getElementById("submitButton");
+    submitButton.disabled = true;
+
+    var form = document.getElementById("myForm");
+    var formData = new FormData(form);
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // Request was successful, you can add any further handling here.
+            } else {
+                // Show error alert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด!',
+                    text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
+                });
+            }
+
+            submitButton.disabled = false;
+            isSubmitting = false;
+        }
+    };
+
+    xhr.open("POST", "https://script.google.com/macros/s/AKfycbxPPel8ZEl38TvMosaHQwsK0FV7PJujtL6VVxyWqJF6LbN648O2lZKUKF9PdAUEPspT2A/exec");
+    xhr.send(formData);
 }
 
     </script>
