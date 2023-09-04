@@ -427,7 +427,11 @@ function submitForm() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                // Request was successful, you can add any further handling here.
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'ส่งข้อมูลสำเร็จ',
+                    text: 'ข้อมูลถูกส่งไปยังเซิร์ฟเวอร์แล้ว'
+                    });
             } else {
                 // Show error alert
                 Swal.fire({
