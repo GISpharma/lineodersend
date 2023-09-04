@@ -423,28 +423,30 @@ function submitForm() {
     var form = document.getElementById("myForm");
     var formData = new FormData(form);
 
-    var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'ส่งข้อมูลสำเร็จ',
-                    text: 'ข้อมูลถูกส่งไปยังเซิร์ฟเวอร์แล้ว'
-                    });
-            } else {
-                // Show error alert
-                Swal.fire({
-                    icon: 'error',
-                    title: 'เกิดข้อผิดพลาด!',
-                    text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
-                });
-            }
+    if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+            // Request was successful, show a success SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: 'ส่งข้อมูลสำเร็จ',
+                text: 'ข้อมูลถูกส่งไปยังเซิร์ฟเวอร์แล้ว'
+            });
 
-            submitButton.disabled = false;
-            isSubmitting = false;
+            // Optionally, you can reset the form or perform other actions here
+        } else {
+            // Show error alert
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด!',
+                text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
+            });
         }
-    };
+
+        submitButton.disabled = false;
+        isSubmitting = false;
+    }
+};
 
     xhr.open("POST", "https://script.google.com/macros/s/AKfycbxPPel8ZEl38TvMosaHQwsK0FV7PJujtL6VVxyWqJF6LbN648O2lZKUKF9PdAUEPspT2A/exec");
     xhr.send(formData);
