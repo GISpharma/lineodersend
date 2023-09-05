@@ -204,7 +204,7 @@
                                         <option value="OFTOP 200">OFTOP 200</option>
                                         <option value="OMLEK 20">OMLEK 20</option>
                                         <option value="TENROL 50(50x10s)">TENROL 50(50x10s)</option>
-                                        <option value="TENROL 50(50x10')">TENROL 50(50x10)</option>
+                                        <option value="TENROL 100(50x10')">TENROL 1000(50x10)</option>
                                     </select>
                                 </td>
                                 <td><input type="number" class="form-control text-end" placeholder="จำนวน" name="qty"
@@ -556,8 +556,9 @@
                                     "layout": "horizontal",
                                     "flex": 1,
                                     "contents": [
-                                        { type: "text", text: `ลด : ${item.dis} `, wrap: true, flex: 3 },
-                                        { type: "text", text: `แถม : ${item.give} `, wrap: true,flex: 3 }
+                                        { type: "text", text: `แถม : ${item.give} `, wrap: true,flex: 3 },
+                                        { type: "text", text: `ลด : ${item.dis} `, wrap: true, flex: 3 }
+                                        
                                     ]
                                     }
                                     ,
