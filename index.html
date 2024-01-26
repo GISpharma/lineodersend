@@ -516,13 +516,6 @@
             altText: "มีคำสั่งซ์้อใหม่",
             contents: {
                 type: "bubble",
-                hero: {
-                    type: "image",
-                    url: "https://img.freepik.com/free-vector/employees-deliver-goods-various-forms-customers_1150-35058.jpg",
-                    size: "full",
-                    aspectRatio: "20:13",
-                    aspectMode: "cover"
-                },
                 body: {
                     type: "box",
                     layout: "vertical",
@@ -538,55 +531,53 @@
                             spacing: "sm",
                             margin: "md",
                             contents: [
-                                    {
-                                    "type": "box",
-                                    "layout": "horizontal",
-                                    "flex": 1,
-                                    "contents": [
+                                {
+                                    type: "box",
+                                    layout: "horizontal",
+                                    flex: 1,
+                                    contents: [
                                         { type: "text", text: item.itemName, weight: "bold", size: "md" }
                                     ]
-                                    },
-                                    {
-                                    "type": "box",
-                                    "layout": "horizontal",
-                                    "flex": 1,
-                                    "contents": [
-                                        { type: "text", text: `จำนวน: ${item.qty} `, wrap: true,flex: 3 },
+                                },
+                                {
+                                    type: "box",
+                                    layout: "horizontal",
+                                    flex: 1,
+                                    contents: [
+                                        { type: "text", text: `จำนวน: ${item.qty} `, wrap: true, flex: 3 },
                                         { type: "text", text: `ราคา: ${item.rate} `, wrap: true, flex: 3 }
                                     ]
-                                    }
-                                    ,
-                                    {
-                                    "type": "box",
-                                    "layout": "horizontal",
-                                    "flex": 1,
-                                    "contents": [
-                                        { type: "text", text: `แถม : ${item.give} `, wrap: true,flex: 3 },
+                                },
+                                {
+                                    type: "box",
+                                    layout: "horizontal",
+                                    flex: 1,
+                                    contents: [
+                                        { type: "text", text: `แถม : ${item.give} `, wrap: true, flex: 3 },
                                         { type: "text", text: `ลด : ${item.dis} `, wrap: true, flex: 3 }
-                                        
                                     ]
-                                    }
-                                    ,
-                                    {
-                                    "type": "box",
-                                    "layout": "vertical",
-                                    "flex": 1,
-                                    "contents": [
+                                },
+                                {
+                                    type: "box",
+                                    layout: "vertical",
+                                    flex: 1,
+                                    contents: [
                                         { type: "text", text: `หมายเหตุ: ${item.note}`, wrap: true }
                                     ]
-                                    }
-                                ]
+                                }
+                            ]
                         })),
                         { type: "separator", margin: "sm" },
-                        { type: "text", text: `ยอดรวมทั้งสิ้น : ${fTotal} บาท`, wrap: true,weight: "bold" },
+                        { type: "text", text: `ยอดรวมทั้งสิ้น : ${fTotal} บาท`, wrap: true, weight: "bold" },
                         { type: "separator", margin: "sm" },
-                        { type: "text", text: `เครดิต : ${credit}`, wrap: true,weight: "bold" },
-                         { type: "separator", margin: "sm" },
-                        { type: "text", text: `หมายเหตุ : ${notes}`, wrap: true,weight: "bold" }
+                        { type: "text", text: `เครดิต : ${credit}`, wrap: true, weight: "bold" },
+                        { type: "separator", margin: "sm" },
+                        { type: "text", text: `หมายเหตุ : ${notes}`, wrap: true, weight: "bold" }
                     ]
                 }
             }
         };
+
 
         // Send the Flex Message
         liff.sendMessages([flexMessage]).then(() => {
