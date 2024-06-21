@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GIS รายการสั่งซื้อ</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <style>
+        #loading {
+            display: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script>
+        window.onload = function () {
+            // initializeLiff(), generateKeyAndDate();
+        };
+        async function initializeLiff() {
+            await liff.init({ liffId: '2000460029-xyY548wb' }); // Replace with your LIFF ID
+
+            if (liff.isLoggedIn()) {
+                getUserProfile();
+            } else {
+                liff.login();
+            }
+        }
+        async function getUserProfile() {
+            try {
+                const profile = await liff.getProfile();
+                document.getElementById('userId').value = profile.userId;
+                document.getElementById('displayName').value = profile.displayName;
+            } catch (error) {
+                console.error('Error getting profile data:', error);
+            }
+        }
+        function generateKeyAndDate() {
+            var randomPart = Math.random().toString(36).substring(7);
+            var currentDate = new Date();
+            var year = String(currentDate.getFullYear()).substring(2); 
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            var key = `inv${year}${month}-${randomPart}`;
+            document.getElementById("keyInput").value = key;
+
+            var year = currentDate.getFullYear();
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            var day = String(currentDate.getDate()).padStart(2, '0');
+            var formattedDate = `${year}-${month}-${day}`;
+            document.getElementById("dateInput").value = formattedDate;
+        }
+        function calculateTotal(element) {
+            var container = $(element).closest('.order-item');
+            var quantity = parseFloat(container.find('input[name="quantity"]').val()) || 0;
+            var price = parseFloat(container.find('input[name="price"]').val()) || 0;
+            var bonus = parseFloat(container.find('input[name="bonus"]').val()) || 0;
+            var discount = parseFloat(container.find('input[name="discount"]').val()) || 0;
+            var vat = parseFloat(container.find('input[name="vat"]').val()) || 0;
+            
+            var subtotal = (quantity * price) - discount + bonus;
+            var total = subtotal + (subtotal * vat / 100);
+            container.find('input[name="amount"]').val(total.toFixed(2));
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <form id="myForm">
+            <div class="bg-white p-4 shadow-md rounded-lg">
+                <div class="flex justify-center  p-2 border border-green-500 rounded-lg mb-4 text-center">
+                    <span class="text-white"> สวัสดีคุณ </span>
+                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-white ml-2 w-2/3" readonly />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
+                        <input type="text" id="sell_id" name="sell_id" class="block w-full p-2 border rounded-md" required />
+                    </div>
+                    <div>
+                        <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
+                        <select id="category" name="category" class="block w-full p-2 border rounded-md" required>
+                            <option value="">เลือกประเภท</option>
+                            <option value="ร้านขายยา">ร้านขายยา</option>
+                            <option value="คลีนิก">คลีนิก</option>
+                            <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
+                            <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                            <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
+                            <option value="ออนไลน์">ออนไลน์</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
+                        <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
+                    </div>
+                    <div>
+                        <label for="provinces" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
+                        <select id="provinces" name="city" class="block w-full p-2 border rounded-md" required>
+                            <option value="" disabled selected hidden>เลือกจังหวัด</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
+                    <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md" required />
+                </div>
+
+                <div id="orderItems" class="mt-4">
+                    <div class="bg-green-100 p-4 border rounded-lg mb-4 order-item">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label for="itemSelect" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
+                                <select class="form-control w-full p-2 border rounded-md" name="item_nm" id="itemSelect" required>
+                                    <option value="">เลือกรายการสินค้า</option>
+                                    <option value="AMCARDIA 5">AMCARDIA 5</option>
+                                    <option value="AMCARDIA 10">AMCARDIA 10</option>
+                                    <option value="DICLO SR 100">DICLO SR 100</option>
+                                    <option value="DOLONIL SR 100">DOLONIL SR 100</option>
+                                    <option value="ENACE 10">ENACE 10</option>
+                                    <option value="ENACE 5 (pack100)(10x10s)">ENACE 5 (pack100)(10x10s)</option>
+                                    <option value="ENACE 5 (pack1000)(100x10s)">ENACE 5 (pack1000)(100x10s)</option>
+                                    <option value="HEPARIN INJ">HEPARIN INJ</option>
+                                    <option value="HEP-25">HEP-25</option>
+                                    <option value="IRON SUCROSE INJ">IRON SUCROSE INJ</option>
+                                    <option value="METROGYL GEL">METROGYL GEL</option>
+                                    <option value="NITRAZEPAM TABLETS 5 MG">NITRAZEPAM TABLETS 5 MG</option>
+                                    <option value="NITRAZEPAM (WORKING STANDARD)">NITRAZEPAM (WORKING STANDARD)</option>
+                                    <option value="OFTOP 200">OFTOP 200</option>
+                                    <option value="OMLEK 20">OMLEK 20</option>
+                                    <option value="TENROL 50(50x10s)">TENROL 50(50x10s)</option>
+                                    <option value="TENROL 100(50x10')">TENROL 100(50x10)</option>
+                                    <option value="TENSINIC CD 30">TENSINIC CD 30</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="quantity" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
+                                    <input type="number" name="quantity" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
+                                </div>
+                                <div>
+                                    <label for="price" class="block mb-2 text-sm font-medium text-gray-700">ราคา</label>
+                                    <input type="number" name="price" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
+                                </div>
+                                <div>
+                                    <label for="bonus" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลดพิเศษ</label>
+                                    <input type="number" name="bonus" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
+                                </div>
+                                <div>
+                                    <label for="discount" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
+                                    <input type="number" name="discount" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
+                                </div>
+                                <div>
+                                    <label for="vat" class="block mb-2 text-sm font-medium text-gray-700">VAT</label>
+                                    <input type="number" name="vat" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
+                                </div>
+                                <div>
+                                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
+                                    <input type="number" name="amount" class="form-control w-full p-2 border rounded-md" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <button type="button" id="addItem" class="w-full md:w-auto mt-4 py-2 px-4 bg-blue-500 text-white font-bold rounded-md">เพิ่มรายการ</button>
+                <button type="submit" class="w-full md:w-auto mt-4 py-2 px-4 bg-green-500 text-white font-bold rounded-md">บันทึกข้อมูล</button>
+
+                <div class="flex items-center justify-center mt-4">
+                    <div id="loading" class="spinner-border text-blue-500" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+
+                <input type="hidden" id="keyInput" name="key" />
+                <input type="hidden" id="dateInput" name="date" />
+                <input type="hidden" id="userId" name="userId" />
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#addItem").click(function () {
+                var newItem = $(".order-item").first().clone();
+                newItem.find("input").val("");
+                $("#orderItems").append(newItem);
+            });
+
+            $("#myForm").submit(function (e) {
+                e.preventDefault();
+                $("#loading").show();
+
+                // Implement form submission logic here.
+
+                Swal.fire({
+                    title: 'บันทึกข้อมูลสำเร็จ',
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง'
+                }).then(() => {
+                    $("#loading").hide();
+                });
+            });
+
+            // Call these functions to set the key and date
+            generateKeyAndDate();
+        });
+    </script>
+</body>
+</html>
