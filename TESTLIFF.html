@@ -4,22 +4,86 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GIS รายการสั่งซื้อ</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <!-- เพิ่ม CSS ของ SweetAlert -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
         #loading {
             display: none;
         }
+
+        select.form-control {
+            color: #6c757d;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 2;
+            color: #212529;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0.375rem;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+ @media (max-width: 767px) {
+
+            /* ปรับความกว้างของช่อง Input เพื่อให้มีสเปซเหมาะสม */
+            .form-control-mobile {
+                width: 50%;
+                margin-right: 5px;
+            }
+
+            /* ปรับขนาดของปุ่มเพิ่มและลบให้เหมาะสมกับมือถือ */
+            .btn-mobile {
+                font-size: 12px;
+                padding: 2px 6px;
+            }
+        }
+
+        /* Additional CSS for Mobile View */
+        @media (max-width: 767px) {
+            body {
+                padding-top: 20px;
+            }
+
+            .card {
+                border: none;
+                box-shadow: none;
+            }
+
+            input.form-control.text-end {
+                width: 100px;
+            }
+
+            .table-bordered> :not(caption)>*>* {
+                border-width: 0 1px;
+                float: left;
+                border: none;
+            }
+        }
     </style>
+
+    <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <!-- เพิ่ม JavaScript ของ SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
     <script>
         window.onload = function () {
-            // initializeLiff(), generateKeyAndDate();
+            initializeLiff(), generateKeyAndDate();
         };
         async function initializeLiff() {
-            await liff.init({ liffId: '2000460029-xyY548wb' }); // Replace with your LIFF ID
+            await liff.init({ liffId: '1660766925-qDv7zvV5' }); // Replace with your LIFF ID
 
             if (liff.isLoggedIn()) {
                 getUserProfile();
@@ -38,176 +102,507 @@
         }
         function generateKeyAndDate() {
             var randomPart = Math.random().toString(36).substring(7);
+            // Get the current date
             var currentDate = new Date();
-            var year = String(currentDate.getFullYear()).substring(2); 
+            var year = String(currentDate.getFullYear()).substring(2); // เลขหน้าของปี
             var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+            // Create the key in the format "invYYMM-randomPart"
             var key = `inv${year}${month}-${randomPart}`;
+            // Set the generated key in the "keyInput" element's value attribute
             document.getElementById("keyInput").value = key;
 
+            var currentDate = new Date();
             var year = currentDate.getFullYear();
             var month = String(currentDate.getMonth() + 1).padStart(2, '0');
             var day = String(currentDate.getDate()).padStart(2, '0');
             var formattedDate = `${year}-${month}-${day}`;
+
             document.getElementById("dateInput").value = formattedDate;
         }
-        function calculateTotal(element) {
-            var container = $(element).closest('.order-item');
-            var quantity = parseFloat(container.find('input[name="quantity"]').val()) || 0;
-            var price = parseFloat(container.find('input[name="price"]').val()) || 0;
-            var bonus = parseFloat(container.find('input[name="bonus"]').val()) || 0;
-            var discount = parseFloat(container.find('input[name="discount"]').val()) || 0;
-            var vat = parseFloat(container.find('input[name="vat"]').val()) || 0;
-            
-            var subtotal = (quantity * price) - discount + bonus;
-            var total = subtotal + (subtotal * vat / 100);
-            container.find('input[name="amount"]').val(total.toFixed(2));
-        }
+
     </script>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
+
+<body>
+    <div class="container">
         <form id="myForm">
-            <div class="bg-white p-4 shadow-md rounded-lg">
-                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4 ">
-                    <span class="text-black">🔔💰สวัสดีคุณ </span>
-                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-black ml-2 w-2/3" readonly />
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
-                        <input type="text" id="sell_id" name="sell_id" class="block w-full p-2 border rounded-md" required />
-                    </div>
-                    <div>
-                        <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
-                        <select id="category" name="category" class="block w-full p-2 border rounded-md" required>
-                            <option value="">เลือกประเภท</option>
-                            <option value="ร้านขายยา">ร้านขายยา</option>
-                            <option value="คลีนิก">คลีนิก</option>
-                            <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
-                            <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
-                            <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
-                            <option value="ออนไลน์">ออนไลน์</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
-                        <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label for="provinces" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
-                        <select id="provinces" name="city" class="block w-full p-2 border rounded-md" required>
-                            <option value="">เลือกจังหวัด</option>
-                            <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
-                            <option value="สมุทรปราการ">สมุทรปราการ</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
-                    <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md" required />
-                </div>
-
-                <div id="orderItems" class="mt-4">
-                    <div class="bg-green-100 p-4 border-2 border-green-400 shadow-md rounded-lg mb-4 order-item">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label for="itemInput" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
-                                <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm" id="itemInput" required />
-                                <datalist id="items">
-                                    <option value="AMCARDIA 5">
-                                    <option value="AMCARDIA 10">
-                                    <option value="DICLO SR 100">
-                                    <option value="DOLONIL SR 100">
-                                    <option value="ENACE 10">
-                                    <option value="ENACE 5 (pack100)(10x10s)">
-                                    <option value="ENACE 5 (pack1000)(100x10s)">
-                                    <option value="HEPARIN INJ">
-                                    <option value="HEP-25">
-                                    <option value="IRON SUCROSE INJ">
-                                    <option value="METROGYL GEL">
-                                    <option value="NITRAZEPAM TABLETS 5 MG">
-                                    <option value="NITRAZEPAM (WORKING STANDARD)">
-                                    <option value="OFTOP 200">
-                                    <option value="OMLEK 20">
-                                    <option value="TENROL 50(50x10s)">
-                                    <option value="TENROL 100(50x10')">
-                                    <option value="TENSINIC CD 30">
-                                </datalist>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-4" style="display: none">
+                                <span class="input-group-text">OderID</span>
+                                <input type="text" id="keyInput" name="order_id" />
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="quantity" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
-                                    <input type="number" name="quantity" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
-                                </div>
-                                <div>
-                                    <label for="price" class="block mb-2 text-sm font-medium text-gray-700">ราคา</label>
-                                    <input type="number" name="price" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
-                                </div>
-                                <div>
-                                    <label for="bonus" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลดพิเศษ</label>
-                                    <input type="number" name="bonus" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
-                                </div>
-                                <div>
-                                    <label for="discount" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
-                                    <input type="number" name="discount" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
-                                </div>
-                                <div>
-                                    <label for="vat" class="block mb-2 text-sm font-medium text-gray-700">VAT</label>
-                                    <input type="number" name="vat" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
-                                </div>
-                                <div>
-                                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
-                                    <input type="number" name="amount" class="form-control w-full p-2 border rounded-md" readonly />
-                                </div>
+                            <div class="input-group mb-4" style="display: none">
+                                <span class="input-group-text">UserID</span>
+                                <input type="text" id="userId" name="userId" />
+                            </div>
+                            <div class="justify-content-center"
+                                style="padding: 10px;border: 1px solid green;border-radius: 50px;margin: 0px 0 20px  0;">
+                                <span> สวัสดีคุณ </span>
+                                <input type="text" id="displayName" name="displayName" style="border: none; width:65%;">
                             </div>
                         </div>
                     </div>
-                </div>
-                
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="input-group mb-4">
+                                <input type="text" class="form-control" placeholder="รหัสผู้ขาย" name="sell_id"
+                                    required />
+                            </div>
+                            <div class="input-group mb-4">
+                                <select type="text" class="form-control" placeholder="ประเภทลูกค้า" name="category"
+                                    required>
+                                    <option value="">เลือกประเภท</option>
+                                    <option value="ร้านขายยา">ร้านขายยา</option>
+                                    <option value="คลีนิก">คลีนิก</option>
+                                    <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
+                                    <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                                    <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
+                                    <option value="ออนไลน์">ออนไลน์</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="input-group mb-4">
+                                <input type="text" class="form-control" placeholder="เลขใบสั่งซื้อ" name="ipo" />
+                            </div>
+                            <div class="input-group mb-4">
+                                <select type="text" class="form-control" id="provinces" placeholder="จังหวัด"
+                                    name="city" required>
+                                    <option value="" disabled selected hidden> เลือกจังหวัด </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group mb-4">
+                            <input type="text" class="form-control" placeholder="ลูกค้า" name="cust_nm" required />
+                        </div>
+                    </div>
+                    <table style="background: rgb(236, 245, 215);" class="table table-bordered">
+                        <th scope="col">รายการสั่งซื้อ</th>
+                        <tbody id="TBody">
+                            <tr id="TRow">
+                                <th scope="row" style="float: left; display: none">0</th>
+                                <td>
+                                    <select style="width: 300px" class="form-control" name="item_nm" id="itemSelect"
+                                        required>
+                                        <option value="">เลือกรายการสินค้า</option>
+                                        <option value="AMCARDIA 5">AMCARDIA 5</option>
+                                        <option value="AMCARDIA 10">AMCARDIA 10</option>
+                                        <option value="DICLO SR 100">DICLO SR 100</option>
+                                        <option value="DOLONIL SR 100">DOLONIL SR 100</option>
+                                        <option value="ENACE 10">ENACE 10</option>
+                                        <option value="ENACE 5 (pack100)(10x10s)">ENACE 5 (pack100)(10x10s)</option>
+                                        <option value="ENACE 5 (pack1000)(100x10s)">ENACE 5 (pack1000)(100x10s)</option>
+                                        <option value="HEPARIN INJ">HEPARIN INJ</option>
+                                        <option value="HEP-25">HEP-25</option>
+                                        <option value="IRON SUCROSE INJ">IRON SUCROSE INJ</option>
+                                        <option value="METROGYL GEL">METROGYL GEL</option>
+                                        <option value="NITRAZEPAM TABLETS 5 MG">NITRAZEPAM TABLETS 5 MG</option>
+                                        <option value="NITRAZEPAM (WORKING STANDARD)">NITRAZEPAM (WORKING STANDARD)</option>
+                                        <option value="OFTOP 200">OFTOP 200</option>
+                                        <option value="OMLEK 20">OMLEK 20</option>
+                                        <option value="TENROL 50(50x10s)">TENROL 50(50x10s)</option>
+                                        <option value="TENROL 100(50x10')">TENROL 100(50x10)</option>
+                                        <option value="TENSINIC CD 30">TENSINIC CD 30</option>
+                                        <option value="MAXAMIN TABLETS (30 TABLETS)">MAXAMIN TABLETS (30 TABLETS)</option>
+                                        <option value="BEPLEX  TABLETS (30 TABLETS)">BEPLEX  TABLETS (30 TABLETS)</option>
+                                        <option value="DIPSOTREX OINTMENT 30 G">DIPSOTREX OINTMENT 30 G</option>
+                                 </select>
+                                </td>
+                                <td><input type="number" class="form-control text-end" placeholder="จำนวน" name="qty"
+                                        onchange="Calc(this);" required />
+                                </td>
+                                <td> <input type="number" class="form-control text-end" placeholder="ราคา" name="rate"
+                                        onchange="Calc(this);" required />
+                                </td>
+                                <td> <input type="number" class="form-control text-end" placeholder="แถม" name="give"
+                                        onchange="Calc(this);" />
+                                </td>
+                                <td> <input type="number" class="form-control text-end" placeholder="ลด" name="dis"
+                                        onchange="Calc(this);" />
+                                </td>
+                                <td> <input type="number" class="form-control text-end" name="amt" readonly=""
+                                        style="background-color: #d1e7dd" />
+                                </td>
+                                <td class="NoPrint"> <button type="button" class="btn btn-dm btn-danger"
+                                        onclick="BtnDel(this)"> X </button></td>
+                                <td class="NoPrint"><button style="margin: 0 18px;" type="button"
+                                        class="btn btn-dm btn-success" onclick="BtnAdd()"> + </button>
+                                <td> <input style="width: 300px" type="text" placeholder="หมายเหตุ" class="form-control"
+                                        name="note_nm" /></td>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row" style="padding: 20px 0;">
+                        <div class="col-8"><input class="form-control" type="text" id="newItemName"
+                                placeholder="เพิ่มรายการสินค้า" /></div>
+                        <div class="col-4"><button type="button" class="btn btn-dark" onclick="addNewItem()"> เพิ่ม
+                            </button></div>
+                    </div>
+                    <script>
+                        function addNewItem() {
+                            var newItemName =
+                                document.getElementById("newItemName").value;
+                            if (newItemName.trim() === "") {
+                                alert("กรุณากรอกชื่อรายการสินค้า");
+                                return;
+                            }
 
-                <button type="button" id="addItem" class="w-full md:w-auto mt-4 py-2 px-4 bg-blue-500 text-white font-bold rounded-md">เพิ่มรายการ</button>
-                <button type="submit" class="w-full md:w-auto mt-4 py-2 px-4 bg-green-500 text-white font-bold rounded-md">บันทึกข้อมูล</button>
+                            var select = document.getElementById("itemSelect");
+                            var option = document.createElement("option");
+                            option.value = newItemName;
+                            option.text = newItemName;
+                            select.appendChild(option);
 
-                <div class="flex items-center justify-center mt-4">
-                    <div id="loading" class="spinner-border text-blue-500" role="status">
-                        <span class="sr-only">Loading...</span>
+                            // Clear the input field after adding
+                            document.getElementById("newItemName").value = "";
+                        }
+                    </script>
+                    <div class="row" style="margin-bottom: 300px">
+                        <div class="col-md-4">
+                            <div class="input-group mb-4">
+                                <span class="input-group-text">ทั้งหมด</span>
+                                <input type="number" class="form-control text-end" id="FTotal" name="FTotal"
+                                    disabled="" />
+                            </div>
+                            <div class="input-group mb-4" style="display: none">
+                                <span class="input-group-text">ภาษี</span>
+                                <input type="number" class="form-control text-end" id="FGST" name="FGST"
+                                    onchange="GetTotal()" />
+                            </div>
+                            <div class="input-group mb-4" style="display: none">
+                                <span class="input-group-text">ยอดเงินสุทธิ</span>
+                                <input type="number" class="form-control text-end" id="FNet" name="FNet" disabled="" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="input-group mb-4">
+                                <select class="form-control col-4" placeholder="เครดิต" name="credit" required>
+                                    <option class="form-control " value="">เลือกเครดิต</option>
+                                    <option class="form-control " value="เงินสด">เงินสด</option>
+                                    <option class="form-control " value="7 วัน">7 วัน</option>
+                                    <option class="form-control " value="30 วัน">30 วัน</option>
+                                    <option class="form-control " value="60 วัน">60 วัน</option>
+                                    <option class="form-control " value="90 วัน">90 วัน</option>
+                                     <option class="form-control " value="120 วัน">120 วัน</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="input-group mb-4">
+                                <textarea type="text" class="form-control" placeholder="หมายเหตุ"
+                                    name="note"></textarea>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button style="width: 100%;line-height: 40px;" id="submitButton"
+                                class="btn btn-success btn-block" type="button"
+                                onclick="submitForm()">ส่งข้อมูล</button>
+                        </div>
                     </div>
                 </div>
-
-                <input type="hidden" id="keyInput" name="key" />
-                <input type="hidden" id="dateInput" name="date" />
-                <input type="hidden" id="userId" name="userId" />
             </div>
         </form>
     </div>
-
     <script>
-        $(document).ready(function () {
-            $("#addItem").click(function () {
-                var newItem = $(".order-item").first().clone();
-                newItem.find("input").val("");
-                $("#orderItems").append(newItem);
-            });
+        function BtnAdd() {
+            /*Add Button*/
+            var v = $("#TRow").clone().appendTo("#TBody");
+            $(v).find("input").val("");
+            $(v).removeClass("d-none");
+            $(v)
+                .find("th")
+                .first()
+                .html($("#TBody tr").length - 1);
+        }
 
-            $("#myForm").submit(function (e) {
-                e.preventDefault();
-                $("#loading").show();
+        function BtnDel(v) {
+            /*Delete Button*/
+            $(v).parent().parent().remove();
+            GetTotal();
 
-                // Implement form submission logic here.
-
-                Swal.fire({
-                    title: 'บันทึกข้อมูลสำเร็จ',
-                    icon: 'success',
-                    confirmButtonText: 'ตกลง'
-                }).then(() => {
-                    $("#loading").hide();
+            $("#TBody")
+                .find("tr")
+                .each(function (index) {
+                    $(this).find("th").first().html(index);
                 });
-            });
+        }
 
-            // Call these functions to set the key and date
-            generateKeyAndDate();
-        });
+        function Calc(v) {
+            /*Detail Calculation Each Row*/
+            var index = $(v).parent().parent().index();
+            var qty = document.getElementsByName("qty")[index].value;
+            var rate = document.getElementsByName("rate")[index].value;
+
+            var amt = qty * rate;
+            document.getElementsByName("amt")[index].value = amt;
+
+            GetTotal();
+        }
+
+        function GetTotal() {
+            /*Footer Calculation*/
+            var sum = 0;
+            var amts = document.getElementsByName("amt");
+
+            for (let index = 0; index < amts.length; index++) {
+                var amt = amts[index].value;
+                sum = parseFloat(sum) + parseFloat(amt);
+            }
+
+            document.getElementById("FTotal").value = sum;
+
+            var gst = document.getElementById("FGST").value;
+            var net = parseFloat(sum) + parseFloat(gst);
+            document.getElementById("FNet").value = net;
+        }
     </script>
+    <script>
+        var provinces = [
+        "กรุงเทพมหานคร",
+        "สมุทรปราการ",
+        "นนทบุรี",
+        "ปทุมธานี",
+        "พระนครศรีอยุธยา",
+        "อ่างทอง",
+        "ลพบุรี",
+        "สิงห์บุรี",
+        "ชัยนาท",
+        "สระบุรี",
+        "ชลบุรี",
+        "ระยอง",
+        "จันทบุรี",
+        "ตราด",
+        "ฉะเชิงเทรา",
+        "ปราจีนบุรี",
+        "นครนายก",
+        "สระแก้ว",
+        "นครราชสีมา",
+        "บุรีรัมย์",
+        "สุรินทร์",
+        "ศรีสะเกษ",
+        "อุบลราชธานี",
+        "บึงกาฬ",
+        "ยโสธร",
+        "ชัยภูมิ",
+        "อำนาจเจริญ",
+        "หนองบัวลำภู",
+        "ขอนแก่น",
+        "อุดรธานี",
+        "เลย",
+        "หนองคาย",
+        "มหาสารคาม",
+        "ร้อยเอ็ด",
+        "กาฬสินธุ์",
+        "สกลนคร",
+        "นครพนม",
+        "มุกดาหาร",
+        "เชียงใหม่",
+        "ลำพูน",
+        "ลำปาง",
+        "อุตรดิตถ์",
+        "แพร่",
+        "น่าน",
+        "พะเยา",
+        "เชียงราย",
+        "แม่ฮ่องสอน",
+        "นครสวรรค์",
+        "อุทัยธานี",
+        "กำแพงเพชร",
+        "ตาก",
+        "สุโขทัย",
+        "พิษณุโลก",
+        "พิจิตร",
+        "เพชรบูรณ์",
+        "ราชบุรี",
+        "กาญจนบุรี",
+        "สุพรรณบุรี",
+        "นครปฐม",
+        "สมุทรสาคร",
+        "สมุทรสงคราม",
+        "เพชรบุรี",
+        "ประจวบคีรีขันธ์",
+        "นครศรีธรรมราช",
+        "กระบี่",
+        "พังงา",
+        "ภูเก็ต",
+        "สุราษฎร์ธานี",
+        "ระนอง",
+        "ชุมพร",
+        "สงขลา",
+        "สตูล",
+        "ตรัง",
+        "พัทลุง",
+        "ปัตตานี",
+        "ยะลา",
+        "นราธิวาส",
+
+        ];
+        var select = document.getElementById("provinces");
+        for (var i = 0; i < provinces.length; i++) {
+            var option = document.createElement("option");
+            option.value = provinces[i];
+            option.text = provinces[i];
+            select.appendChild(option);
+        }
+    </script>
+    <script>
+        const LIFF_ID = '2000460029-xyY548wb';
+        var isSubmitting = false;  // เพิ่มตัวแปรเพื่อตรวจสอบสถานะการส่งข้อมูล
+
+        function submitForm() {
+            if (isSubmitting) {
+                return;
+            }
+
+            isSubmitting = true;
+            var submitButton = document.getElementById("submitButton");
+            submitButton.disabled = true;
+
+            var form = document.getElementById("myForm");
+            var formData = new FormData(form);
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        // Send LIFF message
+                        sendLIFFMessage();
+                    } else {
+                        // Show error alert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด!',
+                            text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
+                        });
+
+                        submitButton.disabled = false;
+                        isSubmitting = false;
+                    }
+                }
+            };
+
+            xhr.open("POST", "https://script.google.com/macros/s/AKfycbz3IUK4uhsl0_WyNlkTu73WQUvzcs3CMt-DQILWBdI54ePhB2_oedJXtBBnRu7ExQqpig/exec");  // เปลี่ยน URL ของ Web App ของคุณ
+            xhr.send(formData);
+        }
+    async function sendLIFFMessage() {
+    // Initialize LIFF
+    await liff.init({ liffId: LIFF_ID });
+
+    if (liff.isLoggedIn()) {
+        const userId = await liff.getProfile().then(profile => profile.userId);
+
+        // Get form data
+        const customer = document.getElementsByName("cust_nm")[0].value;
+        const fTotal = document.getElementById("FTotal").value;
+        const orderItems = [];
+        const rows = document.querySelectorAll("#TBody tr");
+        rows.forEach(row => {
+            const itemName = row.querySelector('[name="item_nm"]').value;
+            const qty = row.querySelector('[name="qty"]').value;
+            const rate = row.querySelector('[name="rate"]').value;
+            const give = row.querySelector('[name="give"]').value;
+            const dis = row.querySelector('[name="dis"]').value;
+            const note = row.querySelector('[name="note_nm"]').value;
+            orderItems.push({ itemName, qty, rate, give, dis, note });
+        });
+        const credit = document.getElementsByName("credit")[0].value;
+        const notes = document.getElementsByName("note")[0].value;
+
+        const flexMessage = {
+            type: "flex",
+            altText: "มีคำสั่งซ์้อใหม่",
+            contents: {
+                type: "bubble",
+                body: {
+                    type: "box",
+                    layout: "vertical",
+                    spacing: "md",
+                    contents: [
+                        { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
+                        { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
+                        { type: "separator", margin: "sm" },
+                        { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
+                        ...orderItems.map(item => ({
+                            type: "box",
+                            layout: "vertical",
+                            spacing: "sm",
+                            margin: "md",
+                            contents: [
+                                {
+                                    type: "box",
+                                    layout: "horizontal",
+                                    flex: 1,
+                                    contents: [
+                                        { type: "text", text: item.itemName, weight: "bold", size: "md" }
+                                    ]
+                                },
+                                {
+                                    type: "box",
+                                    layout: "horizontal",
+                                    flex: 1,
+                                    contents: [
+                                        { type: "text", text: `จำนวน: ${item.qty} `, wrap: true, flex: 3 },
+                                        { type: "text", text: `ราคา: ${item.rate} `, wrap: true, flex: 3 }
+                                    ]
+                                },
+                                {
+                                    type: "box",
+                                    layout: "horizontal",
+                                    flex: 1,
+                                    contents: [
+                                        { type: "text", text: `แถม : ${item.give} `, wrap: true, flex: 3 },
+                                        { type: "text", text: `ลด : ${item.dis} `, wrap: true, flex: 3 }
+                                    ]
+                                },
+                                {
+                                    type: "box",
+                                    layout: "vertical",
+                                    flex: 1,
+                                    contents: [
+                                        { type: "text", text: `หมายเหตุ: ${item.note}`, wrap: true }
+                                    ]
+                                }
+                            ]
+                        })),
+                        { type: "separator", margin: "sm" },
+                        { type: "text", text: `ยอดรวมทั้งสิ้น : ${fTotal} บาท`, wrap: true, weight: "bold" },
+                        { type: "separator", margin: "sm" },
+                        { type: "text", text: `เครดิต : ${credit}`, wrap: true, weight: "bold" },
+                        { type: "separator", margin: "sm" },
+                        { type: "text", text: `หมายเหตุ : ${notes}`, wrap: true, weight: "bold" }
+                    ]
+                }
+            }
+        };
+
+
+        // Send the Flex Message
+        liff.sendMessages([flexMessage]).then(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ!',
+                text: 'ส่งข้อมูลสำเร็จแล้ว',
+                confirmButtonText: 'ปิด'
+            }).then(() => {
+                liff.closeWindow();
+            });
+        }).catch(error => {
+            console.error('Error sending Flex LIFF message:', error);
+        });
+    }
+}
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+        </script>
 </body>
+
 </html>
