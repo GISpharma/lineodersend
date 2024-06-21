@@ -68,12 +68,12 @@
     <div class="container mx-auto p-4">
         <form id="myForm">
             <div class="bg-white p-4 shadow-md rounded-lg">
-                <div class="flex justify-center  p-2 border border-green-500 rounded-lg mb-4 text-center">
-                    <span class="text-white"> สวัสดีคุณ </span>
-                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-white ml-2 w-2/3" readonly />
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4 ">
+                    <span class="text-black">🔔💰สวัสดีคุณ </span>
+                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-black ml-2 w-2/3" readonly />
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
                         <input type="text" id="sell_id" name="sell_id" class="block w-full p-2 border rounded-md" required />
@@ -101,14 +101,13 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="mt-4">
                     <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
                     <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md" required />
                 </div>
 
                 <div id="orderItems" class="mt-4">
-                    <div class="bg-green-100 p-4 border rounded-lg mb-4 order-item">
+                    <div class="bg-green-100 p-4 border-2 border-green-400 shadow-md rounded-lg mb-4 order-item">
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="itemSelect" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
@@ -134,7 +133,7 @@
                                     <option value="TENSINIC CD 30">TENSINIC CD 30</option>
                                 </select>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label for="quantity" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
                                     <input type="number" name="quantity" class="form-control w-full p-2 border rounded-md" onchange="calculateTotal(this)" required />
