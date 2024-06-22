@@ -70,21 +70,7 @@
                             <option value="AMCARDIA 5">
                             <option value="AMCARDIA 10">
                             <option value="DICLO SR 100">
-                            <option value="DOLONIL SR 100">
-                            <option value="ENACE 10">
-                            <option value="ENACE 5 (pack100)(10x10s)">
-                            <option value="ENACE 5 (pack1000)(100x10s)">
-                            <option value="HEPARIN INJ">
-                            <option value="HEP-25">
-                            <option value="IRON SUCROSE INJ">
-                            <option value="METROGYL GEL">
-                            <option value="NITRAZEPAM TABLETS 5 MG">
-                            <option value="NITRAZEPAM (WORKING STANDARD)">
-                            <option value="OFTOP 200">
-                            <option value="OMLEK 20">
-                            <option value="TENROL 50(50x10s)">
-                            <option value="TENROL 100(50x10')">
-                            <option value="TENSINIC CD 30">
+                      
                         </datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -165,6 +151,9 @@
                             title: 'สำเร็จ!',
                             text: 'การส่งข้อมูลสำเร็จ'
                         });
+
+                        sendLineMessage(formData);
+
                         liff.closeWindow();
                         
                         form.reset();
@@ -185,6 +174,31 @@
 
             xhr.open("POST", "https://script.google.com/macros/s/AKfycbwHlcsp2PalehTkl7TrXf3-r6TbJdfkSvR2E7ZfQn1XX1RZzRj3bJFtaG9aKxo8vYhi1A/exec");
             xhr.send(formData);
+        }
+
+        async function sendLineMessage(formData) {
+            const token = "YOUR_CHANNEL_ACCESS_TOKEN";  // Replace with your LINE channel access token
+
+            const message = {
+                type: 'text',
+                text: `คุณ ${formData.get('displayName')} ได้ส่งข้อมูลสำเร็จ ยอดรวมทั้งหมดคือ ${formData.get('FTotal')} บาท`
+            };
+
+            const response = await fetch('https://api.line.me/v2/bot/message/push', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    to: formData.get('userId'),
+                    messages: [message]
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Error sending message:', response.statusText);
+            }
         }
  </script>
 </head>
@@ -236,81 +250,7 @@
                                 <option value="กำแพงเพชร">
                                 <option value="ขอนแก่น">
                                 <option value="จันทบุรี">
-                                <option value="ฉะเชิงเทรา">
-                                <option value="ชลบุรี">
-                                <option value="ชัยนาท">
-                                <option value="ชัยภูมิ">
-                                <option value="ชุมพร">
-                                <option value="เชียงราย">
-                                <option value="เชียงใหม่">
-                                <option value="ตรัง">
-                                <option value="ตราด">
-                                <option value="ตาก">
-                                <option value="นครนายก">
-                                <option value="นครปฐม">
-                                <option value="นครพนม">
-                                <option value="นครราชสีมา">
-                                <option value="นครศรีธรรมราช">
-                                <option value="นครสวรรค์">
-                                <option value="นนทบุรี">
-                                <option value="นราธิวาส">
-                                <option value="น่าน">
-                                <option value="บึงกาฬ">
-                                <option value="บุรีรัมย์">
-                                <option value="ปทุมธานี">
-                                <option value="ประจวบคีรีขันธ์">
-                                <option value="ปราจีนบุรี">
-                                <option value="ปัตตานี">
-                                <option value="พระนครศรีอยุธยา">
-                                <option value="พะเยา">
-                                <option value="พังงา">
-                                <option value="พัทลุง">
-                                <option value="พิจิตร">
-                                <option value="พิษณุโลก">
-                                <option value="เพชรบุรี">
-                                <option value="เพชรบูรณ์">
-                                <option value="แพร่">
-                                <option value="ภูเก็ต">
-                                <option value="มหาสารคาม">
-                                <option value="มุกดาหาร">
-                                <option value="แม่ฮ่องสอน">
-                                <option value="ยโสธร">
-                                <option value="ยะลา">
-                                <option value="ร้อยเอ็ด">
-                                <option value="ระนอง">
-                                <option value="ระยอง">
-                                <option value="ราชบุรี">
-                                <option value="ลพบุรี">
-                                <option value="ลำปาง">
-                                <option value="ลำพูน">
-                                <option value="เลย">
-                                <option value="ศรีสะเกษ">
-                                <option value="สกลนคร">
-                                <option value="สงขลา">
-                                <option value="สตูล">
-                                <option value="สมุทรปราการ">
-                                <option value="สมุทรสงคราม">
-                                <option value="สมุทรสาคร">
-                                <option value="สระแก้ว">
-                                <option value="สระบุรี">
-                                <option value="สิงห์บุรี">
-                                <option value="สุโขทัย">
-                                <option value="สุพรรณบุรี">
-                                <option value="สุราษฎร์ธานี">
-                                <option value="สุรินทร์">
-                                <option value="หนองคาย">
-                                <option value="หนองบัวลำภู">
-                                <option value="อ่างทอง">
-                                <option value="อำนาจเจริญ">
-                                <option value="อุดรธานี">
-                                <option value="อุตรดิตถ์">
-                                <option value="อุทัยธานี">
-                                <option value="อุบลราชธานี">
-                                <option value="อ่างทอง">
-                                <option value="เบญจลักษ์">
-                                <option value="นครสวรรค์">
-                                <option value="สระแก้ว">
-                                <option value="ราชบุรี">
+                            
                             <!-- Add more provinces here as needed -->
                         </datalist>
                     </div>
