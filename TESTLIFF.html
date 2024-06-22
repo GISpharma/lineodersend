@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Notification</title>
+    <title>Order </title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -180,32 +180,43 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        window.onload = function () {
             initializeLiff();
-        });
-
-        const initializeLiff = async () => {
-            try {
-                await liff.init({ liffId: '1660766925-qDv7zvV5' });
-
-                if (liff.isLoggedIn()) {
-                    getUserProfile();
-                } else {
-                    liff.login();
-                }
-            } catch (error) {
-                console.error('LIFF initialization failed:', error);
-            }
+            generateKeyAndDate();
         };
 
-        const getUserProfile = async () => {
+        async function initializeLiff() {
+            await liff.init({ liffId: '1660766925-qDv7zvV5' });
+
+            if (liff.isLoggedIn()) {
+                getUserProfile();
+            } else {
+                liff.login();
+            }
+        }
+
+        async function getUserProfile() {
             try {
                 const profile = await liff.getProfile();
+                document.getElementById('userId').value = profile.userId;
                 document.getElementById('displayName').value = profile.displayName;
             } catch (error) {
                 console.error('Error getting profile data:', error);
             }
-        };
+        }
+
+        function generateKeyAndDate() {
+            var randomPart = Math.random().toString(36).substring(7);
+            var currentDate = new Date();
+            var year = String(currentDate.getFullYear()).substring(2);
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+            var key = `inv${year}${month}-${randomPart}`;
+            document.getElementById("keyInput").value = key;
+
+            var formattedDate = `${year}-${month}-${currentDate.getDate()}`;
+            document.getElementById("dateInput").value = formattedDate;
+        }
 
         const addOrderItem = () => {
             const orderItems = document.getElementById("orderItems");
