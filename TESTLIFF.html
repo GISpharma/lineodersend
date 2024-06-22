@@ -184,19 +184,18 @@
             xhr.send(formData);
         }
         
-        async function sendLIFFMessage() {
+async function sendLIFFMessage() {
     // Initialize LIFF
-    await liff.init({ liffId: LIFF_ID });
+    await liff.init({ liffId: '1660766925-qDv7zvV5' });
 
     if (liff.isLoggedIn()) {
         const userId = await liff.getProfile().then(profile => profile.userId);
-        const displayName = document.getElementById("displayName").value;
+        // Get form data
+        const customer = document.getElementById("cust_nm").value;
         const fTotal = document.getElementById("FTotal").value;
-        
-        // Get order items data
         const orderItems = [];
-        const items = document.querySelectorAll('.order-item');
-        items.forEach(item => {
+        const orderItemElements = document.querySelectorAll('.order-item');
+        orderItemElements.forEach(item => {
             const itemName = item.querySelector('input[name="item_nm[]"]').value;
             const quantity = item.querySelector('input[name="quantity[]"]').value;
             const price = item.querySelector('input[name="price[]"]').value;
@@ -204,14 +203,13 @@
             const dis = item.querySelector('input[name="dis[]"]').value;
             orderItems.push({ itemName, quantity, price, give, dis });
         });
-
         const credit = document.getElementsByName("credit")[0].value;
         const notes = document.getElementsByName("note")[0].value;
 
         // Create Flex Message
         const flexMessage = {
             type: "flex",
-            altText: "รายการสั่งซื้อใหม่",
+            altText: "มีคำสั่งซื้อใหม่",
             contents: {
                 type: "bubble",
                 body: {
@@ -219,20 +217,21 @@
                     layout: "vertical",
                     spacing: "md",
                     contents: [
-                        { type: "text", text: "แจ้งการสั่งซื้อ", weight: "bold", size: "lg" },
-                        { type: "text", text: `ลูกค้า: ${displayName}`, wrap: true },
+                        { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
+                        { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
                         { type: "separator", margin: "sm" },
-                        { type: "text", text: "รายการสินค้า", weight: "bold", margin: "sm" },
+                        { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
                         ...orderItems.map(item => ({
                             type: "box",
                             layout: "vertical",
+                            spacing: "sm",
                             margin: "md",
                             contents: [
-                                { type: "text", text: `${item.itemName}`, wrap: true, weight: "bold" },
+                                { type: "text", text: `สินค้า: ${item.itemName}`, wrap: true },
                                 { type: "text", text: `จำนวน: ${item.quantity}`, wrap: true },
                                 { type: "text", text: `ราคา: ${item.price}`, wrap: true },
                                 { type: "text", text: `แถม: ${item.give}`, wrap: true },
-                                { type: "text", text: `ส่วนลด: ${item.dis}`, wrap: true }
+                                { type: "text", text: `ส่วนลด: ${item.dis}`, wrap: true },
                             ]
                         })),
                         { type: "separator", margin: "sm" },
