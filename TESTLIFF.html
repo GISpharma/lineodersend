@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GIS รายการสั่งซื้อ </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <title>GIS รายการสั่งซื้อ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -13,21 +12,18 @@
             display: none;
         }
     </style>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
     <script>
-        const LIFF_ID = '1660766925-qDv7zvV5';
-
         window.onload = function () {
             initializeLiff();
             generateKeyAndDate();
         };
 
         async function initializeLiff() {
-            await liff.init({ liffId: LIFF_ID });
+            await liff.init({ liffId: '1660766925-qDv7zvV5' });
 
             if (liff.isLoggedIn()) {
                 getUserProfile();
@@ -73,6 +69,9 @@
                             <option value="AMCARDIA 10">
                             <option value="DICLO SR 100">
                             <option value="DOLONIL SR 100">
+                            <option value="ENACE 10">
+                            <option value="ENACE 5 (pack100)(10x10s)">
+                            <option value="ENACE 5 (pack1000)(100x10s)">
                         </datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -129,7 +128,85 @@
             document.getElementById("FTotal").value = total;
         }
 
-        var isSubmitting = false;
+        function createFlexMessage(orderData) {
+            return {
+                "type": "flex",
+                "altText": "Order Details",
+                "contents": {
+                    "type": "bubble",
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": "Order Details",
+                                "weight": "bold",
+                                "size": "xl"
+                            },
+                            {
+                                "type": "box",
+                                "layout": "vertical",
+                                "margin": "lg",
+                                "spacing": "sm",
+                                "contents": orderData.items.map(item => ({
+                                    "type": "box",
+                                    "layout": "baseline",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": item.name,
+                                            "color": "#aaaaaa",
+                                            "size": "sm",
+                                            "flex": 1
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": `${item.quantity} x ${item.price} = ${item.amount}`,
+                                            "wrap": true,
+                                            "color": "#666666",
+                                            "size": "sm",
+                                            "flex": 2
+                                        }
+                                    ]
+                                })),
+                                "borderColor": "#E8E8E8",
+                                "borderWidth": "1px"
+                            },
+                            {
+                                "type": "box",
+                                "layout": "vertical",
+                                "margin": "lg",
+                                "spacing": "sm",
+                                "contents": [
+                                    {
+                                        "type": "text",
+                                        "text": `Total: ${orderData.total}`,
+                                        "weight": "bold",
+                                        "size": "lg"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            };
+        }
+
+        async function sendFlexMessage(flexMessage) {
+            const accessToken = 'YOUR_LINE_CHANNEL_ACCESS_TOKEN';
+            try {
+                await liff.sendMessages([{
+                    type: 'flex',
+                    altText: 'Order Details',
+                    contents: flexMessage.contents
+                }]);
+                console.log('Flex message sent');
+            } catch (error) {
+                console.error('Error sending Flex message:', error);
+            }
+        }
 
         function submitForm() {
             if (isSubmitting) {
@@ -144,7 +221,7 @@
             var formData = new FormData(form);
 
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = async function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         Swal.fire({
@@ -152,186 +229,128 @@
                             title: 'สำเร็จ!',
                             text: 'การส่งข้อมูลสำเร็จ'
                         });
-                        sendLIFFMessage(formData);
                         form.reset();
                         document.getElementById("orderItems").innerHTML = "";
                         calculateTotal();
+
+                        // Prepare order data
+                        const orderData = {
+                            items: Array.from(document.querySelectorAll('.order-item')).map(item => ({
+                                name: item.querySelector('input[name="item_nm[]"]').value,
+                                quantity: item.querySelector('input[name="quantity[]"]').value,
+                                price: item.querySelector('input[name="price[]"]').value,
+                                amount: item.querySelector('input[name="amt[]"]').value
+                            })),
+                            total: document.getElementById("FTotal").value
+                        };
+
+                        // Create and send Flex message
+                        const flexMessage = createFlexMessage(orderData);
+                        await sendFlexMessage(flexMessage);
                     } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'เกิดข้อผิดพลาด!',
-                            text: 'ลืมกรอกข้อมูลไหม',
+                            text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
                         });
+
+                        submitButton.disabled = false;
+                        isSubmitting = false;
                     }
-                    isSubmitting = false;
-                    submitButton.disabled = false;
                 }
             };
 
-            xhr.open("POST", "https://script.google.com/macros/s/AKfycbxkMX6IeMmE_wG9n-d6PzZe-LVdY4EBN3RrmEYlg_Wf3EnnD_VG/exec");
+            xhr.open("POST", "https://script.google.com/macros/s/AKfycbwHlcsp2PalehTkl7TrXf3-r6TbJdfkSvR2E7ZfQn1XX1RZzRj3bJFtaG9aKxo8vYhi1A/exec");
             xhr.send(formData);
         }
-
-        function sendLIFFMessage(formData) {
-            const message = {
-                "type": "flex",
-                "altText": "This is a Flex Message",
-                "contents": {
-                    "type": "bubble",
-                    "body": {
-                        "type": "box",
-                        "layout": "vertical",
-                        "contents": [
-                            {
-                                "type": "text",
-                                "text": `สำหรับ: ${formData.get('customer')}`,
-                                "wrap": true
-                            },
-                            {
-                                "type": "text",
-                                "text": `โทรศัพท์: ${formData.get('phone')}`,
-                                "wrap": true
-                            },
-                            {
-                                "type": "text",
-                                "text": `ที่อยู่: ${formData.get('address')}`,
-                                "wrap": true
-                            },
-                            {
-                                "type": "text",
-                                "text": `เลขที่ใบเสร็จ: ${formData.get('keyInput')}`,
-                                "wrap": true
-                            },
-                            {
-                                "type": "text",
-                                "text": `วันที่: ${formData.get('dateInput')}`,
-                                "wrap": true
-                            },
-                            {
-                                "type": "separator",
-                                "margin": "lg"
-                            },
-                            {
-                                "type": "text",
-                                "text": "รายการสั่งซื้อ",
-                                "weight": "bold",
-                                "margin": "lg"
-                            }
-                        ]
-                    }
-                }
-            };
-
-            const orderItems = document.querySelectorAll('.order-item');
-            orderItems.forEach(item => {
-                const itemName = item.querySelector('input[name="item_nm[]"]').value || 'N/A';
-                const quantity = item.querySelector('input[name="quantity[]"]').value || 'N/A';
-                const price = item.querySelector('input[name="price[]"]').value || 'N/A';
-                const give = item.querySelector('input[name="give[]"]').value || 'N/A';
-                const dis = item.querySelector('input[name="dis[]"]').value || 'N/A';
-                const amount = item.querySelector('input[name="amt[]"]').value || 'N/A';
-
-                message.contents.body.contents.push({
-                    "type": "text",
-                    "text": `สินค้า: ${itemName}`,
-                    "wrap": true
-                });
-
-                message.contents.body.contents.push({
-                    "type": "text",
-                    "text": `จำนวน: ${quantity}`,
-                    "wrap": true
-                });
-
-                message.contents.body.contents.push({
-                    "type": "text",
-                    "text": `ราคา: ${price}`,
-                    "wrap": true
-                });
-
-                message.contents.body.contents.push({
-                    "type": "text",
-                    "text": `แถม: ${give}`,
-                    "wrap": true
-                });
-
-                message.contents.body.contents.push({
-                    "type": "text",
-                    "text": `ส่วนลด: ${dis}`,
-                    "wrap": true
-                });
-
-                message.contents.body.contents.push({
-                    "type": "text",
-                    "text": `จำนวนเงิน: ${amount}`,
-                    "wrap": true
-                });
-            });
-
-            liff.sendMessages([message])
-                .then(() => {
-                    console.log('Message sent');
-                })
-                .catch((err) => {
-                    console.error('Error sending message:', err);
-                });
-        }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </head>
-<body>
-    <div class="container mx-auto">
-        <form id="myForm" class="p-4 border-2 border-gray-400 shadow-md rounded-lg">
-            <h2 class="text-lg font-semibold mb-4">แบบฟอร์มสั่งซื้อ</h2>
-            <div class="grid grid-cols-1 gap-4">
-                <div>
-                    <label for="customer" class="block mb-2 text-sm font-medium text-gray-700">ชื่อลูกค้า</label>
-                    <input type="text" id="customer" name="customer" class="form-control w-full p-2 border rounded-md" required />
+<body class="bg-gray-100">
+    <div class="container mx-auto p-2">
+        <form id="myForm">
+            <div class="bg-white p-2 shadow-md rounded-lg">
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
+                    <span class="input-group-text">OderID</span>
+                    <input type="text" id="keyInput" name="order_id" required/>
                 </div>
-                <div>
-                    <label for="phone" class="block mb-2 text-sm font-medium text-gray-700">โทรศัพท์</label>
-                    <input type="tel" id="phone" name="phone" class="form-control w-full p-2 border rounded-md" required />
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
+                    <span class="input-group-text">UserID</span>
+                    <input type="text" id="userId" name="userId" required/>
                 </div>
-                <div>
-                    <label for="address" class="block mb-2 text-sm font-medium text-gray-700">ที่อยู่</label>
-                    <textarea id="address" name="address" rows="3" class="form-control w-full p-2 border rounded-md"
-                        required></textarea>
+                <div class="flex justify-start p-2 bg-green-100 border-2 border-green-500 rounded-lg p-3 my-4">
+                    <span class="w-48 text-black">🔔สวัสดีคุณ </span>
+                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-black ml-2 w-2/3" required/>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="keyInput" class="block mb-2 text-sm font-medium text-gray-700">เลขที่ใบเสร็จ</label>
-                        <input type="text" id="keyInput" name="keyInput" class="form-control w-full p-2 border rounded-md"
-                            readonly required />
+                        <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
+                        <input type="number" class="block w-full p-2 border rounded-md"  name="sell_id" required />
                     </div>
                     <div>
-                        <label for="dateInput" class="block mb-2 text-sm font-medium text-gray-700">วันที่</label>
-                        <input type="date" id="dateInput" name="dateInput" class="form-control w-full p-2 border rounded-md"
-                            readonly required />
+                        <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
+                        <select id="category" name="category" class="block w-full p-2 border rounded-md" required>
+                            <option value="">เลือกประเภท</option>
+                            <option value="ร้านขายยา">ร้านขายยา</option>
+                            <option value="คลีนิก">คลีนิก</option>
+                            <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
+                            <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                            <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
+                            <option value="ออนไลน์">ออนไลน์</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
+                        <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
+                    </div>
+                    <div>
+                        <label for="provinces" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
+                        <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
+                        <datalist id="provinces">
+                            <option value="กรุงเทพมหานคร">
+                                <option value="กระบี่">
+                                <option value="กาญจนบุรี">
+                                <option value="กาฬสินธุ์">
+                                <option value="กำแพงเพชร">
+                               
+                        </datalist>
                     </div>
                 </div>
-            </div>
-
-            <hr class="my-6">
-
-            <div class="mb-4">
-                <button type="button" class="w-32 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onclick="addOrderItem()">เพิ่มรายการ</button>
-            </div>
-
-            <div id="orderItems">
-                <!-- รายการสั่งซื้อจะถูกเพิ่มที่นี่ -->
-            </div>
-
-            <div class="flex justify-end mt-4">
-                <div class="w-full md:w-1/2 lg:w-1/3">
-                    <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">ยอดรวม</label>
-                    <input type="number" id="FTotal" name="FTotal" class="form-control bg-gray-200 w-full p-2 border rounded-md"
-                        readonly />
+                <div class="mt-4">
+                    <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
+                    <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md" required />
                 </div>
-            </div>
-
-            <div class="flex justify-center mt-6">
-                <button id="submitButton" type="button"
-                    class="w-40 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onclick="submitForm()">ส่งข้อมูล</button>
+                <div id="orderItems" class="mt-4"></div>
+                <div class="mt-4">
+                    <button type="button" class="btn border-2 border-green-500 text-green-700 p-2" onclick="addOrderItem()">เพิ่มรายการสินค้า</button>
+                </div>
+                <div class="mt-4">
+                    <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">ทั้งหมด</label>
+                    <input type="number" class="block w-full bg-gray-200 p-2 border rounded-md" id="FTotal" name="FTotal" readonly />
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="input-group mb-4">
+                            <select class="form-control p-2" placeholder="เครดิต" name="credit" required>
+                                <option class="form-control " value="">เลือกเครดิต</option>
+                                <option class="form-control " value="เงินสด">เงินสด</option>
+                                <option class="form-control " value="7 วัน">7 วัน</option>
+                                <option class="form-control " value="30 วัน">30 วัน</option>
+                                <option class="form-control " value="60 วัน">60 วัน</option>
+                                <option class="form-control " value="90 วัน">90 วัน</option>
+                                <option class="form-control " value="120 วัน">120 วัน</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group mb-4">
+                            <textarea type="text" class="form-control" placeholder="หมายเหตุ" name="note"></textarea>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <button id="submitButton" class="btn bg-green-500 border-2 border-green-700 text-white text-md py-4 w-full" type="button" onclick="submitForm()">ส่งข้อมูล</button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
