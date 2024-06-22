@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GIS รายการสั่งซื้อ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIS รายการสั่งซื้อ ทดสอบ2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -11,7 +12,6 @@
             display: none;
         }
     </style>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -47,7 +47,6 @@
             var currentDate = new Date();
             var year = String(currentDate.getFullYear()).substring(2);
             var month = String(currentDate.getMonth() + 1).padStart(2, '0');
-
             var key = `inv${year}${month}-${randomPart}`;
             document.getElementById("keyInput").value = key;
 
@@ -62,37 +61,37 @@
             newItem.innerHTML = `
                 <div class="grid grid-cols-1 gap-4">
                     <div>
-                        <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
-                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required />
+                        <label for="item_nm" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
+                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm" required />
                         <datalist id="items">
                             <option value="AMCARDIA 5">
                             <option value="AMCARDIA 10">
                             <option value="DICLO SR 100">
                             <option value="DOLONIL SR 100">
                             <option value="ENACE 10">
-                    
+                            <option value="ENACE 5 (pack100)(10x10s)">
                         </datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="quantity[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
-                            <input type="number" name="quantity[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="quantity" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
+                            <input type="number" name="quantity" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="price[]" class="block mb-2 text-sm font-medium text-gray-700">ราคา</label>
-                            <input type="number" name="price[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="price" class="block mb-2 text-sm font-medium text-gray-700">ราคา</label>
+                            <input type="number" name="price" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="give[]" class="block mb-2 text-sm font-medium text-gray-700">แถม</label>
-                            <input type="number" name="give[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="give" class="block mb-2 text-sm font-medium text-gray-700">แถม</label>
+                            <input type="number" name="give" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="dis[]" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
-                            <input type="number" name="dis[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="dis" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
+                            <input type="number" name="dis" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="amt[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
-                            <input type="number" name="amt[]" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
+                            <label for="amt" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
+                            <input type="number" name="amt" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
                         </div>
                         <div class="flex justify-end pt-4">
                             <button type="button" class="w-32 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ </button>
@@ -109,17 +108,17 @@
 
         function calculateAmount(input) {
             const item = input.closest('.order-item');
-            const quantity = item.querySelector('input[name="quantity[]"]').value || 0;
-            const price = item.querySelector('input[name="price[]"]').value || 0;
-            const give = item.querySelector('input[name="give[]"]').value || 0;
-            const dis = item.querySelector('input[name="dis[]"]').value || 0;
+            const quantity = item.querySelector('input[name="quantity"]').value || 0;
+            const price = item.querySelector('input[name="price"]').value || 0;
+            const give = item.querySelector('input[name="give"]').value || 0;
+            const dis = item.querySelector('input[name="dis"]').value || 0;
             const amount = (quantity * price) - dis;
-            item.querySelector('input[name="amt[]"]').value = amount;
+            item.querySelector('input[name="amt"]').value = amount;
             calculateTotal();
         }
 
         function calculateTotal() {
-            const amounts = document.querySelectorAll('input[name="amt[]"]');
+            const amounts = document.querySelectorAll('input[name="amt"]');
             let total = 0;
             amounts.forEach(amount => {
                 total += parseFloat(amount.value) || 0;
@@ -151,7 +150,6 @@
                             title: 'สำเร็จ!',
                             text: 'การส่งข้อมูลสำเร็จ'
                         });
-                        sendLIFFMessage();
                         form.reset();
                         document.getElementById("orderItems").innerHTML = "";
                         calculateTotal();
@@ -167,118 +165,97 @@
                     }
                 }
             };
-
-            xhr.open("POST", "https://script.google.com/macros/s/AKfycbxpeznRr9E2D2wgrHSsOBUKbVy5XudmmEo6JSEz6w9YdyXoSrjSuST8RDFoaGhlRwp65w/exec");
+            xhr.open("POST", "https://script.google.com/macros/s/AKfycbwHlcsp2PalehTkl7TrXf3-r6TbJdfkSvR2E7ZfQn1XX1RZzRj3bJFtaG9aKxo8vYhi1A/exec");
             xhr.send(formData);
-        }
-        
-        async function sendLIFFMessage() {
-            // Initialize LIFF
-            await liff.init({ liffId: LIFF_ID });
-
-            if (liff.isLoggedIn()) {
-                const customer = document.getElementById("cust_nm").value;
-                const fTotal = document.getElementById("FTotal").value;
-                const orderItems = [];
-                const orderItemElements = document.querySelectorAll('.order-item');
-                orderItemElements.forEach(item => {
-                    const itemName = item.querySelector('input[name="item_nm[]"]').value;
-                    const quantity = item.querySelector('input[name="quantity[]"]').value;
-                    const price = item.querySelector('input[name="price[]"]').value;
-                    const give = item.querySelector('input[name="give[]"]').value;
-                    const dis = item.querySelector('input[name="dis[]"]').value;
-                    orderItems.push({ itemName, quantity, price, give, dis });
-                });
-                const credit = document.getElementsByName("credit")[0].value;
-                const notes = document.getElementsByName("note")[0].value;
-
-                // Create Flex Message
-                const flexMessage = {
-                    type: "flex",
-                    altText: "มีคำสั่งซื้อใหม่",
-                    contents: {
-                        type: "bubble",
-                        body: {
-                            type: "box",
-                            layout: "vertical",
-                            contents: [
-                                { type: "text", text: `ชื่อลูกค้า: ${customer}` },
-                                { type: "text", text: `จำนวนเงินรวม: ${fTotal}` },
-                                { type: "text", text: `เงื่อนไขเครดิต: ${credit}` },
-                                { type: "text", text: `หมายเหตุ: ${notes}` },
-                                { type: "separator", margin: "md" },
-                                {
-                                    type: "box",
-                                    layout: "vertical",
-                                    margin: "md",
-                                    contents: orderItems.map(item => ({
-                                        type: "text",
-                                        text: `รายการ: ${item.itemName}, จำนวน: ${item.quantity}, ราคา: ${item.price}, แถม: ${item.give}, ส่วนลด: ${item.dis}`
-                                    }))
-                                }
-                            ]
-                        }
-                    }
-                };
-
-                try {
-                    await liff.sendMessages([flexMessage]);
-                    console.log("Flex Message sent");
-                } catch (error) {
-                    console.error("Error sending Flex Message:", error);
-                }
-            } else {
-                console.log("User not logged in");
-            }
         }
     </script>
 </head>
 <body class="bg-gray-100">
-    <div id="loading" class="fixed inset-0 bg-white bg-opacity-75 z-50 flex items-center justify-center">
-        <div class="text-center">
-            <div class="loader"></div>
-            <p class="mt-4 text-lg">Loading...</p>
-        </div>
-    </div>
-    <div class="container mx-auto py-6">
-        <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold mb-6 text-center text-blue-500">เพิ่มรายการสั่งซื้อ</h2>
-            <form id="myForm" enctype="multipart/form-data">
-                <input type="hidden" id="userId" name="userId" />
-                <input type="hidden" id="displayName" name="displayName" />
-                <div class="grid grid-cols-1 gap-4 mb-4">
+    <div class="container mx-auto p-2">
+        <form id="myForm">
+            <div class="bg-white p-2 shadow-md rounded-lg">
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
+                    <span class="input-group-text">OderID</span>
+                    <input type="text" id="keyInput" name="order_id" required>
+                </div>
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
+                    <span class="input-group-text">UserID</span>
+                    <input type="text" id="userId" name="userId" required>
+                </div>
+                <div class="flex justify-start p-2 bg-green-100 border-2 border-green-500 rounded-lg p-3 my-4">
+                    <span class="w-48 text-black">🔔สวัสดีคุณ </span>
+                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-black ml-2 w-2/3" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ชื่อลูกค้า</label>
-                        <input type="text" name="cust_nm" class="form-control w-full p-2 border rounded-md" required />
+                        <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
+                        <input type="number" class="block w-full p-2 border rounded-md" name="sell_id" required>
                     </div>
                     <div>
-                        <label for="credit" class="block mb-2 text-sm font-medium text-gray-700">เงื่อนไขเครดิต</label>
-                        <input type="text" name="credit" class="form-control w-full p-2 border rounded-md" required />
+                        <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
+                        <select id="category" name="category" class="block w-full p-2 border rounded-md" required>
+                            <option value="">เลือกประเภท</option>
+                            <option value="ร้านขายยา">ร้านขายยา</option>
+                            <option value="คลีนิก">คลีนิก</option>
+                            <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
+                            <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                            <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
+                            <option value="ออนไลน์">ออนไลน์</option>
+                        </select>
                     </div>
                     <div>
-                        <label for="note" class="block mb-2 text-sm font-medium text-gray-700">หมายเหตุ</label>
-                        <textarea name="note" rows="4" class="form-control w-full p-2 border rounded-md"></textarea>
+                        <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
+                        <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md">
                     </div>
                     <div>
-                        <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">รวมจำนวนเงิน</label>
-                        <input type="text" id="FTotal" name="FTotal" class="form-control w-full p-2 border rounded-md" readonly />
-                    </div>
-                    <div>
-                        <label for="keyInput" class="block mb-2 text-sm font-medium text-gray-700">Order ID</label>
-                        <input type="text" id="keyInput" name="keyInput" class="form-control w-full p-2 border rounded-md" readonly />
-                    </div>
-                    <div>
-                        <label for="dateInput" class="block mb-2 text-sm font-medium text-gray-700">Order Date</label>
-                        <input type="text" id="dateInput" name="dateInput" class="form-control w-full p-2 border rounded-md" readonly />
+                        <label for="provinces" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
+                        <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
+                        <datalist id="provinces">
+                            <option value="กรุงเทพมหานคร">
+                            <option value="กระบี่">
+                            <option value="กาญจนบุรี">
+                            <option value="กาฬสินธุ์">
+                            <option value="กำแพงเพชร">
+                        </datalist>
                     </div>
                 </div>
-                <div id="orderItems" class="mb-4">
-                    <!-- Order items will be dynamically added here -->
+                <div class="mt-4">
+                    <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
+                    <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md" required>
                 </div>
-                <button type="button" class="w-full bg-blue-500 text-white p-2 text-center font-bold rounded-md" onclick="addOrderItem()">➕ เพิ่มรายการสั่งซื้อ</button>
-                <button type="button" id="submitButton" class="w-full bg-green-500 text-white p-2 text-center font-bold rounded-md mt-4" onclick="submitForm()">📤 ส่งรายการสั่งซื้อ</button>
-            </form>
-        </div>
+                <div id="orderItems" class="mt-4"></div>
+                <div class="mt-4">
+                    <button type="button" class="btn border-2 border-green-500 text-green-700 p-2" onclick="addOrderItem()">เพิ่มรายการสินค้า</button>
+                </div>
+                <div class="mt-4">
+                    <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">ทั้งหมด</label>
+                    <input type="number" class="block w-full bg-gray-200 p-2 border rounded-md" id="FTotal" name="FTotal" readonly>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="input-group mb-4">
+                            <select class="form-control p-2" placeholder="เครดิต" name="credit" required>
+                                <option class="form-control" value="">เลือกเครดิต</option>
+                                <option class="form-control" value="เงินสด">เงินสด</option>
+                                <option class="form-control" value="7 วัน">7 วัน</option>
+                                <option class="form-control" value="30 วัน">30 วัน</option>
+                                <option class="form-control" value="60 วัน">60 วัน</option>
+                                <option class="form-control" value="90 วัน">90 วัน</option>
+                                <option class="form-control" value="120 วัน">120 วัน</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group mb-4">
+                            <textarea type="text" class="form-control" placeholder="หมายเหตุ" name="note"></textarea>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <button id="submitButton" class="btn bg-green-500 border-2 border-green-700 text-white text-md py-4 w-full" type="button" onclick="submitForm()">ส่งข้อมูล</button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </body>
 </html>
