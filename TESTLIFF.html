@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIS รายการสั่งซื้อ ทดสอบ2</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GIS รายการสั่งซื้อ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -12,13 +13,14 @@
             display: none;
         }
     </style>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
     <script>
         window.onload = function () {
-            initializeLiff();
+             initializeLiff();
             generateKeyAndDate();
         };
 
@@ -47,6 +49,7 @@
             var currentDate = new Date();
             var year = String(currentDate.getFullYear()).substring(2);
             var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+
             var key = `inv${year}${month}-${randomPart}`;
             document.getElementById("keyInput").value = key;
 
@@ -57,12 +60,12 @@
         function addOrderItem() {
             const orderItems = document.getElementById("orderItems");
             const newItem = document.createElement("div");
-            newItem.className = "bg-green-100 p-2 border-2 border-green-400 shadow-md rounded-lg mb-4 order-item";
+            newItem.className = "bg-green-100 p-4 border-2 border-green-400 shadow-md rounded-lg mb-4 order-item";
             newItem.innerHTML = `
                 <div class="grid grid-cols-1 gap-4">
                     <div>
-                        <label for="item_nm" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
-                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm" required />
+                        <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
+                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required />
                         <datalist id="items">
                             <option value="AMCARDIA 5">
                             <option value="AMCARDIA 10">
@@ -70,31 +73,44 @@
                             <option value="DOLONIL SR 100">
                             <option value="ENACE 10">
                             <option value="ENACE 5 (pack100)(10x10s)">
+                            <option value="ENACE 5 (pack1000)(100x10s)">
+                            <option value="HEPARIN INJ">
+                            <option value="HEP-25">
+                            <option value="IRON SUCROSE INJ">
+                            <option value="METROGYL GEL">
+                            <option value="NITRAZEPAM TABLETS 5 MG">
+                            <option value="NITRAZEPAM (WORKING STANDARD)">
+                            <option value="OFTOP 200">
+                            <option value="OMLEK 20">
+                            <option value="TENROL 50(50x10s)">
+                            <option value="TENROL 100(50x10')">
+                            <option value="TENSINIC CD 30">
                         </datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="quantity" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
-                            <input type="number" name="quantity" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="quantity[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
+                            <input type="number" name="quantity[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="price" class="block mb-2 text-sm font-medium text-gray-700">ราคา</label>
-                            <input type="number" name="price" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="price[]" class="block mb-2 text-sm font-medium text-gray-700">ราคา</label>
+                            <input type="number" name="price[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="give" class="block mb-2 text-sm font-medium text-gray-700">แถม</label>
-                            <input type="number" name="give" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="give[]" class="block mb-2 text-sm font-medium text-gray-700">แถม</label>
+                            <input type="number" name="give[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="dis" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
-                            <input type="number" name="dis" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                            <label for="dis[]" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
+                            <input type="number" name="dis[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
                         </div>
                         <div>
-                            <label for="amt" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
-                            <input type="number" name="amt" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
+                            <label for="amt[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
+                            <input type="number" name="amt[]" class="form-control w-full p-2 border rounded-md" readonly />
                         </div>
-                        <div class="flex justify-end pt-4">
-                            <button type="button" class="w-32 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ </button>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Action</label>
+                            <button type="button" class="w-full bg-red-500 p-2 bg-red-100 text-white font-bold rounded-md" onclick="removeOrderItem(this)"> ลบ </button>
                         </div>
                     </div>
                 </div>`;
@@ -108,17 +124,17 @@
 
         function calculateAmount(input) {
             const item = input.closest('.order-item');
-            const quantity = item.querySelector('input[name="quantity"]').value || 0;
-            const price = item.querySelector('input[name="price"]').value || 0;
-            const give = item.querySelector('input[name="give"]').value || 0;
-            const dis = item.querySelector('input[name="dis"]').value || 0;
+            const quantity = item.querySelector('input[name="quantity[]"]').value || 0;
+            const price = item.querySelector('input[name="price[]"]').value || 0;
+            const give = item.querySelector('input[name="give[]"]').value || 0;
+            const dis = item.querySelector('input[name="dis[]"]').value || 0;
             const amount = (quantity * price) - dis;
-            item.querySelector('input[name="amt"]').value = amount;
+            item.querySelector('input[name="amt[]"]').value = amount;
             calculateTotal();
         }
 
         function calculateTotal() {
-            const amounts = document.querySelectorAll('input[name="amt"]');
+            const amounts = document.querySelectorAll('input[name="amt[]"]');
             let total = 0;
             amounts.forEach(amount => {
                 total += parseFloat(amount.value) || 0;
@@ -126,10 +142,10 @@
             document.getElementById("FTotal").value = total;
         }
 
-        const LIFF_ID = '1660766925-qDv7zvV5';
+        const LIFF_ID = '2000460029-xyY548wb';
         var isSubmitting = false;
 
-        async function submitForm() {
+        function submitForm() {
             if (isSubmitting) {
                 return;
             }
@@ -141,140 +157,68 @@
             var form = document.getElementById("myForm");
             var formData = new FormData(form);
 
-            try {
-                await sendFlexMessage();
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'สำเร็จ!',
-                                text: 'การส่งข้อมูลสำเร็จ'
-                            });
-                            form.reset();
-                            document.getElementById("orderItems").innerHTML = "";
-                            calculateTotal();
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'เกิดข้อผิดพลาด!',
-                                text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
-                            });
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ!',
+                            text: 'การส่งข้อมูลสำเร็จ'
+                        });
+                        form.reset();
+                        document.getElementById("orderItems").innerHTML = "";
+                        calculateTotal();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด!',
+                            text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
+                        });
 
-                            submitButton.disabled = false;
-                            isSubmitting = false;
-                        }
-                    }
-                };
-                xhr.open("POST", "https://script.google.com/macros/s/AKfycbwHlcsp2PalehTkl7TrXf3-r6TbJdfkSvR2E7ZfQn1XX1RZzRj3bJFtaG9aKxo8vYhi1A/exec");
-                xhr.send(formData);
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'เกิดข้อผิดพลาด!',
-                    text: 'ไม่สามารถส่งข้อความ flex ไปยัง LINE ได้'
-                });
-                submitButton.disabled = false;
-                isSubmitting = false;
-            }
-        }
-
-        async function sendFlexMessage() {
-            const accessToken = liff.getAccessToken();
-            const userId = (await liff.getProfile()).userId;
-            const flexMessage = createFlexMessage();
-
-            const response = await fetch('https://api.line.me/v2/bot/message/push', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer {YOUR_CHANNEL_ACCESS_TOKEN}`
-                },
-                body: JSON.stringify({
-                    to: userId,
-                    messages: [flexMessage]
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to send flex message');
-            }
-        }
-
-        function createFlexMessage() {
-            const orderItems = Array.from(document.querySelectorAll('.order-item')).map(item => {
-                return {
-                    type: 'box',
-                    layout: 'horizontal',
-                    contents: [
-                        {
-                            type: 'text',
-                            text: item.querySelector('input[name="item_nm"]').value,
-                            size: 'sm',
-                            flex: 4
-                        },
-                        {
-                            type: 'text',
-                            text: `${item.querySelector('input[name="quantity"]').value} x ${item.querySelector('input[name="price"]').value}`,
-                            size: 'sm',
-                            flex: 2,
-                            align: 'end'
-                        },
-                        {
-                            type: 'text',
-                            text: `${item.querySelector('input[name="amt"]').value}`,
-                            size: 'sm',
-                            flex: 2,
-                            align: 'end'
-                        }
-                    ]
-                };
-            });
-
-            return {
-                type: 'flex',
-                altText: 'Order Summary',
-                contents: {
-                    type: 'bubble',
-                    body: {
-                        type: 'box',
-                        layout: 'vertical',
-                        contents: [
-                            {
-                                type: 'text',
-                                text: 'Order Summary',
-                                weight: 'bold',
-                                size: 'xl'
-                            },
-                            ...orderItems
-                        ]
+                        submitButton.disabled = false;
+                        isSubmitting = false;
                     }
                 }
             };
+
+            xhr.open("POST", "https://script.google.com/macros/s/AKfycbwHlcsp2PalehTkl7TrXf3-r6TbJdfkSvR2E7ZfQn1XX1RZzRj3bJFtaG9aKxo8vYhi1A/exec");
+            xhr.send(formData);
         }
+
+        var provinces = ["กรุงเทพมหานคร", "สมุทรปราการ", "นราธิวาส"];
+        var select = document.getElementById("provinces");
+        for (var i = 0; i < provinces.length; i++) {
+            var option = document.createElement("option");
+            option.value = provinces[i];
+            option.text = provinces[i];
+            select.appendChild(option);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
     </script>
 </head>
 <body class="bg-gray-100">
-    <div class="container mx-auto p-2">
+    <div class="container mx-auto p-4">
         <form id="myForm">
-            <div class="bg-white p-2 shadow-md rounded-lg">
-                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
+            <div class="bg-white p-4 shadow-md rounded-lg">
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4">
                     <span class="input-group-text">OderID</span>
-                    <input type="text" id="keyInput" name="order_id" required>
+                    <input type="text" id="keyInput" name="order_id" />
                 </div>
-                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4">
                     <span class="input-group-text">UserID</span>
-                    <input type="text" id="userId" name="userId" required>
+                    <input type="text" id="userId" name="userId" />
                 </div>
-                <div class="flex justify-start p-2 bg-green-100 border-2 border-green-500 rounded-lg p-3 my-4">
-                    <span class="w-48 text-black">🔔สวัสดีคุณ </span>
-                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-black ml-2 w-2/3" required>
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4">
+                    <span class="w-48 text-black">🔔💰สวัสดีคุณ </span>
+                    <input type="text" id="displayName" name="displayName" class="bg-transparent border-none text-black ml-2 w-2/3" />
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
-                        <input type="number" class="block w-full p-2 border rounded-md" name="sell_id" required>
+                        <input type="text" class="block w-full p-2 border rounded-md" placeholder="รหัสผู้ขาย" name="sell_id" required />
                     </div>
                     <div>
                         <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
@@ -290,43 +234,40 @@
                     </div>
                     <div>
                         <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
-                        <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md">
+                        <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
                     </div>
                     <div>
                         <label for="provinces" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
-                        <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
-                        <datalist id="provinces">
-                            <option value="กรุงเทพมหานคร">
-                            <option value="กระบี่">
-                            <option value="กาญจนบุรี">
-                            <option value="กาฬสินธุ์">
-                            <option value="กำแพงเพชร">
-                        </datalist>
+                        <select id="provinces" name="city" class="block w-full p-2 border rounded-md" required>
+                            <option value="">เลือกจังหวัด</option>
+                            <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
+                            <option value="สมุทรปราการ">สมุทรปราการ</option>
+                        </select>
                     </div>
                 </div>
                 <div class="mt-4">
                     <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
-                    <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md" required>
+                    <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md" required />
                 </div>
                 <div id="orderItems" class="mt-4"></div>
                 <div class="mt-4">
-                    <button type="button" class="btn border-2 border-green-500 text-green-700 p-2" onclick="addOrderItem()">เพิ่มรายการสินค้า</button>
+                    <button type="button" class="btn btn-primary" onclick="addOrderItem()">เพิ่มรายการสินค้า</button>
                 </div>
                 <div class="mt-4">
                     <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">ทั้งหมด</label>
-                    <input type="number" class="block w-full bg-gray-200 p-2 border rounded-md" id="FTotal" name="FTotal" readonly>
+                    <input type="number" class="block w-full p-2 border rounded-md" id="FTotal" name="FTotal" readonly />
                 </div>
                 <div class="row mt-4">
                     <div class="col-md-12">
                         <div class="input-group mb-4">
-                            <select class="form-control p-2" placeholder="เครดิต" name="credit" required>
-                                <option class="form-control" value="">เลือกเครดิต</option>
-                                <option class="form-control" value="เงินสด">เงินสด</option>
-                                <option class="form-control" value="7 วัน">7 วัน</option>
-                                <option class="form-control" value="30 วัน">30 วัน</option>
-                                <option class="form-control" value="60 วัน">60 วัน</option>
-                                <option class="form-control" value="90 วัน">90 วัน</option>
-                                <option class="form-control" value="120 วัน">120 วัน</option>
+                            <select class="form-control col-4" placeholder="เครดิต" name="credit" required>
+                                <option class="form-control " value="">เลือกเครดิต</option>
+                                <option class="form-control " value="เงินสด">เงินสด</option>
+                                <option class="form-control " value="7 วัน">7 วัน</option>
+                                <option class="form-control " value="30 วัน">30 วัน</option>
+                                <option class="form-control " value="60 วัน">60 วัน</option>
+                                <option class="form-control " value="90 วัน">90 วัน</option>
+                                <option class="form-control " value="120 วัน">120 วัน</option>
                             </select>
                         </div>
                     </div>
@@ -336,7 +277,7 @@
                         </div>
                     </div>
                     <div class="col">
-                        <button id="submitButton" class="btn bg-green-500 border-2 border-green-700 text-white text-md py-4 w-full" type="button" onclick="submitForm()">ส่งข้อมูล</button>
+                        <button style="width: 100%;line-height: 40px;" id="submitButton" class="btn btn-success btn-block" type="button" onclick="submitForm()">ส่งข้อมูล</button>
                     </div>
                 </div>
             </div>
