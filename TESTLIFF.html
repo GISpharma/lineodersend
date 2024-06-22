@@ -210,7 +210,7 @@
                         layout: "vertical",
                         spacing: "md",
                         contents: [
-                            { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg", color: "#00FF00" },
+                            { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg", color: "#067706" },
                             { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
                             { type: "separator", margin: "sm" },
                             { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
@@ -234,10 +234,15 @@
                                         flex: 1,
                                         contents: [
                                             { type: "text", text: `จำนวน: ${item.qty}`, wrap: true, flex: 3 },
-                                            { type: "text", text: `ราคา: ${item.rate}`, wrap: true, flex: 3 },
-                                            { type: "text", text: `แถม: ${item.give}`, wrap: true, flex:  },
+                                            { type: "text", text: `ราคา: ${item.rate}`, wrap: true, flex: 3 }
+                                        ]
+                                    },{
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: `แถม: ${item.give}`, wrap: true, flex: 3 },
                                             { type: "text", text: `ลด: ${item.dis}`, wrap: true, flex: 3 }
-
                                         ]
                                     },
                                     {
