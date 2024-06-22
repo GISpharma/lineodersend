@@ -165,7 +165,8 @@
                             title: 'สำเร็จ!',
                             text: 'การส่งข้อมูลสำเร็จ'
                         });
-                        sendLIFFMessage();
+                        liff.closeWindow();
+                        
                         form.reset();
                         document.getElementById("orderItems").innerHTML = "";
                         calculateTotal();
