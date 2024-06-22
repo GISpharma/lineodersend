@@ -147,57 +147,57 @@
             const newItem = document.createElement("div");
             newItem.className = "bg-green-100 p-2 border-2 border-green-400 shadow-md rounded-lg mb-4 order-item";
             newItem.innerHTML = `
-                <div class="grid grid-cols-1 gap-4">
+                  <div class="grid grid-cols-1 gap-4">
                     <div>
                         <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
                         <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required />
                         <datalist id="items">
                             <option value="AMCARDIA 5">
                             <option value="AMCARDIA 10">
-                            <option value="DICLOFENAC GEL">
-                            <option value="EROSONE CREAM 10G">
-                            <option value="EROSONE CREAM 25G">
-                            <option value="EROSONE MAX CREAM 10G">
-                            <option value="EROSONE MAX CREAM 25G">
-                            <option value="EROSONE MAX CREAM 50G">
-                            <option value="GRAFEEL 300MCG 5 SYRINGE">
-                            <option value="GLUCOPHAGE XR 1000MG">
-                            <option value="MEXITIL 50MG">
-                            <option value="MEXITIL 150MG">
-                            <option value="MEXITIL 200MG">
-                            <option value="NITROFURANTOIN 100MG">
-                            <option value="PROPRANOLOL 10MG">
-                            <option value="PROPRANOLOL 40MG">
-                            <option value="PYZINA 500MG">
-                            <option value="TETRACYCLINE 250MG">
-                            <option value="THYROZOL 10MG">
-                            <option value="THYROZOL 5MG">
-                            <option value="VALCYTE 450MG">
-                            <option value="ว่านชักมดลูก ตรา สมุนไพรคุณยาย">
-                            <option value="ยาน้ำระดมพล ตรา สมุนไพรคุณยาย">
-                            <option value="กำลังช้างสารแคปซูล ตรา สมุนไพรคุณยาย">
-                            <option value="เพชรสังฆาต ตรา สมุนไพรคุณยาย">
-                            <option value="ขมิ้นชัน ตรา สมุนไพรคุณยาย">
-                            <option value="ไฟทอลแกน ตรา สมุนไพรคุณยาย">
-                            <option value="ดีบัว ตรา สมุนไพรคุณยาย">
-                            <option value="ขิง ตรา สมุนไพรคุณยาย">
-                            <option value="บอระเพ็ด ตรา สมุนไพรคุณยาย">
-                            <option value="รางจืด ตรา สมุนไพรคุณยาย">
-                            <option value="แอลกอฮอล์แซนนิไทเซอร์ 5 ลิตร">
-                            <option value="น้ำมันเหลืองโกลด์ 100 มล.">
-                            <option value="น้ำมันเหลืองโกลด์ 24 มล.">
+                            <option value="DICLO SR 100">
+                            <option value="DOLONIL SR 100">
+                            <option value="ENACE 10">
+                            <option value="ENACE 5 (pack100)(10x10s)">
+                            <option value="ENACE 5 (pack1000)(100x10s)">
+                            <option value="HEPARIN INJ">
+                            <option value="HEP-25">
+                            <option value="IRON SUCROSE INJ">
+                            <option value="METROGYL GEL">
+                            <option value="NITRAZEPAM TABLETS 5 MG">
+                            <option value="NITRAZEPAM (WORKING STANDARD)">
+                            <option value="OFTOP 200">
+                            <option value="OMLEK 20">
+                            <option value="TENROL 50(50x10s)">
+                            <option value="TENROL 100(50x10')">
+                            <option value="TENSINIC CD 30">
                         </datalist>
                     </div>
-                    <div>
-                        <label for="quantity[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
-                        <input type="number" class="form-control w-full p-2 border rounded-md" name="quantity[]" required />
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="quantity[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวน</label>
+                            <input type="number" name="quantity[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                        </div>
+                        <div>
+                            <label for="price[]" class="block mb-2 text-sm font-medium text-gray-700">ราคา</label>
+                            <input type="number" name="price[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                        </div>
+                        <div>
+                            <label for="give[]" class="block mb-2 text-sm font-medium text-gray-700">แถม</label>
+                            <input type="number" name="give[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                        </div>
+                        <div>
+                            <label for="dis[]" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
+                            <input type="number" name="dis[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" required />
+                        </div>
+                        <div>
+                            <label for="amt[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
+                            <input type="number" name="amt[]" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
+                        </div>
+                        <div class="flex flxe justify-end pt-4">
+                            <button type="button" class="w-32 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ </button>
+                        </div>
+                    </div> 
                     </div>
-                    <div>
-                        <label for="amount[]" class="block mb-2 text-sm font-medium text-gray-700">ยอดรวม</label>
-                        <input type="number" class="form-control w-full p-2 border rounded-md" name="amount[]" required />
-                    </div>
-                </div>
-                <button type="button" class="btn border-2 border-red-500 text-red-700 mt-2" onclick="removeOrderItem(this)">ลบรายการ</button>
             `;
             orderItems.appendChild(newItem);
         };
@@ -223,10 +223,21 @@
         const form = document.getElementById("myForm");
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
+        const customer = formData.get("displayName");
+        const fTotal = document.getElementById("FTotal").value;
+        const credit = formData.get("credit");
+        const notes = formData.get("note") || "";
+
+        // Gather order items
+        const orderItems = [];
+        const itemNames = formData.getAll("item_nm[]");
+        const quantities = formData.getAll("quantity[]");
+        const prices = formData.getAll("price[]");
 
         data.item_nm = formData.getAll("item_nm[]");
         data.quantity = formData.getAll("quantity[]");
         data.amount = formData.getAll("amount[]");
+        
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbx5a0pKs2ipa1Hg0Ce76ZNM3NIp5RX4Vgu8_3Bk3wQ9Z8sDH40EwiF8vIMIEiIRWrae_Q/exec';
 
