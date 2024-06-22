@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders</title>
+    <title>Ordersss </title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -54,10 +54,10 @@
                         <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
                         <datalist id="provinces">
                             <option value="กรุงเทพมหานคร">
-                            <option value="กระบี่">
-                            <option value="กาญจนบุรี">
-                            <option value="กาฬสินธุ์">
-                            <option value="กำแพงเพชร">
+                                <option value="กระบี่">
+                                <option value="กาญจนบุรี">
+                                <option value="กาฬสินธุ์">
+                                <option value="กำแพงเพชร">
                                
                             <!-- Add more provinces here as needed -->
                         </datalist>
@@ -147,7 +147,7 @@
             const newItem = document.createElement("div");
             newItem.className = "bg-green-100 p-2 border-2 border-green-400 shadow-md rounded-lg mb-4 order-item";
             newItem.innerHTML = `
-                  <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <div>
                         <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
                         <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required />
@@ -196,101 +196,135 @@
                         <div class="flex flxe justify-end pt-4">
                             <button type="button" class="w-32 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ </button>
                         </div>
-                    </div> 
                     </div>
-            `;
+                </div>`;
             orderItems.appendChild(newItem);
         };
 
-        const removeOrderItem = (btn) => {
-            const orderItem = btn.closest(".order-item");
-            orderItem.remove();
-            updateTotal();
+        const removeOrderItem = (button) => {
+            button.closest('.card').remove();
+            calculateTotal();
         };
 
-        document.getElementById("orderItems").addEventListener("input", updateTotal);
+        const calculateAmount = (input) => {
+            const item = input.closest('.row');
+            const quantity = item.querySelector('input[name="quantity[]"]').value || 0;
+            const price = item.querySelector('input[name="price[]"]').value || 0;
+            const amount = quantity * price;
+            calculateTotal();
+        };
 
-        function updateTotal() {
-            const amounts = document.getElementsByName("amount[]");
+        const calculateTotal = () => {
+            const quantities = document.querySelectorAll('input[name="quantity[]"]');
+            const prices = document.querySelectorAll('input[name="price[]"]');
             let total = 0;
-            for (let amount of amounts) {
-                total += parseFloat(amount.value) || 0;
+            for (let i = 0; i < quantities.length; i++) {
+                total += (parseFloat(quantities[i].value) || 0) * (parseFloat(prices[i].value) || 0);
             }
-            document.getElementById("FTotal").value = total.toFixed(2);
-        }
-
-        async function submitForm() {
-        const form = document.getElementById("myForm");
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-        const customer = formData.get("displayName");
-        const fTotal = document.getElementById("FTotal").value;
-        const credit = formData.get("credit");
-        const notes = formData.get("note") || "";
-
-        // Gather order items
-        const orderItems = [];
-        const itemNames = formData.getAll("item_nm[]");
-        const quantities = formData.getAll("quantity[]");
-        const prices = formData.getAll("price[]");
-
-        data.item_nm = formData.getAll("item_nm[]");
-        data.quantity = formData.getAll("quantity[]");
-        data.amount = formData.getAll("amount[]");
-        
-
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx5a0pKs2ipa1Hg0Ce76ZNM3NIp5RX4Vgu8_3Bk3wQ9Z8sDH40EwiF8vIMIEiIRWrae_Q/exec';
-
-        try {
-            await fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            sendFlexMessage(data);
-            Swal.fire('Success!', 'Order has been submitted.', 'success');
-        } catch (error) {
-            console.error('Error!', error.message);
-            Swal.fire('Error!', 'Something went wrong.', 'error');
-        }
-    }
-
-    async function sendFlexMessage(data) {
-        const itemContents = data.item_nm.map((item, index) => ({
-            type: "box",
-            layout: "horizontal",
-            contents: [
-                { type: "text", text: item, flex: 5 },
-                { type: "text", text: `Qty: ${data.quantity[index]}`, flex: 2, align: "end" },
-                { type: "text", text: `Amt: ${data.amount[index]}`, flex: 3, align: "end" }
-            ]
-        }));
-
-        const flexMessage = {
-            type: "flex",
-            altText: "New Order",
-            contents: {
-                type: "bubble",
-                body: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                        { type: "text", text: `OrderID: ${data.order_id}`, weight: "bold", size: "lg" },
-                        { type: "text", text: `Customer: ${data.displayName}`, size: "md" },
-                        { type: "separator", margin: "md" },
-                        ...itemContents,
-                        { type: "separator", margin: "md" },
-                        { type: "text", text: `Total: ${data.FTotal}`, size: "md", align: "end" }
-                    ]
-                }
-            }
+            document.getElementById("FTotal").value = total;
         };
 
-        await liff.sendMessages([flexMessage]);
-    }
+        const submitForm = () => {
+            const form = document.getElementById("myForm");
+            const formData = new FormData(form);
+            const customer = formData.get("cust_nm");
+            const fTotal = document.getElementById("FTotal").value;
+            const credit = formData.get("credit");
+            const notes = formData.get("note") || "";
+
+            // Gather order items
+            const orderItems = [];
+            const itemNames = formData.getAll("item_nm[]");
+            const quantities = formData.getAll("quantity[]");
+            const prices = formData.getAll("price[]");
+
+            for (let i = 0; i < itemNames.length; i++) {
+                orderItems.push({
+                    itemName: itemNames[i],
+                    qty: quantities[i],
+                    rate: prices[i],
+                    amt: (quantities[i] * prices[i]).toFixed(2)
+                });
+            }
+
+            const flexMessage = {
+                type: "flex",
+                altText: "มีคำสั่งซื้อใหม่",
+                contents: {
+                    type: "bubble",
+                    body: {
+                        type: "box",
+                        layout: "vertical",
+                        spacing: "md",
+                        contents: [
+                            { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
+                            { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
+                            ...orderItems.map(item => ({
+                                type: "box",
+                                layout: "vertical",
+                                spacing: "sm",
+                                margin: "md",
+                                contents: [
+                                    {
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: item.itemName, weight: "bold", size: "md" }
+                                        ]
+                                    },
+                                    {
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: `จำนวน: ${item.qty}`, wrap: true, flex: 3 },
+                                            { type: "text", text: `ราคา: ${item.rate}`, wrap: true, flex: 3 }
+                                        ]
+                                    },
+                                    {
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: `จำนวนเงิน: ${item.amt}`, wrap: true, flex: 3 }
+                                        ]
+                                    }
+                                ]
+                            })),
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: `ยอดรวมทั้งสิ้น: ${fTotal} บาท`, wrap: true, weight: "bold" },
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: `เครดิต: ${credit}`, wrap: true, weight: "bold" },
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: `หมายเหตุ: ${notes}`, wrap: true, weight: "bold" }
+                        ]
+                    }
+                }
+            };
+
+            sendLIFFMessage(flexMessage);
+        };
+
+        const sendLIFFMessage = (flexMessage) => {
+            liff.sendMessages([flexMessage])
+                .then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'สำเร็จ!',
+                        text: 'ส่งข้อมูลสำเร็จแล้ว',
+                        confirmButtonText: 'ปิด'
+                    }).then(() => {
+                        liff.closeWindow();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error sending LIFF message:', error);
+                });
+        };
     </script>
 </body>
 </html>
+
