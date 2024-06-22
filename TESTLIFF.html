@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GIS รายการสั่งซื้อ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <title>GIS รายการสั่งซื้อ ทดสอบ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -12,6 +13,7 @@
             display: none;
         }
     </style>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -72,6 +74,17 @@
                             <option value="ENACE 10">
                             <option value="ENACE 5 (pack100)(10x10s)">
                             <option value="ENACE 5 (pack1000)(100x10s)">
+                            <option value="HEPARIN INJ">
+                            <option value="HEP-25">
+                            <option value="IRON SUCROSE INJ">
+                            <option value="METROGYL GEL">
+                            <option value="NITRAZEPAM TABLETS 5 MG">
+                            <option value="NITRAZEPAM (WORKING STANDARD)">
+                            <option value="OFTOP 200">
+                            <option value="OMLEK 20">
+                            <option value="TENROL 50(50x10s)">
+                            <option value="TENROL 100(50x10')">
+                            <option value="TENSINIC CD 30">
                         </datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -128,85 +141,8 @@
             document.getElementById("FTotal").value = total;
         }
 
-        function createFlexMessage(orderData) {
-            return {
-                "type": "flex",
-                "altText": "Order Details",
-                "contents": {
-                    "type": "bubble",
-                    "body": {
-                        "type": "box",
-                        "layout": "vertical",
-                        "contents": [
-                            {
-                                "type": "text",
-                                "text": "Order Details",
-                                "weight": "bold",
-                                "size": "xl"
-                            },
-                            {
-                                "type": "box",
-                                "layout": "vertical",
-                                "margin": "lg",
-                                "spacing": "sm",
-                                "contents": orderData.items.map(item => ({
-                                    "type": "box",
-                                    "layout": "baseline",
-                                    "spacing": "sm",
-                                    "contents": [
-                                        {
-                                            "type": "text",
-                                            "text": item.name,
-                                            "color": "#aaaaaa",
-                                            "size": "sm",
-                                            "flex": 1
-                                        },
-                                        {
-                                            "type": "text",
-                                            "text": `${item.quantity} x ${item.price} = ${item.amount}`,
-                                            "wrap": true,
-                                            "color": "#666666",
-                                            "size": "sm",
-                                            "flex": 2
-                                        }
-                                    ]
-                                })),
-                                "borderColor": "#E8E8E8",
-                                "borderWidth": "1px"
-                            },
-                            {
-                                "type": "box",
-                                "layout": "vertical",
-                                "margin": "lg",
-                                "spacing": "sm",
-                                "contents": [
-                                    {
-                                        "type": "text",
-                                        "text": `Total: ${orderData.total}`,
-                                        "weight": "bold",
-                                        "size": "lg"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            };
-        }
-
-        async function sendFlexMessage(flexMessage) {
-            const accessToken = 'YOUR_LINE_CHANNEL_ACCESS_TOKEN';
-            try {
-                await liff.sendMessages([{
-                    type: 'flex',
-                    altText: 'Order Details',
-                    contents: flexMessage.contents
-                }]);
-                console.log('Flex message sent');
-            } catch (error) {
-                console.error('Error sending Flex message:', error);
-            }
-        }
+        const LIFF_ID = '1660766925-qDv7zvV5';
+        var isSubmitting = false;
 
         function submitForm() {
             if (isSubmitting) {
@@ -221,7 +157,7 @@
             var formData = new FormData(form);
 
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = async function () {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         Swal.fire({
@@ -229,24 +165,10 @@
                             title: 'สำเร็จ!',
                             text: 'การส่งข้อมูลสำเร็จ'
                         });
+                        sendLIFFMessage();
                         form.reset();
                         document.getElementById("orderItems").innerHTML = "";
                         calculateTotal();
-
-                        // Prepare order data
-                        const orderData = {
-                            items: Array.from(document.querySelectorAll('.order-item')).map(item => ({
-                                name: item.querySelector('input[name="item_nm[]"]').value,
-                                quantity: item.querySelector('input[name="quantity[]"]').value,
-                                price: item.querySelector('input[name="price[]"]').value,
-                                amount: item.querySelector('input[name="amt[]"]').value
-                            })),
-                            total: document.getElementById("FTotal").value
-                        };
-
-                        // Create and send Flex message
-                        const flexMessage = createFlexMessage(orderData);
-                        await sendFlexMessage(flexMessage);
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -263,8 +185,117 @@
             xhr.open("POST", "https://script.google.com/macros/s/AKfycbwHlcsp2PalehTkl7TrXf3-r6TbJdfkSvR2E7ZfQn1XX1RZzRj3bJFtaG9aKxo8vYhi1A/exec");
             xhr.send(formData);
         }
+        
+async function sendLIFFMessage() {
+// Initialize LIFF
+await liff.init({ liffId: LIFF_ID });
+
+if (liff.isLoggedIn()) {
+const userId = await liff.getProfile().then(profile => profile.userId);
+
+// Get form data
+const customer = document.getElementsByName("cust_nm")[0].value;
+const fTotal = document.getElementById("FTotal").value;
+const orderItems = [];
+const rows = document.querySelectorAll("#TBody tr");
+rows.forEach(row => {
+const itemName = row.querySelector('[name="item_nm"]').value;
+const qty = row.querySelector('[name="qty"]').value;
+const rate = row.querySelector('[name="rate"]').value;
+const give = row.querySelector('[name="give"]').value;
+const dis = row.querySelector('[name="dis"]').value;
+const note = row.querySelector('[name="note_nm"]').value;
+orderItems.push({ itemName, qty, rate, give, dis, note });
+});
+const credit = document.getElementsByName("credit")[0].value;
+const notes = document.getElementsByName("note")[0].value;
+
+const flexMessage = {
+type: "flex",
+altText: "มีคำสั่งซ์้อใหม่",
+contents: {
+type: "bubble",
+body: {
+    type: "box",
+    layout: "vertical",
+    spacing: "md",
+    contents: [
+        { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
+        { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
+        { type: "separator", margin: "sm" },
+        { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
+        ...orderItems.map(item => ({
+            type: "box",
+            layout: "vertical",
+            spacing: "sm",
+            margin: "md",
+            contents: [
+                {
+                    type: "box",
+                    layout: "horizontal",
+                    flex: 1,
+                    contents: [
+                        { type: "text", text: item.itemName, weight: "bold", size: "md" }
+                    ]
+                },
+                {
+                    type: "box",
+                    layout: "horizontal",
+                    flex: 1,
+                    contents: [
+                        { type: "text", text: `จำนวน: ${item.qty} `, wrap: true, flex: 3 },
+                        { type: "text", text: `ราคา: ${item.rate} `, wrap: true, flex: 3 }
+                    ]
+                },
+                {
+                    type: "box",
+                    layout: "horizontal",
+                    flex: 1,
+                    contents: [
+                        { type: "text", text: `แถม : ${item.give} `, wrap: true, flex: 3 },
+                        { type: "text", text: `ลด : ${item.dis} `, wrap: true, flex: 3 }
+                    ]
+                },
+                {
+                    type: "box",
+                    layout: "vertical",
+                    flex: 1,
+                    contents: [
+                        { type: "text", text: `หมายเหตุ: ${item.note}`, wrap: true }
+                    ]
+                }
+            ]
+        })),
+        { type: "separator", margin: "sm" },
+        { type: "text", text: `ยอดรวมทั้งสิ้น : ${fTotal} บาท`, wrap: true, weight: "bold" },
+        { type: "separator", margin: "sm" },
+        { type: "text", text: `เครดิต : ${credit}`, wrap: true, weight: "bold" },
+        { type: "separator", margin: "sm" },
+        { type: "text", text: `หมายเหตุ : ${notes}`, wrap: true, weight: "bold" }
+    ]
+}
+}
+};
+// Send the Flex Message
+liff.sendMessages([flexMessage]).then(() => {
+Swal.fire({
+icon: 'success',
+title: 'สำเร็จ!',
+text: 'ส่งข้อมูลสำเร็จแล้ว',
+confirmButtonText: 'ปิด'
+}).then(() => {
+liff.closeWindow();
+});
+}).catch(error => {
+console.error('Error sending Flex LIFF message:', error);
+});
+}
+}
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-2">
@@ -312,7 +343,84 @@
                                 <option value="กาญจนบุรี">
                                 <option value="กาฬสินธุ์">
                                 <option value="กำแพงเพชร">
-                               
+                                <option value="ขอนแก่น">
+                                <option value="จันทบุรี">
+                                <option value="ฉะเชิงเทรา">
+                                <option value="ชลบุรี">
+                                <option value="ชัยนาท">
+                                <option value="ชัยภูมิ">
+                                <option value="ชุมพร">
+                                <option value="เชียงราย">
+                                <option value="เชียงใหม่">
+                                <option value="ตรัง">
+                                <option value="ตราด">
+                                <option value="ตาก">
+                                <option value="นครนายก">
+                                <option value="นครปฐม">
+                                <option value="นครพนม">
+                                <option value="นครราชสีมา">
+                                <option value="นครศรีธรรมราช">
+                                <option value="นครสวรรค์">
+                                <option value="นนทบุรี">
+                                <option value="นราธิวาส">
+                                <option value="น่าน">
+                                <option value="บึงกาฬ">
+                                <option value="บุรีรัมย์">
+                                <option value="ปทุมธานี">
+                                <option value="ประจวบคีรีขันธ์">
+                                <option value="ปราจีนบุรี">
+                                <option value="ปัตตานี">
+                                <option value="พระนครศรีอยุธยา">
+                                <option value="พะเยา">
+                                <option value="พังงา">
+                                <option value="พัทลุง">
+                                <option value="พิจิตร">
+                                <option value="พิษณุโลก">
+                                <option value="เพชรบุรี">
+                                <option value="เพชรบูรณ์">
+                                <option value="แพร่">
+                                <option value="ภูเก็ต">
+                                <option value="มหาสารคาม">
+                                <option value="มุกดาหาร">
+                                <option value="แม่ฮ่องสอน">
+                                <option value="ยโสธร">
+                                <option value="ยะลา">
+                                <option value="ร้อยเอ็ด">
+                                <option value="ระนอง">
+                                <option value="ระยอง">
+                                <option value="ราชบุรี">
+                                <option value="ลพบุรี">
+                                <option value="ลำปาง">
+                                <option value="ลำพูน">
+                                <option value="เลย">
+                                <option value="ศรีสะเกษ">
+                                <option value="สกลนคร">
+                                <option value="สงขลา">
+                                <option value="สตูล">
+                                <option value="สมุทรปราการ">
+                                <option value="สมุทรสงคราม">
+                                <option value="สมุทรสาคร">
+                                <option value="สระแก้ว">
+                                <option value="สระบุรี">
+                                <option value="สิงห์บุรี">
+                                <option value="สุโขทัย">
+                                <option value="สุพรรณบุรี">
+                                <option value="สุราษฎร์ธานี">
+                                <option value="สุรินทร์">
+                                <option value="หนองคาย">
+                                <option value="หนองบัวลำภู">
+                                <option value="อ่างทอง">
+                                <option value="อำนาจเจริญ">
+                                <option value="อุดรธานี">
+                                <option value="อุตรดิตถ์">
+                                <option value="อุทัยธานี">
+                                <option value="อุบลราชธานี">
+                                <option value="อ่างทอง">
+                                <option value="เบญจลักษ์">
+                                <option value="นครสวรรค์">
+                                <option value="สระแก้ว">
+                                <option value="ราชบุรี">
+                            <!-- Add more provinces here as needed -->
                         </datalist>
                     </div>
                 </div>
