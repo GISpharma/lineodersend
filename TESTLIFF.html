@@ -193,6 +193,9 @@
                     itemName: itemNames[i],
                     qty: quantities[i],
                     rate: prices[i],
+                    give: give[i],
+                    dis: dis[i],
+
                     amt: (quantities[i] * prices[i]).toFixed(2)
                 });
             }
@@ -232,7 +235,7 @@
                                         contents: [
                                             { type: "text", text: `จำนวน: ${item.qty}`, wrap: true, flex: 3 },
                                             { type: "text", text: `ราคา: ${item.rate}`, wrap: true, flex: 3 },
-                                            { type: "text", text: `แถม: ${item.give}`, wrap: true, flex: 3 },
+                                            { type: "text", text: `แถม: ${item.give}`, wrap: true, flex:  },
                                             { type: "text", text: `ลด: ${item.dis}`, wrap: true, flex: 3 }
 
                                         ]
