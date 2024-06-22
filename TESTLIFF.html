@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GIS รายการสั่งซื้อ</title>
+    <title>GIS รายการสั่งซื้อ33</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -70,19 +70,7 @@
                             <option value="DICLO SR 100">
                             <option value="DOLONIL SR 100">
                             <option value="ENACE 10">
-                            <option value="ENACE 5 (pack100)(10x10s)">
-                            <option value="ENACE 5 (pack1000)(100x10s)">
-                            <option value="HEPARIN INJ">
-                            <option value="HEP-25">
-                            <option value="IRON SUCROSE INJ">
-                            <option value="METROGYL GEL">
-                            <option value="NITRAZEPAM TABLETS 5 MG">
-                            <option value="NITRAZEPAM (WORKING STANDARD)">
-                            <option value="OFTOP 200">
-                            <option value="OMLEK 20">
-                            <option value="TENROL 50(50x10s)">
-                            <option value="TENROL 100(50x10')">
-                            <option value="TENSINIC CD 30">
+                    
                         </datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -184,88 +172,76 @@
             xhr.send(formData);
         }
         
-async function sendLIFFMessage() {
+        async function sendLIFFMessage() {
     // Initialize LIFF
-    await liff.init({ liffId: '1660766925-qDv7zvV5' });
+    await liff.init({ liffId: LIFF_ID });
 
     if (liff.isLoggedIn()) {
-        const userId = await liff.getProfile().then(profile => profile.userId);
-        // Get form data
         const customer = document.getElementById("cust_nm").value;
-        const fTotal = document.getElementById("FTotal").value;
-        const orderItems = [];
-        const orderItemElements = document.querySelectorAll('.order-item');
-        orderItemElements.forEach(item => {
-            const itemName = item.querySelector('input[name="item_nm[]"]').value;
-            const quantity = item.querySelector('input[name="quantity[]"]').value;
-            const price = item.querySelector('input[name="price[]"]').value;
-            const give = item.querySelector('input[name="give[]"]').value;
-            const dis = item.querySelector('input[name="dis[]"]').value;
-            orderItems.push({ itemName, quantity, price, give, dis });
-        });
-        const credit = document.getElementsByName("credit")[0].value;
-        const notes = document.getElementsByName("note")[0].value;
+    const fTotal = document.getElementById("FTotal").value;
+    const orderItems = [];
+    const orderItemElements = document.querySelectorAll('.order-item');
+    orderItemElements.forEach(item => {
+        const itemName = item.querySelector('input[name="item_nm[]"]').value;
+        const quantity = item.querySelector('input[name="quantity[]"]').value;
+        const price = item.querySelector('input[name="price[]"]').value;
+        const give = item.querySelector('input[name="give[]"]').value;
+        const dis = item.querySelector('input[name="dis[]"]').value;
+        orderItems.push({ itemName, quantity, price, give, dis });
+    });
+    const credit = document.getElementsByName("credit")[0].value;
+    const notes = document.getElementsByName("note")[0].value;
 
-        // Create Flex Message
-        const flexMessage = {
-            type: "flex",
-            altText: "มีคำสั่งซื้อใหม่",
-            contents: {
-                type: "bubble",
-                body: {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "md",
-                    contents: [
-                        { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
-                        { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
-                        ...orderItems.map(item => ({
-                            type: "box",
-                            layout: "vertical",
-                            spacing: "sm",
-                            margin: "md",
-                            contents: [
-                                { type: "text", text: `สินค้า: ${item.itemName}`, wrap: true },
-                                { type: "text", text: `จำนวน: ${item.quantity}`, wrap: true },
-                                { type: "text", text: `ราคา: ${item.price}`, wrap: true },
-                                { type: "text", text: `แถม: ${item.give}`, wrap: true },
-                                { type: "text", text: `ส่วนลด: ${item.dis}`, wrap: true },
-                            ]
-                        })),
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: `ยอดรวมทั้งสิ้น: ${fTotal} บาท`, wrap: true, weight: "bold" },
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: `เครดิต: ${credit}`, wrap: true, weight: "bold" },
-                        { type: "separator", margin: "sm" },
-                        { type: "text", text: `หมายเหตุ: ${notes}`, wrap: true, weight: "bold" }
-                    ]
-                }
+    // Create Flex Message
+    const flexMessage = {
+        type: "flex",
+        altText: "มีคำสั่งซื้อใหม่",
+        contents: {
+            type: "bubble",
+            body: {
+                type: "box",
+                layout: "vertical",
+                spacing: "md",
+                contents: [
+                    { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg" },
+                    { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
+                    { type: "separator", margin: "sm" },
+                    { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
+                    ...orderItems.map(item => ({
+                        type: "box",
+                        layout: "vertical",
+                        spacing: "sm",
+                        margin: "md",
+                        contents: [
+                            { type: "text", text: `สินค้า: ${item.itemName}`, wrap: true },
+                            { type: "text", text: `จำนวน: ${item.quantity}`, wrap: true },
+                            { type: "text", text: `ราคา: ${item.price}`, wrap: true },
+                            { type: "text", text: `แถม: ${item.give}`, wrap: true },
+                            { type: "text", text: `ส่วนลด: ${item.dis}`, wrap: true },
+                        ]
+                    })),
+                    { type: "separator", margin: "sm" },
+                    { type: "text", text: `ยอดรวมทั้งสิ้น: ${fTotal} บาท`, wrap: true, weight: "bold" },
+                    { type: "separator", margin: "sm" },
+                    { type: "text", text: `เครดิต: ${credit}`, wrap: true, weight: "bold" },
+                    { type: "separator", margin: "sm" },
+                    { type: "text", text: `หมายเหตุ: ${notes}`, wrap: true, weight: "bold" }
+                ]
             }
-        };
+        }
+    };
 
-        // Send the Flex Message
-        liff.sendMessages([flexMessage]).then(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'สำเร็จ!',
-                text: 'ส่งข้อมูลสำเร็จแล้ว',
-                confirmButtonText: 'ปิด'
-            }).then(() => {
-                liff.closeWindow();
-            });
-        }).catch(error => {
-            console.error('Error sending Flex LIFF message:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'เกิดข้อผิดพลาด!',
-                text: 'ไม่สามารถส่งข้อมูลได้'
-            });
-        });
-    }
+    // Send Flex Message
+    await liff.sendMessages([flexMessage]).then(() => {
+        console.log('Flex Message sent successfully');
+        // After sending Flex Message, save form data to Google Sheet
+        saveFormDataToGoogleSheet(customer, orderItems, fTotal, credit, notes);
+    }).catch(error => {
+        console.error('Error sending Flex Message:', error);
+        alert('เกิดข้อผิดพลาดในการส่ง Flex Message');
+    });
 }
-
+        }
 </script>
 
 </head>
@@ -315,84 +291,7 @@ async function sendLIFFMessage() {
                                 <option value="กาญจนบุรี">
                                 <option value="กาฬสินธุ์">
                                 <option value="กำแพงเพชร">
-                                <option value="ขอนแก่น">
-                                <option value="จันทบุรี">
-                                <option value="ฉะเชิงเทรา">
-                                <option value="ชลบุรี">
-                                <option value="ชัยนาท">
-                                <option value="ชัยภูมิ">
-                                <option value="ชุมพร">
-                                <option value="เชียงราย">
-                                <option value="เชียงใหม่">
-                                <option value="ตรัง">
-                                <option value="ตราด">
-                                <option value="ตาก">
-                                <option value="นครนายก">
-                                <option value="นครปฐม">
-                                <option value="นครพนม">
-                                <option value="นครราชสีมา">
-                                <option value="นครศรีธรรมราช">
-                                <option value="นครสวรรค์">
-                                <option value="นนทบุรี">
-                                <option value="นราธิวาส">
-                                <option value="น่าน">
-                                <option value="บึงกาฬ">
-                                <option value="บุรีรัมย์">
-                                <option value="ปทุมธานี">
-                                <option value="ประจวบคีรีขันธ์">
-                                <option value="ปราจีนบุรี">
-                                <option value="ปัตตานี">
-                                <option value="พระนครศรีอยุธยา">
-                                <option value="พะเยา">
-                                <option value="พังงา">
-                                <option value="พัทลุง">
-                                <option value="พิจิตร">
-                                <option value="พิษณุโลก">
-                                <option value="เพชรบุรี">
-                                <option value="เพชรบูรณ์">
-                                <option value="แพร่">
-                                <option value="ภูเก็ต">
-                                <option value="มหาสารคาม">
-                                <option value="มุกดาหาร">
-                                <option value="แม่ฮ่องสอน">
-                                <option value="ยโสธร">
-                                <option value="ยะลา">
-                                <option value="ร้อยเอ็ด">
-                                <option value="ระนอง">
-                                <option value="ระยอง">
-                                <option value="ราชบุรี">
-                                <option value="ลพบุรี">
-                                <option value="ลำปาง">
-                                <option value="ลำพูน">
-                                <option value="เลย">
-                                <option value="ศรีสะเกษ">
-                                <option value="สกลนคร">
-                                <option value="สงขลา">
-                                <option value="สตูล">
-                                <option value="สมุทรปราการ">
-                                <option value="สมุทรสงคราม">
-                                <option value="สมุทรสาคร">
-                                <option value="สระแก้ว">
-                                <option value="สระบุรี">
-                                <option value="สิงห์บุรี">
-                                <option value="สุโขทัย">
-                                <option value="สุพรรณบุรี">
-                                <option value="สุราษฎร์ธานี">
-                                <option value="สุรินทร์">
-                                <option value="หนองคาย">
-                                <option value="หนองบัวลำภู">
-                                <option value="อ่างทอง">
-                                <option value="อำนาจเจริญ">
-                                <option value="อุดรธานี">
-                                <option value="อุตรดิตถ์">
-                                <option value="อุทัยธานี">
-                                <option value="อุบลราชธานี">
-                                <option value="อ่างทอง">
-                                <option value="เบญจลักษ์">
-                                <option value="นครสวรรค์">
-                                <option value="สระแก้ว">
-                                <option value="ราชบุรี">
-                            <!-- Add more provinces here as needed -->
+                                
                         </datalist>
                     </div>
                 </div>
