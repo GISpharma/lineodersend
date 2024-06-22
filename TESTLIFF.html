@@ -11,6 +11,7 @@
             display: none;
         }
     </style>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -69,6 +70,7 @@
                             <option value="DICLO SR 100">
                             <option value="DOLONIL SR 100">
                             <option value="ENACE 10">
+                    
                         </datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -169,9 +171,10 @@
             xhr.open("POST", "https://script.google.com/macros/s/AKfycbxpeznRr9E2D2wgrHSsOBUKbVy5XudmmEo6JSEz6w9YdyXoSrjSuST8RDFoaGhlRwp65w/exec");
             xhr.send(formData);
         }
-
+        
         async function sendLIFFMessage() {
-            await liff.init({ liffId: '1660766925-qDv7zvV5' });
+            // Initialize LIFF
+            await liff.init({ liffId: LIFF_ID });
 
             if (liff.isLoggedIn()) {
                 const customer = document.getElementById("cust_nm").value;
@@ -187,64 +190,94 @@
                     orderItems.push({ itemName, quantity, price, give, dis });
                 });
                 const credit = document.getElementsByName("credit")[0].value;
-                let message = `ลูกค้า: ${customer}\nยอดรวม: ${fTotal} บาท\nระยะเครดิต: ${credit} วัน\n`;
+                const notes = document.getElementsByName("note")[0].value;
 
-                orderItems.forEach(item => {
-                    message += `\nรายการ: ${item.itemName}\nจำนวน: ${item.quantity}\nราคา: ${item.price}\nแถม: ${item.give}\nส่วนลด: ${item.dis}\n`;
-                });
+                // Create Flex Message
+                const flexMessage = {
+                    type: "flex",
+                    altText: "มีคำสั่งซื้อใหม่",
+                    contents: {
+                        type: "bubble",
+                        body: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                { type: "text", text: `ชื่อลูกค้า: ${customer}` },
+                                { type: "text", text: `จำนวนเงินรวม: ${fTotal}` },
+                                { type: "text", text: `เงื่อนไขเครดิต: ${credit}` },
+                                { type: "text", text: `หมายเหตุ: ${notes}` },
+                                { type: "separator", margin: "md" },
+                                {
+                                    type: "box",
+                                    layout: "vertical",
+                                    margin: "md",
+                                    contents: orderItems.map(item => ({
+                                        type: "text",
+                                        text: `รายการ: ${item.itemName}, จำนวน: ${item.quantity}, ราคา: ${item.price}, แถม: ${item.give}, ส่วนลด: ${item.dis}`
+                                    }))
+                                }
+                            ]
+                        }
+                    }
+                };
 
-                liff.sendMessages([{
-                    type: 'text',
-                    text: message
-                }]).then(() => {
-                    liff.closeWindow();
-                }).catch((error) => {
-                    console.error('Error sending message:', error);
-                });
+                try {
+                    await liff.sendMessages([flexMessage]);
+                    console.log("Flex Message sent");
+                } catch (error) {
+                    console.error("Error sending Flex Message:", error);
+                }
+            } else {
+                console.log("User not logged in");
             }
         }
     </script>
 </head>
-<body class="bg-gray-200">
-    <div class="container mx-auto mt-8">
-        <div class="flex justify-center">
-            <div class="bg-white p-8 rounded-lg shadow-lg w-full lg:w-3/4 xl:w-1/2">
-                <h1 class="text-2xl font-bold mb-4">รายการสั่งซื้อ</h1>
-                <form id="myForm">
-                    <input type="hidden" id="userId" name="userId" />
-                    <input type="hidden" id="displayName" name="displayName" />
-                    <div class="mb-4">
-                        <label for="keyInput" class="block mb-2 text-sm font-medium text-gray-700">Key</label>
+<body class="bg-gray-100">
+    <div id="loading" class="fixed inset-0 bg-white bg-opacity-75 z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="loader"></div>
+            <p class="mt-4 text-lg">Loading...</p>
+        </div>
+    </div>
+    <div class="container mx-auto py-6">
+        <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-500">เพิ่มรายการสั่งซื้อ</h2>
+            <form id="myForm" enctype="multipart/form-data">
+                <input type="hidden" id="userId" name="userId" />
+                <input type="hidden" id="displayName" name="displayName" />
+                <div class="grid grid-cols-1 gap-4 mb-4">
+                    <div>
+                        <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ชื่อลูกค้า</label>
+                        <input type="text" name="cust_nm" class="form-control w-full p-2 border rounded-md" required />
+                    </div>
+                    <div>
+                        <label for="credit" class="block mb-2 text-sm font-medium text-gray-700">เงื่อนไขเครดิต</label>
+                        <input type="text" name="credit" class="form-control w-full p-2 border rounded-md" required />
+                    </div>
+                    <div>
+                        <label for="note" class="block mb-2 text-sm font-medium text-gray-700">หมายเหตุ</label>
+                        <textarea name="note" rows="4" class="form-control w-full p-2 border rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">รวมจำนวนเงิน</label>
+                        <input type="text" id="FTotal" name="FTotal" class="form-control w-full p-2 border rounded-md" readonly />
+                    </div>
+                    <div>
+                        <label for="keyInput" class="block mb-2 text-sm font-medium text-gray-700">Order ID</label>
                         <input type="text" id="keyInput" name="keyInput" class="form-control w-full p-2 border rounded-md" readonly />
                     </div>
-                    <div class="mb-4">
-                        <label for="dateInput" class="block mb-2 text-sm font-medium text-gray-700">Date</label>
+                    <div>
+                        <label for="dateInput" class="block mb-2 text-sm font-medium text-gray-700">Order Date</label>
                         <input type="text" id="dateInput" name="dateInput" class="form-control w-full p-2 border rounded-md" readonly />
                     </div>
-                    <div class="mb-4">
-                        <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">Customer Name</label>
-                        <input type="text" id="cust_nm" name="cust_nm" class="form-control w-full p-2 border rounded-md" required />
-                    </div>
-                    <div id="orderItems"></div>
-                    <div class="flex justify-end mb-4">
-                        <button type="button" class="bg-green-500 text-white p-2 rounded-md" onclick="addOrderItem()">เพิ่มรายการสั่งซื้อ</button>
-                    </div>
-                    <div class="mb-4">
-                        <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">ยอดรวม</label>
-                        <input type="number" id="FTotal" name="FTotal" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
-                    </div>
-                    <div class="mb-4">
-                        <label for="credit" class="block mb-2 text-sm font-medium text-gray-700">Credit</label>
-                        <input type="number" name="credit" class="form-control w-full p-2 border rounded-md" required />
-                    </div>
-                    <div class="flex justify-end">
-                        <button type="button" id="submitButton" class="bg-blue-500 text-white p-2 rounded-md" onclick="submitForm()">Submit</button>
-                    </div>
-                </form>
-                <div id="loading" class="flex justify-center items-center">
-                    <div class="loader"></div>
                 </div>
-            </div>
+                <div id="orderItems" class="mb-4">
+                    <!-- Order items will be dynamically added here -->
+                </div>
+                <button type="button" class="w-full bg-blue-500 text-white p-2 text-center font-bold rounded-md" onclick="addOrderItem()">➕ เพิ่มรายการสั่งซื้อ</button>
+                <button type="button" id="submitButton" class="w-full bg-green-500 text-white p-2 text-center font-bold rounded-md mt-4" onclick="submitForm()">📤 ส่งรายการสั่งซื้อ</button>
+            </form>
         </div>
     </div>
 </body>
