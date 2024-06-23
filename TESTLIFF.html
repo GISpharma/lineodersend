@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>รายการสั่งซื้อ</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <style>
@@ -13,17 +13,20 @@
             display: none;
         }
     </style>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
     <script>
         window.onload = function () {
+            initializeLiff();
             generateKeyAndDate();
         };
 
         async function initializeLiff() {
             await liff.init({ liffId: '1660766925-qDv7zvV5' });
+
             if (liff.isLoggedIn()) {
                 getUserProfile();
             } else {
@@ -42,13 +45,15 @@
         }
 
         function generateKeyAndDate() {
-            const randomPart = Math.random().toString(36).substring(7);
-            const currentDate = new Date();
-            const year = String(currentDate.getFullYear()).substring(2);
-            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const key = `inv${year}${month}-${randomPart}`;
+            var randomPart = Math.random().toString(36).substring(7);
+            var currentDate = new Date();
+            var year = String(currentDate.getFullYear()).substring(2);
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+            var key = `inv${year}${month}-${randomPart}`;
             document.getElementById("keyInput").value = key;
-            const formattedDate = `${year}-${month}-${currentDate.getDate()}`;
+
+            var formattedDate = `${year}-${month}-${currentDate.getDate()}`;
             document.getElementById("dateInput").value = formattedDate;
         }
 
@@ -89,7 +94,7 @@
                             <input type="number" name="amt[]" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
                         </div>
                         <div class="flex flxe justify-end pt-4">
-                            <button type="button" class="w-24 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ</button>
+                            <button type="button" class="w-24 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ </button>
                         </div>
                     </div>
                 </div>`;
@@ -121,19 +126,30 @@
             document.getElementById("FTotal").value = total;
         }
 
-        let isSubmitting = false;
+        var isSubmitting = false;
 
         function submitForm() {
-            if (isSubmitting) return;
+            if (isSubmitting) {
+                return;
+            }
+
+            if (!validateForm()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด!',
+                    text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
+                });
+                return;
+            }
 
             isSubmitting = true;
-            const submitButton = document.getElementById("submitButton");
+            var submitButton = document.getElementById("submitButton");
             submitButton.disabled = true;
 
-            const form = document.getElementById("myForm");
-            const formData = new FormData(form);
+            var form = document.getElementById("myForm");
+            var formData = new FormData(form);
 
-            const xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -144,6 +160,7 @@
                         });
 
                         createAndSendFlexMessage(formData);
+
                         form.reset();
                         document.getElementById("orderItems").innerHTML = "";
                         calculateTotal();
@@ -164,12 +181,24 @@
             xhr.send(formData);
         }
 
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('#myForm [required]');
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    field.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
         function createAndSendFlexMessage(formData) {
             const customer = formData.get("cust_nm");
             const fTotal = document.getElementById("FTotal").value;
             const credit = formData.get("credit");
             const notes = formData.get("note") || "";
 
+            // Gather order items
             const orderItems = [];
             const itemNames = formData.getAll("item_nm[]");
             const quantities = formData.getAll("quantity[]");
@@ -224,8 +253,7 @@
                                             { type: "text", text: `จำนวน: ${item.qty}`, wrap: true, flex: 3 },
                                             { type: "text", text: `ราคา: ${item.rate}`, wrap: true, flex: 3 }
                                         ]
-                                    },
-                                    {
+                                    },{
                                         type: "box",
                                         layout: "horizontal",
                                         flex: 1,
@@ -281,7 +309,7 @@
         <form id="myForm">
             <div class="bg-white px-4 py-2 shadow-md rounded-lg">
                 <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
-                    <span class="input-group-text">OrderID</span>
+                    <span class="input-group-text">OderID</span>
                     <input type="text" id="keyInput" name="order_id" required/>
                 </div>
                 <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
@@ -295,7 +323,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
-                        <input type="number" class="block w-full p-2 border rounded-md" name="sell_id" required/>
+                        <input type="number" class="block w-full p-2 border rounded-md"  name="sell_id"  required/>
                     </div>
                     <div>
                         <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
@@ -318,12 +346,14 @@
                         <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
                         <datalist id="provinces">
                             <option value="กรุงเทพมหานคร">
-                            <option value="กระบี่">
-                            <option value="กาญจนบุรี">
-                            <option value="กาฬสินธุ์">
-                            <option value="กำแพงเพชร">
-                            <option value="ขอนแก่น">
-                            <option value="จันทบุรี">
+                                <option value="กระบี่">
+                                <option value="กาญจนบุรี">
+                                <option value="กาฬสินธุ์">
+                                <option value="กำแพงเพชร">
+                                <option value="ขอนแก่น">
+                                <option value="จันทบุรี">
+                            
+                            <!-- Add more provinces here as needed -->
                         </datalist>
                     </div>
                 </div>
