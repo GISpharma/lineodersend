@@ -12,6 +12,18 @@
         #loading {
             display: none;
         }
+        .results {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .result-item {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .result-item:hover {
+            background-color: #eee;
+        }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -56,40 +68,27 @@
             var formattedDate = `${year}-${month}-${currentDate.getDate()}`;
             document.getElementById("dateInput").value = formattedDate;
         }
+        const allItems = [
+            "AMCARDIA 5", "AMCARDIA 10", "DICLO SR 100", "DOLONIL SR 100",
+            "ENACE 10", "ENACE 5 (pack100)(10x10s)", "ENACE 5 (pack1000)(100x10s)",
+            "HEPARIN INJ", "HEP-25", "IRON SUCROSE INJ", "METROGYL GEL",
+            "NITRAZEPAM TABLETS 5 MG", "NITRAZEPAM (WORKING STANDARD)",
+            "OFTOP 200", "OMLEK 20", "TENROL 50(50x10s)", "TENROL 100(50x10)",
+            "TENSINIC CD 30", "MAXAMIN TABLETS (30 TABLETS)", "BEPLEX  TABLETS (30 TABLETS)",
+            "DIPSOTREX OINTMENT 30 G"
+        ];
 
         function addOrderItem() {
             const orderItems = document.getElementById("orderItems");
             const newItem = document.createElement("div");
             newItem.className = "bg-green-100 p-2 border-2 border-green-400 shadow-md rounded-lg mb-4 order-item";
+
+            // Add the new order item HTML
             newItem.innerHTML = `
                 <div class="grid grid-cols-1 gap-4">
                     <div>
-                       <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
-                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required id="itemInput" />
-                        <datalist id="items">
-                                <option value="AMCARDIA 5">AMCARDIA 5</option>
-                                <option value="AMCARDIA 10">AMCARDIA 10</option>
-                                <option value="DICLO SR 100">DICLO SR 100</option>
-                                <option value="DOLONIL SR 100">DOLONIL SR 100</option>
-                                <option value="ENACE 10">ENACE 10</option>
-                                <option value="ENACE 5 (pack100)(10x10s)">ENACE 5 (pack100)(10x10s)</option>
-                                <option value="ENACE 5 (pack1000)(100x10s)">ENACE 5 (pack1000)(100x10s)</option>
-                                <option value="HEPARIN INJ">HEPARIN INJ</option>
-                                <option value="HEP-25">HEP-25</option>
-                                <option value="IRON SUCROSE INJ">IRON SUCROSE INJ</option>
-                                <option value="METROGYL GEL">METROGYL GEL</option>
-                                <option value="NITRAZEPAM TABLETS 5 MG">NITRAZEPAM TABLETS 5 MG</option>
-                                <option value="NITRAZEPAM (WORKING STANDARD)">NITRAZEPAM (WORKING STANDARD)</option>
-                                <option value="OFTOP 200">OFTOP 200</option>
-                                <option value="OMLEK 20">OMLEK 20</option>
-                                <option value="TENROL 50(50x10s)">TENROL 50(50x10s)</option>
-                                <option value="TENROL 100(50x10')">TENROL 100(50x10)</option>
-                                <option value="TENSINIC CD 30">TENSINIC CD 30</option>
-                                <option value="MAXAMIN TABLETS (30 TABLETS)">MAXAMIN TABLETS (30 TABLETS)</option>
-                                <option value="BEPLEX  TABLETS (30 TABLETS)">BEPLEX  TABLETS (30 TABLETS)</option>
-                                <option value="DIPSOTREX OINTMENT 30 G">DIPSOTREX OINTMENT 30 G</option>
-                        </datalist>
-                       
+                        <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
+                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required />
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -102,24 +101,65 @@
                         </div>
                         <div>
                             <label for="give[]" class="block mb-2 text-sm font-medium text-gray-700">แถม</label>
-                            <input type="number" name="give[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);"  />
+                            <input type="number" name="give[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" />
                         </div>
                         <div>
                             <label for="dis[]" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
-                            <input type="number" name="dis[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);"  />
+                            <input type="number" name="dis[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" />
                         </div>
                         <div>
                             <label for="amt[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
                             <input type="number" name="amt[]" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
                         </div>
-                        <div class="flex flxe justify-end pt-4">
+                        <div class="flex justify-end pt-4">
                             <button type="button" class="w-24 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ </button>
                         </div>
                     </div>
                 </div>`;
+            
             orderItems.appendChild(newItem);
+            
+            // Get the newly added input element
+            const newInput = newItem.querySelector('input[list="items"]');
+
+            // Attach the dynamic datalist functionality
+            attachDatalist(newInput);
         }
 
+        function attachDatalist(inputElement) {
+            const maxOptionsToShow = 3;
+
+            inputElement.addEventListener('input', function() {
+                const inputValue = inputElement.value.toLowerCase();
+                const matchingItems = allItems
+                    .filter(item => item.toLowerCase().includes(inputValue))
+                    .slice(0, maxOptionsToShow);
+
+                // Remove any existing datalist
+                const existingDatalist = document.getElementById('datalist-items');
+                if (existingDatalist) {
+                    existingDatalist.remove();
+                }
+
+                // Create a new datalist if there are matching items
+                if (matchingItems.length > 0) {
+                    const dataList = document.createElement('datalist');
+                    dataList.id = 'datalist-items';
+
+                    matchingItems.forEach(item => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = item;
+                        dataList.appendChild(optionElement);
+                    });
+
+                    document.body.appendChild(dataList);
+                    inputElement.setAttribute('list', 'datalist-items');
+                } else {
+                    inputElement.removeAttribute('list');
+                }
+            });
+        }
+        
         function removeOrderItem(button) {
             button.closest('.order-item').remove();
             calculateTotal();
@@ -322,43 +362,7 @@
                 });
         }
     </script>
-     <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const input = document.getElementById('itemInput');
-                                const datalist = document.getElementById('items');
-                                
-                                input.addEventListener('input', function() {
-                                    const options = datalist.querySelectorAll('option');
-                                    let count = 0;
-                                    options.forEach(option => {
-                                        if (count < 3 && option.value.toLowerCase().includes(input.value.toLowerCase())) {
-                                            option.style.display = 'block';
-                                            count++;
-                                        } else {
-                                            option.style.display = 'none';
-                                        }
-                                    });
-                                });
-                            });
-                            </script>
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('provinceInput');
-    const datalist = document.getElementById('provinces');
     
-    input.addEventListener('input', function() {
-        const options = Array.from(datalist.options);
-        const inputValue = input.value.toLowerCase();
-        let count = 0;
-
-        options.forEach(option => {
-            const shouldShow = count < 3 && option.value.toLowerCase().includes(inputValue);
-            option.style.display = shouldShow ? 'block' : 'none';
-            if (shouldShow) count++;
-        });
-    });
-});
-</script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-2">
@@ -398,93 +402,61 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
                     </div>
                     <div>
-                     <label for="provinceInput" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
-<input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
-<datalist id="provinces">
-                                  <option value="กรุงเทพมหานคร">
-                                  <option value="กระบี่">
-                                  <option value="กาญจนบุรี">
-                                  <option value="กาฬสินธุ์">
-                                  <option value="กำแพงเพชร">
-                                  <option value="ขอนแก่น">
-                                  <option value="จันทบุรี">
-                                  <option value="ฉะเชิงเทรา">
-                                  <option value="ชลบุรี">
-                                  <option value="ชัยนาท">
-                                  <option value="ชัยภูมิ">
-                                  <option value="ชุมพร">
-                                  <option value="เชียงราย">
-                                  <option value="เชียงใหม่">
-                                  <option value="ตรัง">
-                                  <option value="ตราด">
-                                  <option value="ตาก">
-                                  <option value="นครนายก">
-                                  <option value="นครปฐม">
-                                  <option value="นครพนม">
-                                  <option value="นครราชสีมา">
-                                  <option value="นครศรีธรรมราช">
-                                  <option value="นครสวรรค์">
-                                  <option value="นนทบุรี">
-                                  <option value="นราธิวาส">
-                                  <option value="น่าน">
-                                  <option value="บึงกาฬ">
-                                  <option value="บุรีรัมย์">
-                                  <option value="ปทุมธานี">
-                                  <option value="ประจวบคีรีขันธ์">
-                                  <option value="ปราจีนบุรี">
-                                  <option value="ปัตตานี">
-                                  <option value="พระนครศรีอยุธยา">
-                                  <option value="พะเยา">
-                                  <option value="พังงา">
-                                  <option value="พัทลุง">
-                                  <option value="พิจิตร">
-                                  <option value="พิษณุโลก">
-                                  <option value="เพชรบุรี">
-                                  <option value="เพชรบูรณ์">
-                                  <option value="แพร่">
-                                  <option value="ภูเก็ต">
-                                  <option value="มหาสารคาม">
-                                  <option value="มุกดาหาร">
-                                  <option value="แม่ฮ่องสอน">
-                                  <option value="ยโสธร">
-                                  <option value="ยะลา">
-                                  <option value="ร้อยเอ็ด">
-                                  <option value="ระนอง">
-                                  <option value="ระยอง">
-                                  <option value="ราชบุรี">
-                                  <option value="ลพบุรี">
-                                  <option value="ลำปาง">
-                                  <option value="ลำพูน">
-                                  <option value="เลย">
-                                  <option value="ศรีสะเกษ">
-                                  <option value="สกลนคร">
-                                  <option value="สงขลา">
-                                  <option value="สตูล">
-                                  <option value="สมุทรปราการ">
-                                  <option value="สมุทรสงคราม">
-                                  <option value="สมุทรสาคร">
-                                  <option value="สระแก้ว">
-                                  <option value="สระบุรี">
-                                  <option value="สิงห์บุรี">
-                                  <option value="สุโขทัย">
-                                  <option value="สุพรรณบุรี">
-                                  <option value="สุราษฎร์ธานี">
-                                  <option value="สุรินทร์">
-                                  <option value="หนองคาย">
-                                  <option value="หนองบัวลำภู">
-                                  <option value="อ่างทอง">
-                                  <option value="อำนาจเจริญ">
-                                  <option value="อุดรธานี">
-                                  <option value="อุตรดิตถ์">
-                                  <option value="อุทัยธานี">
-                                  <option value="อุบลราชธานี">
-                                  <option value="อ่างทอง">
-                                  <option value="เบญจลักษ์">
-                                  <option value="นครสวรรค์">
-                                  <option value="สระแก้ว">
-                                  <option value="ราชบุรี">
-                            <!-- Add more provinces here as needed -->
-                        </datalist>
+                        <label for="provinceInput" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
+                        <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
+                        <datalist id="provinces">
+                            <script>
+                                // List of available provinces
+                                const provinces = [
+                                    "กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี",
+                                    "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง",
+                                    "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช",
+                                    "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี",
+                                    "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา", "พะเยา", "พังงา",
+                                    "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "ภูเก็ต", "มหาสารคาม",
+                                    "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร", "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี",
+                                    "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ",
+                                    "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี",
+                                    "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อำนาจเจริญ",
+                                    "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี", "อ่างทอง", "เบญจลักษ์",
+                                    "นครสวรรค์", "สระแก้ว", "ราชบุรี"
+                                ];
+                        
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    const input = document.getElementById('provinceInput');
+                                    const maxOptionsToShow = 3;
+                        
+                                    input.addEventListener('input', function() {
+                                        const inputValue = input.value.toLowerCase();
+                                        const matchingProvinces = provinces
+                                            .filter(province => province.toLowerCase().includes(inputValue))
+                                            .slice(0, maxOptionsToShow);
+                        
+                                        // Remove any existing datalist
+                                        const existingDatalist = document.getElementById('datalist-provinces');
+                                        if (existingDatalist) {
+                                            existingDatalist.remove();
+                                        }
+                        
+                                        // Create a new datalist if there are matching items
+                                        if (matchingProvinces.length > 0) {
+                                            const dataList = document.createElement('datalist');
+                                            dataList.id = 'datalist-provinces';
+                        
+                                            matchingProvinces.forEach(province => {
+                                                const optionElement = document.createElement('option');
+                                                optionElement.value = province;
+                                                dataList.appendChild(optionElement);
+                                            });
+                        
+                                            document.body.appendChild(dataList);
+                                            input.setAttribute('list', 'datalist-provinces');
+                                        } else {
+                                            input.removeAttribute('list');
+                                        }
+                                    });
+                                });
+                            </script>
                     </div>
                 </div>
                 <div class="mt-4">
@@ -525,24 +497,5 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </form>
     </div>
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('itemInput');
-    const datalist = document.getElementById('itemSelect');
-    
-    input.addEventListener('input', function() {
-        const options = datalist.querySelectorAll('option');
-        let count = 0;
-        options.forEach(option => {
-            if (count < 3 && option.value.toLowerCase().includes(input.value.toLowerCase())) {
-                option.style.display = 'block';
-                count++;
-            } else {
-                option.style.display = 'none';
-            }
-        });
-    });
-});
-</script>
 </body>
 </html>
