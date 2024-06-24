@@ -89,25 +89,7 @@
                                 <option value="BEPLEX  TABLETS (30 TABLETS)">BEPLEX  TABLETS (30 TABLETS)</option>
                                 <option value="DIPSOTREX OINTMENT 30 G">DIPSOTREX OINTMENT 30 G</option>
                         </datalist>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const input = document.getElementById('itemInput');
-                                const datalist = document.getElementById('items');
-                                
-                                input.addEventListener('input', function() {
-                                    const options = datalist.querySelectorAll('option');
-                                    let count = 0;
-                                    options.forEach(option => {
-                                        if (count < 3 && option.value.toLowerCase().includes(input.value.toLowerCase())) {
-                                            option.style.display = 'block';
-                                            count++;
-                                        } else {
-                                            option.style.display = 'none';
-                                        }
-                                    });
-                                });
-                            });
-                            </script>
+                       
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -340,6 +322,43 @@
                 });
         }
     </script>
+     <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const input = document.getElementById('itemInput');
+                                const datalist = document.getElementById('items');
+                                
+                                input.addEventListener('input', function() {
+                                    const options = datalist.querySelectorAll('option');
+                                    let count = 0;
+                                    options.forEach(option => {
+                                        if (count < 3 && option.value.toLowerCase().includes(input.value.toLowerCase())) {
+                                            option.style.display = 'block';
+                                            count++;
+                                        } else {
+                                            option.style.display = 'none';
+                                        }
+                                    });
+                                });
+                            });
+                            </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('provinceInput');
+    const datalist = document.getElementById('provinces');
+    
+    input.addEventListener('input', function() {
+        const options = Array.from(datalist.options);
+        const inputValue = input.value.toLowerCase();
+        let count = 0;
+
+        options.forEach(option => {
+            const shouldShow = count < 3 && option.value.toLowerCase().includes(inputValue);
+            option.style.display = shouldShow ? 'block' : 'none';
+            if (shouldShow) count++;
+        });
+    });
+});
+</script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-2">
@@ -379,9 +398,9 @@
                         <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
                     </div>
                     <div>
-                        <label for="provinces" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
-                        <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
-                        <datalist id="provinces">
+                     <label for="provinceInput" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
+<input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
+<datalist id="provinces">
                                   <option value="กรุงเทพมหานคร">
                                   <option value="กระบี่">
                                   <option value="กาญจนบุรี">
