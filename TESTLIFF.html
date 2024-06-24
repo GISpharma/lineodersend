@@ -64,8 +64,8 @@
             newItem.innerHTML = `
                 <div class="grid grid-cols-1 gap-4">
                     <div>
-                        <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
-                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required />
+                       <label for="item_nm[]" class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
+                        <input list="items" class="form-control w-full p-2 border rounded-md" name="item_nm[]" required id="itemInput" />
                         <datalist id="items">
                                 <option value="AMCARDIA 5">AMCARDIA 5</option>
                                 <option value="AMCARDIA 10">AMCARDIA 10</option>
@@ -89,6 +89,25 @@
                                 <option value="BEPLEX  TABLETS (30 TABLETS)">BEPLEX  TABLETS (30 TABLETS)</option>
                                 <option value="DIPSOTREX OINTMENT 30 G">DIPSOTREX OINTMENT 30 G</option>
                         </datalist>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const input = document.getElementById('itemInput');
+                                const datalist = document.getElementById('items');
+                                
+                                input.addEventListener('input', function() {
+                                    const options = datalist.querySelectorAll('option');
+                                    let count = 0;
+                                    options.forEach(option => {
+                                        if (count < 3 && option.value.toLowerCase().includes(input.value.toLowerCase())) {
+                                            option.style.display = 'block';
+                                            count++;
+                                        } else {
+                                            option.style.display = 'none';
+                                        }
+                                    });
+                                });
+                            });
+                            </script>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -487,5 +506,24 @@
             </div>
         </form>
     </div>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('itemInput');
+    const datalist = document.getElementById('itemSelect');
+    
+    input.addEventListener('input', function() {
+        const options = datalist.querySelectorAll('option');
+        let count = 0;
+        options.forEach(option => {
+            if (count < 3 && option.value.toLowerCase().includes(input.value.toLowerCase())) {
+                option.style.display = 'block';
+                count++;
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>
