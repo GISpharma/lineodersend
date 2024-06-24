@@ -321,7 +321,25 @@
             </div>
         </form>
     </div>
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('itemInput');
+    const datalist = document.getElementById('itemSelect');
+    
+    input.addEventListener('input', function() {
+        const options = datalist.querySelectorAll('option');
+        let count = 0;
+        options.forEach(option => {
+            if (count < 3 && option.value.toLowerCase().includes(input.value.toLowerCase())) {
+                option.style.display = 'block';
+                count++;
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
     <script>
     function BtnAdd() {
         /*Add Button*/
