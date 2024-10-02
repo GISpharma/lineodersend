@@ -45,8 +45,9 @@
                 </div>
 
                   <textarea type="text" id="Address" name="Address" class="w-full mb-4 mr-2 p-2 border rounded-md" placeholder="ที่อยู่" ></textarea>
-                  <textarea type="text" id="Shipping" name="Shipping" class="w-full p-2 border rounded-md" placeholder="ที่อยู่จัดส่ง"></textarea>
-            
+                  <textarea type="text" id="Shipping" name="Shipping" class="w-full p-2 mb-4 border rounded-md" placeholder="ที่อยู่จัดส่ง"></textarea>
+                  <textarea type="text" id="Note" name="Note" class="w-full p-2 border rounded-md" placeholder="หมายเหตุ"></textarea>
+
             </div>
         </div>
         <!-- ฟอร์มเลือกประเภทและอัพโหลดไฟล์ -->
@@ -63,6 +64,8 @@
                             <option value="ร้านยา">ร้านยา</option>
                             <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
                             <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                            <option value="อื่นๆ">อื่นๆ</option>
+
                         </select>
                     </div>
 
@@ -174,6 +177,15 @@
                               </label> 
                           </div>
                         </div>
+                    <!-- สำหรับเอกสารแนบอื่นๆ -->
+                    <div class="file-group" data-type="อื่นๆ" style="display: none;">
+                        <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                            <label>เอกสารแนบอื่นๆ
+                                <input type="file" name="เอกสารแนบอื่นๆ">
+                            </label>
+                        </div>
+            
+                    </div>
 
                     </div>
 
@@ -192,6 +204,7 @@
         let faxID = document.getElementById("Fax");
         let addressID = document.getElementById("Address");
         let shippingID = document.getElementById("Shipping");
+        let noteID = document.getElementById("Note");
         let typeID = document.getElementById("Type");
         let statusID = document.getElementById("status");
         let submitBtn = document.getElementById("submitBtn");
@@ -222,7 +235,7 @@
         // ฟังก์ชันสำหรับตรวจสอบความถูกต้องของฟอร์ม
         function validateForm() {
             return nameID.value.trim() !== '' && contactID.value.trim() !== '' && paymentID.value.trim() !== '' && 
-                   texID.value.trim() !== '' && faxID.value.trim() !== '' && addressID.value.trim() !== '' && shippingID.value.trim() !== '' && typeID.value.trim() !== '' &&
+                   texID.value.trim() !== '' && faxID.value.trim() !== '' && addressID.value.trim() !== '' && shippingID.value.trim() !== ''&& noteID.value.trim() !== '' && typeID.value.trim() !== '' &&
                    statusID.value.trim() !== '';
         }
 
@@ -278,6 +291,7 @@
                     fax: faxID.value,
                     address: addressID.value,
                     shipping: shippingID.value,
+                    note: noteID.value,
                     type: typeID.value,
                     status: statusID.value,
                     files: []
