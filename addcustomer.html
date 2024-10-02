@@ -356,6 +356,8 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         document.querySelector('form').reset();
+                        liff.closeWindow(); // ปิดหน้าต่าง LIFF หลังจากปิด Swal
+
                     }
                 });
                 console.log(data);
