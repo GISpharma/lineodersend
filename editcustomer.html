@@ -18,15 +18,17 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen font-sans leading-normal tracking-normal">
+<body class="bg-gray-50 min-h-screen font-sans leading-normal tracking-normal">
     <div class="max-w-md mx-auto px-4 py-8">
-        <h1 class="text-xl font-bold mb-8 text-gray-800">จัดการข้อมูลลูกค้า</h1>
-        
+        <div class="flex text-center mb-2">
+            <div class="w-full bg-green-800 text-white rounded-md mr-2 p-4"><a href="https://gispharma.github.io/lineodersend/addcustomer.html">เพิ่มข้อมูลลูกค้า</a></div>
+            <div class="w-full bg-green-500 text-white rounded-md p-4"><a href="https://gispharma.github.io/lineodersend/editcustomer.html">แก้ไขข้อมูลลูกค้า</a></div>
+        </div>
         <!-- แถบแท็บ -->
         <div class="mb-6">
             <nav class="flex space-x-4">
-                <button id="tabCustomers" class="px-4 py-2 bg-gray-800 text-white rounded ">รายชื่อลูกค้า</button>
-                <button id="tabEdit" class="px-4 py-2 bg-gray-300 text-gray-100 rounded hover:bg-gray-400 focus:outline-none" disabled>แก้ไขข้อมูลลูกค้า</button>
+                <button id="tabCustomers" class="px-4 py-2 bg-slate-700 text-white rounded">รายชื่อลูกค้า</button>
+                <button id="tabEdit" class="px-4 py-2 bg-slate-300 text-gray-100 rounded " disabled>แก้ไขข้อมูลลูกค้า</button>
             </nav>
         </div>
         
@@ -47,14 +49,14 @@
                 </div>
             </div>
             <!-- ตารางลูกค้า -->
-            <div class="bg-white shadow-md rounded my-6 overflow-x-auto">
+            <div class="bg-white shadow-md rounded-md my-6 overflow-x-auto">
                 <table class="min-w-full leading-normal">
                     <thead>
                         <tr>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
                         </tr>
                     </thead>
                     <tbody id="customerTable">
@@ -73,7 +75,7 @@
         <!-- เนื้อหาแท็บแก้ไขข้อมูลลูกค้า -->
         <div id="contentEdit" class="tab-content">
             <h2 class="text-xl font-bold mb-6 text-gray-800">รายละเอียดลูกค้า</h2>
-            <form id="editForm" class="bg-white p-6 rounded-lg shadow-md">
+            <form id="editForm" class="bg-green-50 border border-green-400 p-6 rounded-lg shadow-md">
                 <!-- ฟอร์มข้อมูลลูกค้า -->
                 <input type="hidden" id="customerId">
                 <div class="mb-4">
@@ -90,13 +92,18 @@
                         <input type="text" id="Fax" name="Fax" placeholder="แฟกซ์" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
                     </div>
                 </div>
-                <div class="w-full sm:w-1/2 px-1 mb-4">
-                    <label for="Tex" class="block text-gray-700 text-sm font-bold mb-2">Tex</label>
+                <div class="mb-4">
+                    <label for="Tex" class="block text-gray-700 text-sm font-bold mb-2">เลขประจำตัวผู้เสียภาษี</label>
                     <input type="text" id="Tex" name="Tex" placeholder="Tex" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
                 </div>
-                <div class="mb-4">
-                    <label for="Payment" class="block text-gray-700 text-sm font-bold mb-2">การชำระเงิน</label>
-                    <input type="text" id="Payment" name="Payment" placeholder="การชำระเงิน" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <div class="w-1/2 mb-4">
+                    <label for="Payment" class="block text-gray-700 text-sm font-bold mb-2">เครดิต/การชำระเงิน</label>
+                    <select id="Payment" name="Payment" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <option value="30 วัน">30 วัน</option>
+                        <option value="60 วัน">60 วัน</option>
+                        <option value="90 วัน">90 วัน</option>
+                        <option value="120 วัน">120 วัน</option>
+                    </select>                
                 </div>
                 <div class="mb-4">
                     <label for="Address" class="block text-gray-700 text-sm font-bold mb-2">ที่อยู่</label>
@@ -108,7 +115,7 @@
                 </div>
                 <div class="mb-4">
                     <label for="status" class="block text-gray-700 text-sm font-bold mb-2">สถานะ</label>
-                    <input type="hidden" id="status" name="status" placeholder="สถานะ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <input type="text" id="status" name="status" placeholder="สถานะ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" readonly>
                 </div>
 
                 <!-- ส่วนเลือกประเภทลูกค้า -->
@@ -137,7 +144,7 @@
             
                 <!-- ปุ่มบันทึก -->
                 <div class="mt-6 text-right">
-                    <button type="button" id="updateBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <button type="button" id="updateBtn" class="w-full bg-green-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         อัปเดตข้อมูล
                     </button>
                 </div>
@@ -490,19 +497,19 @@
             if (tab === 'customers') {
                 contentCustomers.classList.add('active');
                 contentEdit.classList.remove('active');
-                tabCustomers.classList.add('bg-blue-500', 'text-white');
-                tabCustomers.classList.remove('bg-gray-300', 'text-gray-700');
-                tabEdit.classList.remove('bg-blue-500', 'text-white');
-                tabEdit.classList.add('bg-gray-300', 'text-gray-700');
+                tabCustomers.classList.add('bg-slate-400', 'text-white');
+                tabCustomers.classList.remove('bg-slate-400', 'text-gray-100');
+                tabEdit.classList.remove('bg-slate-400', 'text-white');
+                tabEdit.classList.add('bg-slate-400', 'text-gray-100');
                 tabEdit.disabled = true;
                 tabCustomers.disabled = false;
             } else if (tab === 'edit') {
                 contentCustomers.classList.remove('active');
                 contentEdit.classList.add('active');
-                tabEdit.classList.add('bg-blue-500', 'text-white');
-                tabEdit.classList.remove('bg-gray-300', 'text-gray-700');
-                tabCustomers.classList.remove('bg-blue-500', 'text-white');
-                tabCustomers.classList.add('bg-gray-300', 'text-gray-700');
+                tabEdit.classList.add('bg-slate-400', 'text-white');
+                tabEdit.classList.remove('bg-slate-400', 'text-gray-100');
+                tabCustomers.classList.remove('bg-slate-400', 'text-white');
+                tabCustomers.classList.add('bg-slate-400', 'text-gray-100');
                 tabEdit.disabled = false;
                 tabCustomers.disabled = false;
             }
