@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>จัดการข้อมูลลูกค้า</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>จัดการข้อมูลลูกค้า</title>
     <!-- นำเข้า Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- นำเข้า SweetAlert2 สำหรับแสดงกล่องข้อความ -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <!-- นำเข้า LIFF SDK (ถ้าจำเป็น) -->
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 
     <style>
         /* เพิ่มการแสดงแท็บที่เลือก */
@@ -21,21 +23,30 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans leading-normal tracking-normal">
-    <div class="max-w-md mx-auto p-4 mt-4">
+    <div class="max-w-md mx-auto px-4 py-4">
         <div class="flex text-center mb-2">
-            <div class="w-full bg-green-800 text-white rounded-md mr-2 py-2"><a href="https://gispharma.github.io/lineodersend/addcustomer.html">เพิ่มข้อมูลลูกค้า</a></div>
-            <div class="w-full bg-green-500 text-white rounded-md py-2"><a href="https://gispharma.github.io/lineodersend/editcustomer.html">ตรวจสอบข้อมูลลูกค้า</a></div>
+            <div class="w-full bg-green-800 text-white rounded-md mr-2 py-2">
+                <a href="https://gispharma.github.io/lineodersend/addcustomer.html">เพิ่มข้อมูลลูกค้า</a>
+            </div>
+            <div class="w-full bg-green-500 text-white rounded-md py-2">
+                <a href="https://gispharma.github.io/lineodersend/editcustomer.html">ตรวจสอบข้อมูลลูกค้า</a>
+            </div>
         </div>
         <!-- แถบแท็บ -->
         <div class="my-4">
             <nav class="flex space-x-4">
                 <button id="tabCustomers" class="px-4 py-2 bg-slate-700 text-white rounded">รายชื่อลูกค้า</button>
-                <button id="tabEdit" class="hidden px-4 py-2 bg-slate-300 text-gray-100 rounded " disabled>แก้ไขข้อมูลลูกค้า</button>
+                <button id="tabEdit" class="hidden px-4 py-2 bg-slate-300 text-gray-100 rounded" disabled>แก้ไขข้อมูลลูกค้า</button>
             </nav>
         </div>
         
         <!-- เนื้อหาแท็บรายชื่อลูกค้า -->
-        <div id="contentCustomers" class="tab-content active">
+        <div id="contentCustomers" class="tab-content active relative">
+            <!-- Loading message สำหรับการดึงข้อมูลลูกค้า -->
+            <div id="loadingIndicator" class="flex justify-center items-center absolute inset-0 bg-gray-200 bg-opacity-50 hidden">
+                <div class="text-xl text-red-500">กำลังโหลดข้อมูล...</div>
+            </div>
+            
             <!-- ช่องค้นหาและกรองสถานะ -->
             <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
                 <input type="text" id="searchInput" placeholder="ค้นหารายชื่อลูกค้า..." class="w-full md:w-1/2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 md:mb-0">
@@ -51,7 +62,7 @@
                 </div>
             </div>
             <!-- ตารางลูกค้า -->
-            <div class="bg-white shadow-md rounded-md my-6 overflow-x-auto">
+            <div class="bg-white shadow-md rounded-md my-6 overflow-x-auto relative">
                 <table class="min-w-full leading-normal">
                     <thead>
                         <tr>
@@ -87,7 +98,7 @@
                 <div class="flex justify-between -mx-1">
                     <div class="mb-4 mr-2">
                         <label for="contact" class="block text-gray-700 text-sm font-bold mb-2">เบอร์ติดต่อ</label>
-                        <input type="text" id="contact" name="contact" placeholder="เบอร์ติดต่อ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <input type="tel" pattern="[0-9]{10}" title="กรุณากรอกเบอร์โทรศัพท์ที่มี 10 หลัก" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" id="contact" name="contact" placeholder="เบอร์ติดต่อ" required>
                     </div>
                     <div class="mb-4">
                         <label for="Fax" class="block text-gray-700 text-sm font-bold mb-2">แฟกซ์</label>
@@ -190,16 +201,34 @@
         // ฟังก์ชันสำหรับดึงข้อมูลลูกค้าทั้งหมด
         async function fetchCustomerData() {
             try {
+                // แสดง Loading Indicator
+                document.getElementById('loadingIndicator').classList.remove('hidden');
+
                 let response = await fetch(WEB_APP_URL + '?action=getCustomers');
                 let data = await response.json();
 
-                allCustomers = data; // เก็บข้อมูลลูกค้าทั้งหมด
+                // ตรวจสอบว่าข้อมูลที่ได้รับเป็นอาร์เรย์
+                if (Array.isArray(data)) {
+                    // เรียงข้อมูลจากล่าสุดไปเก่าตาม timestamp
+                    allCustomers = data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                } else {
+                    allCustomers = [];
+                }
+
                 currentPage = 1; // รีเซ็ตหน้าเป็น 1
                 displayCustomers(); // แสดงลูกค้า
                 updatePagination(); // อัปเดตปุ่มแบ่งหน้า
 
             } catch (error) {
                 console.error('Error fetching customer data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถโหลดข้อมูลลูกค้าได้',
+                });
+            } finally {
+                // ซ่อน Loading Indicator
+                document.getElementById('loadingIndicator').classList.add('hidden');
             }
         }
 
@@ -299,65 +328,60 @@
             await fetchAndDisplayDocuments(customer.id);
         }
 
+        // ฟังก์ชันสำหรับแสดงฟิลด์อัปโหลดไฟล์ตามประเภทลูกค้า
         function displayFileFields(type) {
-    let fileUploadsDiv = document.getElementById('fileUploads');
-    fileUploadsDiv.innerHTML = ''; // ล้างฟิลด์อัปโหลดไฟล์ก่อน
+            let fileUploadsDiv = document.getElementById('fileUploads');
+            fileUploadsDiv.innerHTML = ''; // ล้างฟิลด์อัปโหลดไฟล์ก่อน
 
-    let fileFields = []; // เก็บฟิลด์ที่ต้องการสร้าง
+            let fileFields = []; // เก็บฟิลด์ที่ต้องการสร้าง
 
-    if (type === 'company') { // บริษัท นิติบุคคล
-        fileFields = [
-            { label: 'ใบอนุญาตขายยาแผนปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', },
-            { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
-            { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-            { label: 'สำเนาบัตรประชาชน และสำเนาทะเบียนบ้าน ของกรรมการผู้มีอำนาจ (ถ้ามี)', name: 'สำเนาบัตรประชาชนและทะเบียนบ้านกรรมการ', required: false },
-            { label: 'เบอร์โทรศัพท์ ที่สามารถติดต่อได้', name: 'เบอร์โทรศัพท์ติดต่อ', required: false },
-            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'clinic') { // คลินิก
-        fileFields = [
-            { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
-            { label: 'สำเนาบัตรประจำตัวประชาชน ของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาบัตรประจำตัวประชาชน', required: false },
-            { label: 'เบอร์โทรศัพท์ ที่สามารถติดต่อได้', name: 'เบอร์โทรศัพท์ติดต่อ', required: false },
-            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'shop') { // ร้านยา
-        fileFields = [
-            { label: 'ใบอนุญาตขายยาแผนปัจจุบัน ที่เป็นปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
-            { label: 'สำเนาบัตรประชาชน และ/หรือ สำเนาทะเบียนบ้าน ของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนและทะเบียนบ้าน', required: false },
-            { label: 'เบอร์โทรศัพท์ ที่สามารถติดต่อได้', name: 'เบอร์โทรศัพท์ติดต่อ', required: false },
-            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'gov_hospital') { // โรงพยาบาลรัฐบาล
-        fileFields = [
-            { label: 'เลขประจำตัวผู้เสียภาษี', name: 'เลขประจำตัวผู้เสียภาษี', required: false },
-            { label: 'ชื่อ ที่อยู่โรงพยาบาล เบอร์โทรศัพท์', name: 'ชื่อที่อยู่เบอร์โทรศัพท์', required: false },
-            { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'private_hospital') { // โรงพยาบาลเอกชน
-        fileFields = [
-            { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
-            { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20) (ถ้ามี)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
-            { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-            { label: 'ชื่อ ที่อยู่โรงพยาบาล เบอร์โทรศัพท์', name: 'ชื่อที่อยู่เบอร์โทรศัพท์', required: false },
-            { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
-        ];
-    }
+            if (type === 'company') { // บริษัท นิติบุคคล
+                fileFields = [
+                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
+                    { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+                    { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+                    { label: 'สำเนาบัตรประชาชน และสำเนาทะเบียนบ้าน ของกรรมการผู้มีอำนาจ (ถ้ามี)', name: 'สำเนาบัตรประชาชนและทะเบียนบ้านกรรมการ', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'clinic') { // คลินิก
+                fileFields = [
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
+                    { label: 'สำเนาบัตรประจำตัวประชาชน ของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาบัตรประจำตัวประชาชน', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'shop') { // ร้านยา
+                fileFields = [
+                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน ที่เป็นปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
+                    { label: 'สำเนาบัตรประชาชน และ/หรือ สำเนาทะเบียนบ้าน ของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนและทะเบียนบ้าน', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'gov_hospital') { // โรงพยาบาลรัฐบาล
+                fileFields = [
+                    { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'private_hospital') { // โรงพยาบาลเอกชน
+                fileFields = [
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
+                    { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+                    { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20) (ถ้ามี)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+                    { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
+                ];
+            }
 
-    // แสดงฟิลด์อัปโหลดตามที่กำหนดไว้ใน fileFields
-    fileFields.forEach(field => {
-        let fieldDiv = document.createElement('div');
-        fieldDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
+            // แสดงฟิลด์อัปโหลดตามที่กำหนดไว้ใน fileFields
+            fileFields.forEach(field => {
+                let fieldDiv = document.createElement('div');
+                fieldDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
 
-        fieldDiv.innerHTML = `
-            <label>${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}
-                <input type="file" name="${field.name}" ${field.required ? 'required' : ''} class="mt-2 w-full">
-            </label>
-        `;
+                fieldDiv.innerHTML = `
+                    <label>${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}
+                        <input type="file" name="${field.name}" ${field.required ? 'required' : ''} class="mt-2 w-full">
+                    </label>
+                `;
 
-        fileUploadsDiv.appendChild(fieldDiv);
-    });
-}
+                fileUploadsDiv.appendChild(fieldDiv);
+            });
+        }
 
         // ฟังก์ชันสำหรับดึงและแสดงเอกสารที่เกี่ยวข้อง
         async function fetchAndDisplayDocuments(customerId) {
@@ -452,6 +476,15 @@
             }
 
             try {
+                // แสดง Loading Indicator โดยใช้ SweetAlert2
+                Swal.fire({
+                    title: 'กำลังอัปเดตข้อมูล...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
                 let response = await fetch(WEB_APP_URL, {
                     method: 'POST',
                     body: JSON.stringify(obj)
@@ -459,20 +492,28 @@
 
                 let result = await response.json();
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'อัปเดตข้อมูลสำเร็จ',
-                    text: 'ข้อมูลลูกค้าถูกอัปเดตเรียบร้อยแล้ว',
-                }).then(() => {
-                    // รีเฟรชรายการลูกค้า
-                    fetchCustomerData();
-                    // เคลียร์ฟอร์ม
-                    document.getElementById('editForm').reset();
-                    document.getElementById('fileUploads').innerHTML = '';
-                    document.getElementById('documents').innerHTML = '';
-                    // สลับกลับไปยังแท็บรายชื่อลูกค้า
-                    switchTab('customers');
-                });
+                if (result.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'อัปเดตข้อมูลสำเร็จ',
+                        text: 'ข้อมูลลูกค้าถูกอัปเดตเรียบร้อยแล้ว',
+                    }).then(() => {
+                        // รีเฟรชรายการลูกค้า
+                        fetchCustomerData();
+                        // เคลียร์ฟอร์ม
+                        document.getElementById('editForm').reset();
+                        document.getElementById('fileUploads').innerHTML = '';
+                        document.getElementById('documents').innerHTML = '';
+                        // สลับกลับไปยังแท็บรายชื่อลูกค้า
+                        switchTab('customers');
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: result.message || 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                    });
+                }
 
             } catch (error) {
                 console.error('Error updating customer data:', error);
@@ -481,6 +522,8 @@
                     title: 'เกิดข้อผิดพลาด',
                     text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
                 });
+            } finally {
+                // ซ่อน Loading Indicator (SweetAlert2 จะซ่อนเองหลังจาก Swal.fire())
             }
         }
 
@@ -499,19 +542,18 @@
             if (tab === 'customers') {
                 contentCustomers.classList.add('active');
                 contentEdit.classList.remove('active');
-                tabCustomers.classList.add('bg-slate-400', 'text-white');
-                tabCustomers.classList.remove('bg-slate-400', 'text-gray-100');
+                tabCustomers.classList.add('bg-slate-700', 'text-white');
                 tabEdit.classList.remove('bg-slate-400', 'text-white');
-                tabEdit.classList.add('bg-slate-400', 'text-gray-100');
+                tabEdit.classList.add('bg-slate-300', 'text-gray-100');
                 tabEdit.disabled = true;
                 tabCustomers.disabled = false;
             } else if (tab === 'edit') {
                 contentCustomers.classList.remove('active');
                 contentEdit.classList.add('active');
                 tabEdit.classList.add('bg-slate-400', 'text-white');
-                tabEdit.classList.remove('bg-slate-400', 'text-gray-100');
-                tabCustomers.classList.remove('bg-slate-400', 'text-white');
-                tabCustomers.classList.add('bg-slate-400', 'text-gray-100');
+                tabEdit.classList.remove('bg-slate-300', 'text-gray-100');
+                tabCustomers.classList.remove('bg-slate-700', 'text-white');
+                tabCustomers.classList.add('bg-slate-400', 'text-white');
                 tabEdit.disabled = false;
                 tabCustomers.disabled = false;
             }
