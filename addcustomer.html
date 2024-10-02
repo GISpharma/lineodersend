@@ -226,19 +226,16 @@
             });
         }
 
-       function validateForm() {
-            // ค้นหาฟิลด์ที่มีคุณสมบัติ required เท่านั้น
-            let requiredFields = document.querySelectorAll('input[required], textarea[required], select[required]');
-            
-                for (let field of requiredFields) {
-                    // ตรวจสอบว่าฟิลด์มีค่าว่างหรือไม่
-                    if (field.value.trim() === '') {
-                        return false;
-                    }
-                }
-            
-                return true; // ถ้าฟิลด์ทั้งหมดมีค่าครบ
-            }
+        // ฟังก์ชันสำหรับตรวจสอบความถูกต้องของฟอร์ม
+function validateForm() {
+    let requiredFields = [nameID, contactID, paymentID, texID, faxID, addressID, shippingID, noteID, typeID, statusID];
+    for (let field of requiredFields) {
+        if (field.hasAttribute('required') && field.value.trim() === '') {
+            return false;
+        }
+    }
+    return true;
+}
 
 
         // ฟังก์ชันสำหรับจัดการคลิกปุ่มส่งข้อมูล
@@ -254,17 +251,18 @@
                 return;
             }
 
-           let requiredFiles = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"][required]');
-            for (let fileInput of requiredFiles) {
-                if (fileInput.files.length === 0) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'กรอกข้อมูลไม่ครบ',
-                        text: 'กรุณาอัปโหลดไฟล์ ' + fileInput.name,
-                    });
-                    return;
+            // ตรวจสอบว่ามีการอัปโหลดไฟล์ที่มี required เท่านั้น
+                let requiredFiles = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"][required]');
+                for (let fileInput of requiredFiles) {
+                    if (fileInput.files.length === 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'กรอกข้อมูลไม่ครบ',
+                            text: 'กรุณาอัปโหลดไฟล์ ' + fileInput.name,
+                        });
+                        return;
+                    }
                 }
-            }
 
 
 
