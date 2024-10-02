@@ -58,11 +58,11 @@
                     <div class="w-full border mb-5">
                         <select id="Type" name="Type" class="w-full p-2 rounded-md">
                             <option value="" disabled selected>เลือกประเภทลูกค้า</option>
-                            <option value="company">บริษัท นิติบุคคล</option>
-                            <option value="clinic">คลินิก</option>
-                            <option value="shop">ร้านยา</option>
-                            <option value="gov_hospital">โรงพยาบาลรัฐบาล</option>
-                            <option value="private_hospital">โรงพยาบาลเอกชน</option>
+                            <option value="นิติบุคคล">บริษัท นิติบุคคล</option>
+                            <option value="คลินิก">คลินิก</option>
+                            <option value="ร้านยา">ร้านยา</option>
+                            <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
+                            <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
                         </select>
                     </div>
 
@@ -70,18 +70,18 @@
                     <div id="fileUploads">
 
                         <!-- สำหรับบริษัท นิติบุคคล -->
-                        <div class="file-group" data-type="company" style="display: none;">
-                            <div class="bg-slate-100 text-red-600 text-sm rounded-md my-5 p-4">
+                        <div class="file-group" data-type="นิติบุคคล" style="display: none;">
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>ใบอนุญาตขายยาแผนปัจจุบัน
                                     <input type="file" name="ใบอนุญาตขายยาแผนปัจจุบัน" required>
                                 </label>
                             </div>
-                            <div class="bg-slate-100 text-red-600 text-sm rounded-md my-5 p-4">
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)
                                     <input type="file" name="สำเนาทะเบียนภาษีมูลค่าเพิ่ม" required>
                                 </label>
                             </div>
-                            <div class="bg-slate-100 text-red-600 rounded-md text-sm my-5 p-4">
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                               <label>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน
                                   <input type="file" name="สำเนาหนังสือรับรองบริษัท"required>
                               </label>
@@ -104,13 +104,13 @@
                         </div>
 
                         <!-- สำหรับคลินิก -->
-                        <div class="file-group" data-type="clinic" style="display: none;">
-                            <div class="bg-slate-100 text-sm text-red-600 rounded-md my-5 p-4">
+                        <div class="file-group" data-type="คลินิก" style="display: none;">
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>ใบอนุญาตให้ประกอบกิจการสถานพยาบาล
                                     <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล" required>
                                 </label>
                             </div>
-                            <div class="bg-slate-100 rounded-md text-red-600 text-sm my-5 p-4">
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                               <label>สำเนาบัตรประชาชน ของผู้ประกอบกิจการสถานพยาบาล
                                   <input type="file" name="สำเนาบัตรประชาชนผู้ประกอบการ" required>
                               </label>
@@ -128,13 +128,13 @@
                         </div>
 
                         <!-- สำหรับร้านยา -->
-                        <div class="file-group" data-type="shop" style="display: none;">
-                            <div class="bg-slate-100 text-sm text-red-600 rounded-md my-5 p-4">
+                        <div class="file-group" data-type="ร้านยา" style="display: none;">
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>ใบอนุญาตขายยาแผนปัจจุบัน
                                     <input type="file" name="ใบอนุญาตขายยาแผนปัจจุบัน"required>
                                 </label>
                             </div>
-                            <div class="bg-slate-100 rounded-md text-red-600 text-sm my-5 p-4">
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                               <label>สำเนาบัตรประชาชน และ/หรือ สำเนาทะเบียนบ้าน ของผู้รับอนุญาต 
                                   <input type="file" name="สำเนาบัตรประชาชนและทะเบียนบ้านผู้รับอนุญาต"required>
                               </label>
@@ -152,7 +152,7 @@
                         </div>
 
                         <!-- สำหรับโรงพยาบาลรัฐบาล -->
-                        <div class="file-group" data-type="gov_hospital" style="display: none;">
+                        <div class="file-group" data-type="โรงพยาบาลรัฐบาล" style="display: none;">
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เลขประจำตัวผู้เสียภาษี (ถ้ามี)
                                     <input type="file" name="เลขประจำตัวผู้เสียภาษี">
@@ -171,13 +171,13 @@
                         </div>
 
                         <!-- สำหรับโรงพยาบาลเอกชน -->
-                        <div class="file-group" data-type="private_hospital" style="display: none;">
-                            <div class="bg-slate-100 text-sm text-red-600 rounded-md my-5 p-4">
+                        <div class="file-group" data-type="โรงพยาบาลเอกชน" style="display: none;">
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>ใบอนุญาตให้ประกอบกิจการสถานพยาบาล
                                     <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล"required>
                                 </label>
                             </div>
-                          <div class="bg-slate-100 rounded-md text-red-600 text-sm my-5 p-4">
+                          <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                               <label>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน
                                   <input type="file" name="สำเนาหนังสือรับรองบริษัท" required>
                               </label>
