@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>จัดการข้อมูลลูกค้า</title>
+    <!-- นำเข้า Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- นำเข้า SweetAlert2 สำหรับแสดงกล่องข้อความ -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* เพิ่มการแสดงแท็บที่เลือก */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans leading-normal tracking-normal">
+    <div class="max-w-md mx-auto px-4 py-8">
+        <h1 class="text-xl font-bold mb-8 text-gray-800">จัดการข้อมูลลูกค้า</h1>
+        
+        <!-- แถบแท็บ -->
+        <div class="mb-6">
+            <nav class="flex space-x-4">
+                <button id="tabCustomers" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-blue-700 focus:outline-none">รายชื่อลูกค้า</button>
+                <button id="tabEdit" class="px-4 py-2 bg-gray-300 text-gray-100 rounded hover:bg-gray-400 focus:outline-none" disabled>แก้ไขข้อมูลลูกค้า</button>
+            </nav>
+        </div>
+        
+        <!-- เนื้อหาแท็บรายชื่อลูกค้า -->
+        <div id="contentCustomers" class="tab-content active">
+            <!-- ช่องค้นหาและกรองสถานะ -->
+            <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                <input type="text" id="searchInput" placeholder="ค้นหารายชื่อลูกค้า..." class="w-full md:w-1/2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 md:mb-0">
+                <div class="flex items-center space-x-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="filterApproved" class="form-checkbox h-5 w-5 text-blue-600">
+                        <span class="ml-2 text-sm text-gray-700">อนุมัติแล้ว</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="filterPending" class="form-checkbox h-5 w-5 text-blue-600">
+                        <span class="ml-2 text-sm text-gray-700">รอการอนุมัติ</span>
+                    </label>
+                </div>
+            </div>
+            <!-- ตารางลูกค้า -->
+            <div class="bg-white shadow-md rounded my-6 overflow-x-auto">
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTable">
+                        <!-- รายการลูกค้าจะแสดงที่นี่ -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- การแบ่งหน้า -->
+            <div class="flex justify-between items-center mt-4">
+                <button id="prevPage" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l disabled:opacity-50" disabled>ย้อนกลับ</button>
+                <span id="pageInfo" class="text-gray-700"></span>
+                <button id="nextPage" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r" disabled>ถัดไป</button>
+            </div>
+        </div>
+        
+        <!-- เนื้อหาแท็บแก้ไขข้อมูลลูกค้า -->
+        <div id="contentEdit" class="tab-content">
+            <h2 class="text-xl font-bold mb-6 text-gray-800">รายละเอียดลูกค้า</h2>
+            <form id="editForm" class="bg-white p-6 rounded-lg shadow-md">
+                <!-- ฟอร์มข้อมูลลูกค้า -->
+                <input type="hidden" id="customerId">
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 text-sm font-bold mb-2">ชื่อ สกุล</label>
+                    <input type="text" id="name" name="name" placeholder="ชื่อ สกุล" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div class="flex justify-between -mx-1">
+                    <div class="mb-4 mr-2">
+                        <label for="contact" class="block text-gray-700 text-sm font-bold mb-2">เบอร์ติดต่อ</label>
+                        <input type="text" id="contact" name="contact" placeholder="เบอร์ติดต่อ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <div class="mb-4">
+                        <label for="Fax" class="block text-gray-700 text-sm font-bold mb-2">แฟกซ์</label>
+                        <input type="text" id="Fax" name="Fax" placeholder="แฟกซ์" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 px-1 mb-4">
+                    <label for="Tex" class="block text-gray-700 text-sm font-bold mb-2">Tex</label>
+                    <input type="text" id="Tex" name="Tex" placeholder="Tex" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div class="mb-4">
+                    <label for="Payment" class="block text-gray-700 text-sm font-bold mb-2">การชำระเงิน</label>
+                    <input type="text" id="Payment" name="Payment" placeholder="การชำระเงิน" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div class="mb-4">
+                    <label for="Address" class="block text-gray-700 text-sm font-bold mb-2">ที่อยู่</label>
+                    <textarea type="text" id="Address" name="Address" placeholder="Address" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                </div>
+                <div class="w-full sm:w-1/2 px-1 mb-4">
+                    <label for="Shipping" class="block text-gray-700 text-sm font-bold mb-2">สถานที่จัดส่ง</label>
+                    <textarea type="text" id="Shipping" name="Shipping" placeholder="Shipping" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="status" class="block text-gray-700 text-sm font-bold mb-2">สถานะ</label>
+                    <input type="hidden" id="status" name="status" placeholder="สถานะ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+
+                <!-- ส่วนเลือกประเภทลูกค้า -->
+                <div class="mb-5">
+                    <label for="Type" class="block text-gray-700 text-sm font-bold mb-2">ประเภทลูกค้า</label>
+                    <select id="Type" name="Type" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <option value="" disabled selected>เลือกประเภทลูกค้า</option>
+                        <option value="company">บริษัท นิติบุคคล</option>
+                        <option value="clinic">คลินิก</option>
+                        <option value="shop">ร้านยา</option>
+                        <option value="gov_hospital">โรงพยาบาลรัฐบาล</option>
+                        <option value="private_hospital">โรงพยาบาลเอกชน</option>
+                    </select>
+                </div>
+                <!-- ส่วนแสดงเอกสารที่อัปโหลดแล้ว -->
+                <div id="documentList" class="mt-4">
+                    <h3 class="text-lg font-bold mb-2 text-gray-800">เอกสารที่อัปโหลดแล้ว</h3>
+                    <ul id="documents" class="list-disc list-inside text-blue-600">
+                        <!-- รายการเอกสารจะแสดงที่นี่ -->
+                    </ul>
+                </div>
+                <!-- ส่วนอัปโหลดไฟล์ -->
+                <div id="fileUploads" class="mb-4">
+                    <!-- ฟิลด์อัปโหลดไฟล์จะถูกเติมเมื่อเลือกประเภทลูกค้า -->
+                </div>
+            
+                <!-- ปุ่มบันทึก -->
+                <div class="mt-6 text-right">
+                    <button type="button" id="updateBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        อัปเดตข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzxtfB5zB_wY_8wVpBKmbnjc74U6-ML1fgIbLu9IPJgbJO3D65XbWy2QWlZi1d8zBkxOg/exec'; // แทนที่ด้วย URL ของคุณ
+
+        let customerIdField = document.getElementById('customerId');
+        let nameID = document.getElementById("name");
+        let contactID = document.getElementById("contact");
+        let paymentID = document.getElementById("Payment");
+        let texID = document.getElementById("Tex");
+        let faxID = document.getElementById("Fax");
+        let addressID = document.getElementById("Address");
+        let shippingID = document.getElementById("Shipping");
+        let typeID = document.getElementById("Type");
+        let statusID = document.getElementById("status");
+        let updateBtn = document.getElementById("updateBtn");
+        let searchInput = document.getElementById("searchInput");
+        let filterApproved = document.getElementById("filterApproved");
+        let filterPending = document.getElementById("filterPending");
+
+        let allCustomers = []; // เก็บข้อมูลลูกค้าทั้งหมด
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // แท็บ
+        const tabCustomers = document.getElementById('tabCustomers');
+        const tabEdit = document.getElementById('tabEdit');
+        const contentCustomers = document.getElementById('contentCustomers');
+        const contentEdit = document.getElementById('contentEdit');
+
+        // ปุ่มแบ่งหน้า
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+
+        // ฟังก์ชันสำหรับดึงข้อมูลลูกค้าทั้งหมด
+        async function fetchCustomerData() {
+            try {
+                let response = await fetch(WEB_APP_URL + '?action=getCustomers');
+                let data = await response.json();
+
+                allCustomers = data; // เก็บข้อมูลลูกค้าทั้งหมด
+                currentPage = 1; // รีเซ็ตหน้าเป็น 1
+                displayCustomers(); // แสดงลูกค้า
+                updatePagination(); // อัปเดตปุ่มแบ่งหน้า
+
+            } catch (error) {
+                console.error('Error fetching customer data:', error);
+            }
+        }
+
+        // ฟังก์ชันสำหรับแสดงลูกค้าในตาราง
+        function displayCustomers() {
+            let customerTable = document.getElementById('customerTable');
+            customerTable.innerHTML = '';
+
+            // ค้นหาและกรองข้อมูล
+            let filterText = searchInput.value.toLowerCase();
+            let filteredCustomers = allCustomers.filter(customer => {
+                let matchesSearch = customer.name.toLowerCase().includes(filterText);
+                let matchesStatus = true;
+                if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
+                    matchesStatus = false;
+                }
+                if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
+                    matchesStatus = false;
+                }
+                return matchesSearch && matchesStatus;
+            });
+
+            // การแบ่งหน้า
+            const totalItems = filteredCustomers.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const customersToDisplay = filteredCustomers.slice(startIndex, endIndex);
+
+            customersToDisplay.forEach(customer => {
+                let row = document.createElement('tr');
+                row.classList.add('bg-white', 'hover:bg-gray-100');
+
+                row.innerHTML = `
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${customer.name}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${customer.contact}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${customer.status}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-center text-sm">
+                        <button class="editBtn bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded" data-id="${customer.id}">แก้ไข</button>
+                    </td>
+                `;
+                customerTable.appendChild(row);
+            });
+
+            pageInfo.textContent = `หน้า ${currentPage} จาก ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        // ฟังก์ชันสำหรับกรองลูกค้าตามการค้นหาและสถานะ
+        function filterCustomers() {
+            currentPage = 1; // รีเซ็ตหน้าเป็น 1
+            displayCustomers();
+            updatePagination();
+        }
+
+        // ฟังก์ชันสำหรับอัปเดตการแบ่งหน้า
+        function updatePagination() {
+            let filterText = searchInput.value.toLowerCase();
+            let filteredCustomers = allCustomers.filter(customer => {
+                let matchesSearch = customer.name.toLowerCase().includes(filterText);
+                let matchesStatus = true;
+                if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
+                    matchesStatus = false;
+                }
+                if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
+                    matchesStatus = false;
+                }
+                return matchesSearch && matchesStatus;
+            });
+            const totalItems = filteredCustomers.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            pageInfo.textContent = `หน้า ${currentPage} จาก ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        // ฟังก์ชันสำหรับโหลดรายละเอียดลูกค้าในฟอร์ม
+        async function loadCustomerDetails(customer) {
+            customerIdField.value = customer.id;
+            nameID.value = customer.name || '';
+            contactID.value = customer.contact || '';
+            paymentID.value = customer.payment || '';
+            texID.value = customer.tex || '';
+            faxID.value = customer.fax || '';
+            addressID.value = customer.address || '';
+            shippingID.value = customer.shipping || '';
+            typeID.value = customer.type || '';
+            statusID.value = customer.status || '';
+
+            // เรียกฟังก์ชันแสดงฟิลด์อัปโหลดไฟล์ตามประเภทลูกค้า
+            displayFileFields(customer.type);
+
+            // ดึงและแสดงเอกสารที่เกี่ยวข้อง
+            await fetchAndDisplayDocuments(customer.id);
+        }
+
+        function displayFileFields(type) {
+    let fileUploadsDiv = document.getElementById('fileUploads');
+    fileUploadsDiv.innerHTML = ''; // ล้างฟิลด์อัปโหลดไฟล์ก่อน
+
+    let fileFields = []; // เก็บฟิลด์ที่ต้องการสร้าง
+
+    if (type === 'company') { // บริษัท นิติบุคคล
+        fileFields = [
+            { label: 'ใบอนุญาตขายยาแผนปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', },
+            { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+            { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+            { label: 'สำเนาบัตรประชาชน และสำเนาทะเบียนบ้าน ของกรรมการผู้มีอำนาจ (ถ้ามี)', name: 'สำเนาบัตรประชาชนและทะเบียนบ้านกรรมการ', required: false },
+            { label: 'เบอร์โทรศัพท์ ที่สามารถติดต่อได้', name: 'เบอร์โทรศัพท์ติดต่อ', required: false },
+            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+        ];
+    } else if (type === 'clinic') { // คลินิก
+        fileFields = [
+            { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
+            { label: 'สำเนาบัตรประจำตัวประชาชน ของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาบัตรประจำตัวประชาชน', required: false },
+            { label: 'เบอร์โทรศัพท์ ที่สามารถติดต่อได้', name: 'เบอร์โทรศัพท์ติดต่อ', required: false },
+            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+        ];
+    } else if (type === 'shop') { // ร้านยา
+        fileFields = [
+            { label: 'ใบอนุญาตขายยาแผนปัจจุบัน ที่เป็นปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
+            { label: 'สำเนาบัตรประชาชน และ/หรือ สำเนาทะเบียนบ้าน ของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนและทะเบียนบ้าน', required: false },
+            { label: 'เบอร์โทรศัพท์ ที่สามารถติดต่อได้', name: 'เบอร์โทรศัพท์ติดต่อ', required: false },
+            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+        ];
+    } else if (type === 'gov_hospital') { // โรงพยาบาลรัฐบาล
+        fileFields = [
+            { label: 'เลขประจำตัวผู้เสียภาษี', name: 'เลขประจำตัวผู้เสียภาษี', required: false },
+            { label: 'ชื่อ ที่อยู่โรงพยาบาล เบอร์โทรศัพท์', name: 'ชื่อที่อยู่เบอร์โทรศัพท์', required: false },
+            { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
+        ];
+    } else if (type === 'private_hospital') { // โรงพยาบาลเอกชน
+        fileFields = [
+            { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
+            { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20) (ถ้ามี)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+            { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+            { label: 'ชื่อ ที่อยู่โรงพยาบาล เบอร์โทรศัพท์', name: 'ชื่อที่อยู่เบอร์โทรศัพท์', required: false },
+            { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
+        ];
+    }
+
+    // แสดงฟิลด์อัปโหลดตามที่กำหนดไว้ใน fileFields
+    fileFields.forEach(field => {
+        let fieldDiv = document.createElement('div');
+        fieldDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
+
+        fieldDiv.innerHTML = `
+            <label>${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}
+                <input type="file" name="${field.name}" ${field.required ? 'required' : ''} class="mt-2 w-full">
+            </label>
+        `;
+
+        fileUploadsDiv.appendChild(fieldDiv);
+    });
+}
+
+        // ฟังก์ชันสำหรับดึงและแสดงเอกสารที่เกี่ยวข้อง
+        async function fetchAndDisplayDocuments(customerId) {
+            try {
+                let response = await fetch(`${WEB_APP_URL}?action=getDocumentsByCustomerId&id=${customerId}`);
+                let documents = await response.json();
+
+                let documentsList = document.getElementById('documents');
+                documentsList.innerHTML = '';
+
+                if (documents.length === 0) {
+                    documentsList.innerHTML = '<li>ไม่มีเอกสารที่อัปโหลด</li>';
+                } else {
+                    documents.forEach(doc => {
+                        let listItem = document.createElement('li');
+                        listItem.className = 'mb-2';
+
+                        // สร้างลิงก์ไปยังเอกสาร
+                        let link = document.createElement('a');
+                        link.href = doc.fileLink;
+                        link.target = '_blank';
+                        link.textContent = doc.fileName;
+                        link.className = 'text-blue-600 underline';
+
+                        listItem.appendChild(link);
+                        documentsList.appendChild(listItem);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching documents:', error);
+            }
+        }
+
+        // ฟังก์ชันสำหรับอัปเดตข้อมูลลูกค้า
+        async function updateCustomerData() {
+            // ตรวจสอบความถูกต้องของฟอร์ม
+            if (!nameID.value.trim() || !contactID.value.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'กรอกข้อมูลไม่ครบ',
+                    text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                });
+                return;
+            }
+
+            // ตรวจสอบไฟล์ที่จำเป็นต้องอัปโหลด
+            let requiredFiles = document.querySelectorAll('#fileUploads input[type="file"][required]');
+            for (let fileInput of requiredFiles) {
+                if (fileInput.files.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'กรอกข้อมูลไม่ครบ',
+                        text: 'กรุณาอัปโหลดไฟล์ ' + fileInput.name,
+                    });
+                    return;
+                }
+            }
+
+            let obj = {
+                id: customerIdField.value,
+                name: nameID.value,
+                contact: contactID.value,
+                payment: paymentID.value,
+                tex: texID.value,
+                fax: faxID.value,
+                address: addressID.value,
+                shipping: shippingID.value,
+                type: typeID.value,
+                status: statusID.value,
+                files: []
+            };
+
+            // รวบรวมไฟล์ที่อัปโหลดใหม่
+            let fileInputs = document.querySelectorAll('#fileUploads input[type="file"]');
+            for (let fileInput of fileInputs) {
+                if (fileInput.files.length > 0) {
+                    let file = fileInput.files[0];
+                    let base64 = await getBase64(file);
+
+                    // รักษานามสกุลไฟล์
+                    let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+
+                    // รวมชื่อไฟล์ที่ต้องการกับนามสกุล
+                    let finalFileName = fileInput.name + fileExtension;
+
+                    obj.files.push({
+                        base64: base64,
+                        type: file.type,
+                        name: finalFileName
+                    });
+                }
+            }
+
+            try {
+                let response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(obj)
+                });
+
+                let result = await response.json();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'อัปเดตข้อมูลสำเร็จ',
+                    text: 'ข้อมูลลูกค้าถูกอัปเดตเรียบร้อยแล้ว',
+                }).then(() => {
+                    // รีเฟรชรายการลูกค้า
+                    fetchCustomerData();
+                    // เคลียร์ฟอร์ม
+                    document.getElementById('editForm').reset();
+                    document.getElementById('fileUploads').innerHTML = '';
+                    document.getElementById('documents').innerHTML = '';
+                    // สลับกลับไปยังแท็บรายชื่อลูกค้า
+                    switchTab('customers');
+                });
+
+            } catch (error) {
+                console.error('Error updating customer data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                });
+            }
+        }
+
+        // ฟังก์ชันสำหรับแปลงไฟล์เป็น base64
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                let reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ฟังก์ชันสำหรับสลับแท็บ
+        function switchTab(tab) {
+            if (tab === 'customers') {
+                contentCustomers.classList.add('active');
+                contentEdit.classList.remove('active');
+                tabCustomers.classList.add('bg-blue-500', 'text-white');
+                tabCustomers.classList.remove('bg-gray-300', 'text-gray-700');
+                tabEdit.classList.remove('bg-blue-500', 'text-white');
+                tabEdit.classList.add('bg-gray-300', 'text-gray-700');
+                tabEdit.disabled = true;
+                tabCustomers.disabled = false;
+            } else if (tab === 'edit') {
+                contentCustomers.classList.remove('active');
+                contentEdit.classList.add('active');
+                tabEdit.classList.add('bg-blue-500', 'text-white');
+                tabEdit.classList.remove('bg-gray-300', 'text-gray-700');
+                tabCustomers.classList.remove('bg-blue-500', 'text-white');
+                tabCustomers.classList.add('bg-gray-300', 'text-gray-700');
+                tabEdit.disabled = false;
+                tabCustomers.disabled = false;
+            }
+        }
+
+        // กำหนดเหตุการณ์เมื่อคลิกแท็บ
+        tabCustomers.addEventListener('click', () => switchTab('customers'));
+        tabEdit.addEventListener('click', () => switchTab('edit'));
+
+        // กำหนดเหตุการณ์เมื่อคลิกปุ่มแก้ไขในตาราง
+        document.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('editBtn')) {
+                const customerId = event.target.getAttribute('data-id');
+                const customer = allCustomers.find(c => c.id == customerId);
+                if (customer) {
+                    loadCustomerDetails(customer);
+                    switchTab('edit');
+                }
+            }
+        });
+
+        // กำหนดเหตุการณ์เมื่อเปลี่ยนประเภทลูกค้า
+        typeID.addEventListener('change', function() {
+            displayFileFields(this.value);
+        });
+
+        // กำหนดเหตุการณ์เมื่อกดปุ่มอัปเดตข้อมูล
+        updateBtn.addEventListener('click', updateCustomerData);
+
+        // กำหนดเหตุการณ์เมื่อค้นหา
+        searchInput.addEventListener('keyup', filterCustomers);
+
+        // กำหนดเหตุการณ์เมื่อเปลี่ยนสถานะกรอง
+        filterApproved.addEventListener('change', filterCustomers);
+        filterPending.addEventListener('change', filterCustomers);
+
+        // กำหนดเหตุการณ์เมื่อกดปุ่มแบ่งหน้า
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayCustomers();
+                updatePagination();
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            let filterText = searchInput.value.toLowerCase();
+            let filteredCustomers = allCustomers.filter(customer => {
+                let matchesSearch = customer.name.toLowerCase().includes(filterText);
+                let matchesStatus = true;
+                if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
+                    matchesStatus = false;
+                }
+                if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
+                    matchesStatus = false;
+                }
+                return matchesSearch && matchesStatus;
+            });
+            const totalItems = filteredCustomers.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayCustomers();
+                updatePagination();
+            }
+        });
+
+        // เรียกฟังก์ชันเมื่อโหลดหน้า
+        window.onload = fetchCustomerData;
+    </script>
+</body>
+</html>
