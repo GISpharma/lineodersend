@@ -226,12 +226,20 @@
             });
         }
 
-        // ฟังก์ชันสำหรับตรวจสอบความถูกต้องของฟอร์ม
-        function validateForm() {
-            return nameID.value.trim() !== '' && contactID.value.trim() !== '' && paymentID.value.trim() !== '' && 
-                   texID.value.trim() !== '' && faxID.value.trim() !== '' && addressID.value.trim() !== '' && shippingID.value.trim() !== ''&& noteID.value.trim() !== '' && typeID.value.trim() !== '' &&
-                   statusID.value.trim() !== '';
-        }
+       function validateForm() {
+            // ค้นหาฟิลด์ที่มีคุณสมบัติ required เท่านั้น
+            let requiredFields = document.querySelectorAll('input[required], textarea[required], select[required]');
+            
+                for (let field of requiredFields) {
+                    // ตรวจสอบว่าฟิลด์มีค่าว่างหรือไม่
+                    if (field.value.trim() === '') {
+                        return false;
+                    }
+                }
+            
+                return true; // ถ้าฟิลด์ทั้งหมดมีค่าครบ
+            }
+
 
         // ฟังก์ชันสำหรับจัดการคลิกปุ่มส่งข้อมูล
         submitBtn.addEventListener('click', async (event) => {
@@ -246,18 +254,17 @@
                 return;
             }
 
-            // ตรวจสอบว่ามีการอัปโหลดไฟล์ที่มี required เท่านั้น
-                let requiredFiles = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"][required]');
-                for (let fileInput of requiredFiles) {
-                    if (fileInput.files.length === 0) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'กรอกข้อมูลไม่ครบ',
-                            text: 'กรุณาอัปโหลดไฟล์ ' + fileInput.name,
-                        });
-                        return;
-                    }
+           let requiredFiles = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"][required]');
+            for (let fileInput of requiredFiles) {
+                if (fileInput.files.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'กรอกข้อมูลไม่ครบ',
+                        text: 'กรุณาอัปโหลดไฟล์ ' + fileInput.name,
+                    });
+                    return;
                 }
+            }
 
 
 
