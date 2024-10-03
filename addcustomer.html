@@ -24,22 +24,22 @@
               <div class="flex justify-between mb-4">
                 <div class="text-xl text-slate-800 my-auto">เพิ่มข้อมูลลูกค้า</div>
                 <div class="my-auto">
-                <input id="status" name="status" placeholder="status" class="p-2  text-right text-yellow-500 bg-white bg-opacity-0  " value="รอการอนุมัติ">
+                <input id="status" name="status" placeholder="status" class="p-2  text-right text-yellow-500 bg-white bg-opacity-0  " value="รอการอนุมัติ" readonly>
              </div> 
             </div>
-                <input type="text" class="w-full p-2 mb-4 border rounded-md" id="name" name="name"  placeholder="ชื่อ สกุล" >
+                <input type="text" class="w-full p-2 mb-4 border rounded-md" id="name" name="name"  placeholder="ชื่อ สกุล" required>
                 <div class="flex justify-between mb-4">
-                  <input type="text" class="w-full mr-2 p-2 border rounded-md" id="contact"  name="contact"  placeholder="เบอร์ติดต่อ">
+                  <input type="text" class="w-full mr-2 p-2 border rounded-md" id="contact"  name="contact"  placeholder="เบอร์ติดต่อ" required>
                   <input type="text" class="w-full p-2 border rounded-md" id="Fax" name="Fax" placeholder="แฟกซ์">
                 </div>
-                <input type="text" class=" w-full  mb-4 p-2 border rounded-md" id="Tex" name="Tex"  placeholder="รหัสเสียภาษี">
+                <input type="text" class=" w-full  mb-4 p-2 border rounded-md" id="Tex" name="Tex"  placeholder="รหัสเสียภาษี" required>
 
                 <div class="flex justify-between mb-4">
-                    <input type="text" id="Payment" name="Payment" placeholder="การชำระเงิน" class="w-1/2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">              
+                    <input type="text" id="Payment" name="Payment" placeholder="การชำระเงิน" class="w-1/2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>              
                 </div>
 
-                  <textarea type="text" id="Address" name="Address" class="w-full mb-4 mr-2 p-2 border rounded-md" placeholder="ที่อยู่" ></textarea>
-                  <textarea type="text" id="Shipping" name="Shipping" class="w-full p-2 mb-4 border rounded-md" placeholder="ที่อยู่จัดส่ง"></textarea>
+                  <textarea type="text" id="Address" name="Address" class="w-full mb-4 mr-2 p-2 border rounded-md" placeholder="ที่อยู่" required></textarea>
+                  <textarea type="text" id="Shipping" name="Shipping" class="w-full p-2 mb-4 border rounded-md" placeholder="ที่อยู่จัดส่ง" ></textarea>
                   <textarea type="text" id="Note" name="Note" class="w-full p-2 border rounded-md" placeholder="หมายเหตุ"></textarea>
 
             </div>
