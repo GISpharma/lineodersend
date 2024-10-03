@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- นำเข้า LIFF SDK (ถ้าจำเป็น) -->
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-
     <style>
         /* เพิ่มการแสดงแท็บที่เลือก */
         .tab-content {
@@ -25,10 +24,10 @@
 <body class="bg-gray-50 min-h-screen font-sans leading-normal tracking-normal">
     <div class="max-w-md mx-auto px-4 py-4">
         <div class="flex text-center mb-2">
-            <div class="w-full bg-green-800 text-white rounded-md mr-2 py-2">
+            <div class="w-full bg-green-800 text-white rounded-md mr-2 py-2 hover:bg-green-700">
                 <a href="https://gispharma.github.io/lineodersend/addcustomer.html">เพิ่มข้อมูลลูกค้า</a>
             </div>
-            <div class="w-full bg-green-500 text-white rounded-md py-2">
+            <div class="w-full bg-green-500 text-white rounded-md py-2 hover:bg-green-400">
                 <a href="https://gispharma.github.io/lineodersend/editcustomer.html">ตรวจสอบข้อมูลลูกค้า</a>
             </div>
         </div>
@@ -66,10 +65,10 @@
                 <table class="min-w-full leading-normal">
                     <thead>
                         <tr>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-green-700 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
                         </tr>
                     </thead>
                     <tbody id="customerTable">
@@ -267,10 +266,10 @@
                 row.classList.add('bg-white', 'hover:bg-gray-100');
 
                 row.innerHTML = `
-                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${customer.name}</td>
-                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${customer.contact}</td>
-                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${customer.status}</td>
-                    <td class="px-5 py-5 border-b border-gray-200 text-center text-sm">
+                    <td class="p-2 border-b border-gray-200 text-sm">${customer.name}</td>
+                    <td class="p-2 border-b border-gray-200 text-sm">${customer.contact}</td>
+                    <td class="p-2 border-b border-gray-200 text-sm">${customer.status}</td>
+                    <td class="p-2 border-b border-gray-200 text-center text-sm">
                         <button class="editBtn bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded" data-id="${customer.id}">แก้ไข</button>
                     </td>
                 `;
@@ -340,22 +339,25 @@
 
             if (type === 'นิติบุคคล') { // บริษัท นิติบุคคล
                 fileFields = [
-                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
+                    { label: 'ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล', name: 'ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล', required: false },
                     { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
                     { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-                    { label: 'สำเนาบัตรประชาชน และสำเนาทะเบียนบ้าน ของกรรมการผู้มีอำนาจ (ถ้ามี)', name: 'สำเนาบัตรประชาชนและทะเบียนบ้านกรรมการ', required: false },
+                    { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
+                    { label: 'ทะเบียนบ้านกรรมการผู้มีอำนาจ (ถ้ามี)', name: 'ทะเบียนบ้านกรรมการผู้มีอำนาจ', required: false },
                     { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
                 ];
             } else if (type === 'คลินิก') { // คลินิก
                 fileFields = [
                     { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
-                    { label: 'สำเนาบัตรประจำตัวประชาชน ของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาบัตรประจำตัวประชาชน', required: false },
+                    { label: 'สำเนาบัตรประจำตัวประชาชนของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาบัตรประจำตัวประชาชนผู้ประกอบ', required: false },
+                    { label: 'ทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', name: 'ทะเบียนบ้านของผู้ประกอบ', required: false },
                     { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
                 ];
             } else if (type === 'ร้านยา') { // ร้านยา
                 fileFields = [
                     { label: 'ใบอนุญาตขายยาแผนปัจจุบัน ที่เป็นปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
                     { label: 'สำเนาบัตรประชาชน และ/หรือ สำเนาทะเบียนบ้าน ของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนและทะเบียนบ้าน', required: false },
+                    { label: 'สำเนาทะเบียนบ้านผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านผู้รับอนุญาต', required: false },
                     { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
                 ];
             } else if (type === 'โรงพยาบาลรัฐบาล') { // โรงพยาบาลรัฐบาล
@@ -371,7 +373,7 @@
                 ];
             } else if (type === 'อื่นๆ') { // โรงพยาบาลรัฐบาล
                 fileFields = [
-                    { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
+                    { label: 'เอกสารแนบอื่นๆ', name:'เอกสารแนบอื่นๆ', required: false },
                 ];
             }
 
