@@ -42,9 +42,7 @@
         <!-- เนื้อหาแท็บรายชื่อลูกค้า -->
         <div id="contentCustomers" class="tab-content active relative">
             <!-- Loading message สำหรับการดึงข้อมูลลูกค้า -->
-            <div id="loadingIndicator" class="flex justify-center items-center absolute inset-0 bg-gray-200 bg-opacity-50 hidden">
-                <div class="text-xl text-slate-500">กำลังโหลดข้อมูล...</div>
-            </div>
+            
             
             <!-- ช่องค้นหาและกรองสถานะ -->
             <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
@@ -65,15 +63,18 @@
                 <table class="min-w-full leading-normal">
                     <thead>
                         <tr>
-                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
-                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
-                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
-                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-green-700 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
                         </tr>
                     </thead>
                     <tbody id="customerTable">
                         <!-- รายการลูกค้าจะแสดงที่นี่ -->
                     </tbody>
+                    <div id="loadingIndicator" class="flex justify-center items-center absolute inset-0 bg-gray-200  hidden">
+                        <div class="text-sm text-slate-500">กำลังโหลดข้อมูล...</div>
+                    </div>
                 </table>
             </div>
             <!-- การแบ่งหน้า -->
