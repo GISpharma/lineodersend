@@ -203,7 +203,10 @@
         const prevPageBtn = document.getElementById('prevPage');
         const nextPageBtn = document.getElementById('nextPage');
         const pageInfo = document.getElementById('pageInfo');
-
+        
+        window.onload = function () {
+         initializeLiff();
+        };
         // ฟังก์ชันสำหรับเริ่มต้น LIFF และดึงข้อมูลโปรไฟล์ผู้ใช้
         async function initializeLiff() {
             try {
