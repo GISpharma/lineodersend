@@ -88,7 +88,10 @@
             <form id="editForm" class="bg-green-50 border border-green-400 p-6 rounded-lg shadow-md">
                 <!-- ฟอร์มข้อมูลลูกค้า -->
                 <input type="hidden" id="customerId">
-           
+                <div class="mb-4">
+                    <label for="useridline" class="block text-gray-700 text-sm font-bold mb-2">UserID Line</label>
+                    <input type="hidden" id="useridline" name="useridline" placeholder="UserID Line" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" readonly>
+                </div>
                 <div class="mb-4">
                     <label for="name" class="block text-gray-700 text-sm font-bold mb-2">ชื่อ สกุล</label>
                     <input type="text" id="name" name="name" placeholder="ชื่อ สกุล" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
