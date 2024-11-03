@@ -33,7 +33,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
     <script>
         window.onload = function () {
-            //initializeLiff();
+            initializeLiff();
             generateKeyAndDate();
         };
 
@@ -109,17 +109,18 @@
                             <input type="number" name="dis[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" />
                         </div>
                          <div>
-                            <label for="dis[]" class="block w-full mb-2 text-sm font-medium text-gray-700">ส่งเสริมการขาย</label>
-                            <select id="number" name="dis[]" class="block w-full p-2 border rounded-md" required>
-                            <option value="">ส่งเสริมการขาย</option>
-                            <option value="3%">3%</option>
-                            <option value="5%">5%</option>
-                            <option value="10%">10%</option>
-                            <option value="15%">15%</option>
-                            <option value="5 บาท">5 บาท</option>
-                            <option value="7 บาท">7 บาท</option>
-                            <option value="10 บาท">10 บาท</option>
-                        </select>
+                            <label for="smp" class="block w-full mb-2 text-sm font-medium text-gray-700">ส่งเสริมการขาย</label>
+                            <input list="discounts" id="smp" name="smp[]" class="block w-full p-2 border rounded-md" required>
+                            <datalist id="discounts">
+                                <option value="3%">3%</option>
+                                <option value="5%">5%</option>
+                                <option value="10%">10%</option>
+                                <option value="15%">15%</option>
+                                <option value="5 บาท">5 บาท</option>
+                                <option value="7 บาท">7 บาท</option>
+                                <option value="10 บาท">10 บาท</option>
+                            </datalist>
+
                         </div>
                         <div>
                             <label for="amt[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
@@ -278,6 +279,8 @@
             const prices = formData.getAll("price[]");
             const give = formData.getAll("give[]");
             const dis = formData.getAll("dis[]");
+            const smp = formData.getAll("dis[]");
+
 
             for (let i = 0; i < itemNames.length; i++) {
                 orderItems.push({
@@ -286,6 +289,7 @@
                     rate: prices[i],
                     give: give[i],
                     dis: dis[i],
+                    smp: smp[i],
                     amt: (quantities[i] * prices[i]).toFixed(2)
                 });
             }
@@ -333,6 +337,13 @@
                                         contents: [
                                             { type: "text", text: `แถม: ${item.give}`, wrap: true, flex: 3 },
                                             { type: "text", text: `ลด: ${item.dis}`, wrap: true, flex: 3 }
+                                        ]
+                                    },{
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: `แถม: ${item.smp}`, wrap: true, flex: 3 }
                                         ]
                                     },
                                     {
