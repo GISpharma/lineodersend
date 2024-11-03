@@ -109,7 +109,7 @@
                         </div>
                         <div>
                             <label for="smp[]" class="block mb-2 text-sm font-medium text-gray-700">ส่งเสริมการขาย</label>
-                            <input type="number" name="smp[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" />
+                            <input type="text" name="smp[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" />
                         </div>   
                         <div>
                             <label for="amt[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
@@ -175,6 +175,7 @@
             const price = item.querySelector('input[name="price[]"]').value || 0;
             const give = item.querySelector('input[name="give[]"]').value || 0;
             const dis = item.querySelector('input[name="dis[]"]').value || 0;
+            const smp = item.querySelector('input[name="smp[]"]').value || 0;
             const amount = (quantity * price);
             item.querySelector('input[name="amt[]"]').value = amount;
             calculateTotal();
