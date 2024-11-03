@@ -107,15 +107,17 @@
                             <label for="dis[]" class="block mb-2 text-sm font-medium text-gray-700">ส่วนลด</label>
                             <input type="number" name="dis[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" />
                         </div>
-                        <div>
+                         <div>
                             <label for="smp[]" class="block mb-2 text-sm font-medium text-gray-700">ส่งเสริมการขาย</label>
-                            <input type="text" name="smp[]" class="form-control w-full p-2 border rounded-md" onchange="calculateAmount(this);" />
-                        </div>   
+                            <input type="text" name="smp[]" class="form-control w-full p-2 border rounded-md" required />
+                            <span class="text-sm text-gray-300">ตย. ไม่มี 3% 5% 7% 3บาท 5บาท 7บาท</span>
+
+                        </div>  
                         <div>
                             <label for="amt[]" class="block mb-2 text-sm font-medium text-gray-700">จำนวนเงิน</label>
                             <input type="number" name="amt[]" class="form-control bg-gray-200 w-full p-2 border rounded-md" readonly />
                         </div>
-                        <div class="flex justify-end pt-4">
+                        <div class="flex  pt-2">
                             <button type="button" class="w-24 bg-red-200 border-2 border-red-500 p-2 text-red-900 text-center font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ </button>
                         </div>
                     </div>
@@ -176,6 +178,7 @@
             const give = item.querySelector('input[name="give[]"]').value || 0;
             const dis = item.querySelector('input[name="dis[]"]').value || 0;
             const smp = item.querySelector('input[name="smp[]"]').value || 0;
+
             const amount = (quantity * price);
             item.querySelector('input[name="amt[]"]').value = amount;
             calculateTotal();
@@ -193,153 +196,165 @@
         var isSubmitting = false;
 
         function submitForm() {
-    if (isSubmitting) {
-        return;
-    }
+            if (isSubmitting) {
+                return;
+            }
 
-    if (!validateForm()) {
-        Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด!',
-            text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
-        });
-        return;
-    }
-
-    isSubmitting = true;
-    var submitButton = document.getElementById("submitButton");
-    submitButton.disabled = true;
-
-    var form = document.getElementById("myForm");
-    var formData = new FormData(form);
-
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'สำเร็จ!',
-                    text: 'การส่งข้อมูลสำเร็จ'
-                });
-
-                createAndSendFlexMessage(formData);
-
-                form.reset();
-                document.getElementById("orderItems").innerHTML = "";
-                calculateTotal();
-            } else {
+            if (!validateForm()) {
                 Swal.fire({
                     icon: 'error',
                     title: 'เกิดข้อผิดพลาด!',
                     text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
                 });
-
-                submitButton.disabled = false;
-                isSubmitting = false;
+                return;
             }
+
+            isSubmitting = true;
+            var submitButton = document.getElementById("submitButton");
+            submitButton.disabled = true;
+
+            var form = document.getElementById("myForm");
+            var formData = new FormData(form);
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ!',
+                            text: 'การส่งข้อมูลสำเร็จ'
+                        });
+
+                        createAndSendFlexMessage(formData);
+
+                        form.reset();
+                        document.getElementById("orderItems").innerHTML = "";
+                        calculateTotal();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด!',
+                            text: 'ลืมกรอกข้อมูลไปหรือเปล่า'
+                        });
+
+                        submitButton.disabled = false;
+                        isSubmitting = false;
+                    }
+                }
+            };
+
+            xhr.open("POST", "https://script.google.com/macros/s/AKfycbwPndil0dR-LJZraU_GWONXAga1PgHPVOtzInwl_6sW8TMMCkIhsBPbA63vTek9Xq5m/exec");
+            xhr.send(formData);
         }
-    };
 
-    xhr.open("POST", "https://script.google.com/macros/s/AKfycbwPndil0dR-LJZraU_GWONXAga1PgHPVOtzInwl_6sW8TMMCkIhsBPbA63vTek9Xq5m/exec");
-    xhr.send(formData);
-}
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('#myForm [required]');
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    field.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
 
-function createAndSendFlexMessage(formData) {
-    const customer = formData.get("cust_nm");
-    const fTotal = document.getElementById("FTotal").value;
-    const credit = formData.get("credit");
-    const notes = formData.get("note") || "";
+        function createAndSendFlexMessage(formData) {
+            const customer = formData.get("cust_nm");
+            const fTotal = document.getElementById("FTotal").value;
+            const credit = formData.get("credit");
+            const notes = formData.get("note") || "";
 
-    // Gather order items
-    const orderItems = [];
-    const itemNames = formData.getAll("item_nm[]");
-    const quantities = formData.getAll("quantity[]");
-    const prices = formData.getAll("price[]");
-    const give = formData.getAll("give[]");
-    const dis = formData.getAll("dis[]");
-    const smp = formData.getAll("smp[]"); // Add SMP (ส่งเสริมการขาย)
-    const amt = formData.getAll("amt[]");
+            // Gather order items
+            const orderItems = [];
+            const itemNames = formData.getAll("item_nm[]");
+            const quantities = formData.getAll("quantity[]");
+            const prices = formData.getAll("price[]");
+            const give = formData.getAll("give[]");
+            const dis = formData.getAll("dis[]");
+            const smp = formData.getAll("smp[]");
 
-    for (let i = 0; i < itemNames.length; i++) {
-        orderItems.push({
-            itemName: itemNames[i],
-            qty: quantities[i],
-            rate: prices[i],
-            give: give[i],
-            dis: dis[i],
-            smp: smp[i], // Add SMP data here
-            amt: amt[i]
-        });
-    }
+            for (let i = 0; i < itemNames.length; i++) {
+                orderItems.push({
+                    itemName: itemNames[i],
+                    qty: quantities[i],
+                    rate: prices[i],
+                    give: give[i],
+                    dis: dis[i],
+                    smp: smp[i],
+                    amt: (quantities[i] * prices[i]).toFixed(2)
+                });
+            }
 
-    const flexMessage = {
-        type: "flex",
-        altText: "มีคำสั่งซื้อใหม่",
-        contents: {
-            type: "bubble",
-            body: {
-                type: "box",
-                layout: "vertical",
-                spacing: "md",
-                contents: [
-                    { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg", color: "#067706" },
-                    { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
-                    { type: "separator", margin: "sm" },
-                    { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
-                    ...orderItems.map(item => ({
+            const flexMessage = {
+                type: "flex",
+                altText: "มีคำสั่งซื้อใหม่",
+                contents: {
+                    type: "bubble",
+                    body: {
                         type: "box",
                         layout: "vertical",
-                        spacing: "sm",
-                        margin: "md",
+                        spacing: "md",
                         contents: [
-                            {
+                            { type: "text", text: "แจ้งการสั่งซื้อ", wrap: true, weight: "bold", size: "lg", color: "#067706" },
+                            { type: "text", text: `ลูกค้า: ${customer}`, wrap: true },
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: "รายการสินค้า:", weight: "bold", margin: "sm" },
+                            ...orderItems.map(item => ({
                                 type: "box",
-                                layout: "horizontal",
+                                layout: "vertical",
+                                spacing: "sm",
+                                margin: "md",
                                 contents: [
-                                    { type: "text", text: item.itemName, weight: "bold", size: "md" }
+                                    {
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: item.itemName, weight: "bold", size: "md" }
+                                        ]
+                                    },
+                                    {
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: `จำนวน: ${item.qty}`, wrap: true, flex: 3 },
+                                            { type: "text", text: `ราคา: ${item.rate}`, wrap: true, flex: 3 }
+                                        ]
+                                    },{
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: `แถม: ${item.give}`, wrap: true, flex: 3 },
+                                            { type: "text", text: `ลด: ${item.dis}`, wrap: true, flex: 3 },
+                                            { type: "text", text: `ส่งเสริม: ${item.smp}`, wrap: true, flex: 3 }
+                                        ]
+                                    },
+                                    {
+                                        type: "box",
+                                        layout: "horizontal",
+                                        flex: 1,
+                                        contents: [
+                                            { type: "text", text: `จำนวนเงิน: ${item.amt}`, wrap: true, flex: 3 }
+                                        ]
+                                    }
                                 ]
-                            },
-                            {
-                                type: "box",
-                                layout: "horizontal",
-                                contents: [
-                                    { type: "text", text: `จำนวน: ${item.qty}`, flex: 3 },
-                                    { type: "text", text: `ราคา: ${item.rate}`, flex: 3 }
-                                ]
-                            },
-                            {
-                                type: "box",
-                                layout: "horizontal",
-                                contents: [
-                                    { type: "text", text: `แถม: ${item.give}`, flex: 3 },
-                                    { type: "text", text: `ลด: ${item.dis}`, flex: 3 },
-                                    { type: "text", text: `ส่งเสริมการขาย: ${item.smp}`, flex: 3 }
-                                ]
-                            },
-                            {
-                                type: "box",
-                                layout: "horizontal",
-                                contents: [
-                                    { type: "text", text: `จำนวนเงิน: ${item.amt}`, flex: 3 }
-                                ]
-                            }
+                            })),
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: `ยอดรวมทั้งสิ้น: ${fTotal} บาท`, wrap: true, weight: "bold" },
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: `เครดิต: ${credit}`, wrap: true, weight: "bold" },
+                            { type: "separator", margin: "sm" },
+                            { type: "text", text: `หมายเหตุ: ${notes}`, wrap: true, weight: "bold" }
                         ]
-                    })),
-                    { type: "separator", margin: "sm" },
-                    { type: "text", text: `ยอดรวมทั้งสิ้น: ${fTotal} บาท`, wrap: true, weight: "bold" },
-                    { type: "separator", margin: "sm" },
-                    { type: "text", text: `เครดิต: ${credit}`, wrap: true, weight: "bold" },
-                    { type: "separator", margin: "sm" },
-                    { type: "text", text: `หมายเหตุ: ${notes}`, wrap: true, weight: "bold" }
-                ]
-            }
+                    }
+                }
+            };
+
+            sendLIFFMessage(flexMessage);
         }
-    };
-
-    sendLIFFMessage(flexMessage);
-}
-
 
         function sendLIFFMessage(flexMessage) {
             liff.sendMessages([flexMessage])
@@ -368,9 +383,9 @@ function createAndSendFlexMessage(formData) {
                     <span class="input-group-text">OderID</span>
                     <input type="text" id="keyInput" name="order_id" required/>
                 </div>
-                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4" style="display: none;">
+                <div class="flex justify-start p-2 border border-green-500 rounded-lg mb-4"  style="display: none;">
                     <span class="input-group-text">UserID</span>
-                    <input type="text" id="userId" name="userId" required/>
+                    <input type="text" id="userId" name="userId" required />
                 </div>
                 <div class="flex justify-start p-2 bg-green-100 border-2 border-green-500 rounded-lg p-3 my-4">
                     <span class="text-black">🔔</span>
