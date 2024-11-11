@@ -87,7 +87,7 @@
                         <div class="file-group" data-type="นิติบุคคล" style="display: none;">
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล
-                                    <input type="file" name="ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล" required>
+                                    <input type="file" name="ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล" required >
                                 </label>
                             </div>
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
@@ -206,7 +206,7 @@
                         <div class="file-group" data-type="อื่นๆ" style="display: none;">
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
-                                    <input type="file" name="เอกสารแนบอื่นๆ">
+                                    <input type="file" name="เอกสารแนบอื่นๆ" multiple>
                                 </label>
                             </div>
 
@@ -362,28 +362,32 @@
                 };
 
                 // รวบรวมไฟล์ที่อัปโหลด
-                let allFileInputs = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"]');
-                for (let fileInput of allFileInputs) {
-                    if (fileInput.files.length > 0) {
-                        let file = fileInput.files[0];
-                        let base64 = await getBase64(file);
+let allFileInputs = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"]');
+for (let fileInput of allFileInputs) {
+    if (fileInput.files.length > 0) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+            let file = fileInput.files[i];
+            let base64 = await getBase64(file);
 
-                        // ใช้ชื่อของไฟล์เป็นชื่อเอกสารที่ต้องการ
-                        let desiredFileName = fileInput.name;
+            // ใช้ชื่อของไฟล์ตามที่ระบุใน name ของ input แต่ละประเภทและเพิ่มลำดับไฟล์ในกรณีที่มีหลายไฟล์
+            let documentNumber = i + 1; // ลำดับไฟล์
+            let desiredFileName = `${fileInput.name}_${documentNumber}`; // เช่น ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล_1, ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล_2
 
-                        // รักษานามสกุลไฟล์
-                        let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+            // รักษานามสกุลไฟล์
+            let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
 
-                        // รวมชื่อไฟล์ที่ต้องการกับนามสกุล
-                        let finalFileName = desiredFileName + fileExtension;
+            // รวมชื่อไฟล์ที่ต้องการกับนามสกุล
+            let finalFileName = desiredFileName + fileExtension;
 
-                        obj.files.push({
-                            base64: base64,
-                            type: file.type,
-                            name: finalFileName
-                        });
-                    }
-                }
+            obj.files.push({
+                base64: base64,
+                type: file.type,
+                name: finalFileName
+            });
+        }
+    }
+}
+
 
                 Swal.fire({
                     title: '<div class="text-md">กำลังบันทึก, กรุณารอสักครู่...</div>',
