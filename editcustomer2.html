@@ -203,10 +203,7 @@
         const nextPageBtn = document.getElementById('nextPage');
         const pageInfo = document.getElementById('pageInfo');
 
-      
 
-
-        // ฟังก์ชันสำหรับเริ่มต้น LIFF และดึงข้อมูลโปรไฟล์ผู้ใช้
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: `${LIFF_ID}` });
@@ -220,38 +217,32 @@
             }
         }
 
-        // ดึงข้อมูลโปรไฟล์ผู้ใช้จาก LIFF และกรองข้อมูลลูกค้า
         async function getUserProfile() {
             try {
                 const profile = await liff.getProfile();
                 useridlineFilter = profile.userId;
-                fetchCustomerData(); // ดึงข้อมูลลูกค้าและกรองตาม useridline
+                fetchCustomerData();
             } catch (error) {
                 console.error('Error getting profile data:', error);
             }
         }
 
-        // ฟังก์ชันสำหรับดึงข้อมูลลูกค้าทั้งหมด
         async function fetchCustomerData() {
             try {
-                // แสดง Loading Indicator
                 document.getElementById('loadingIndicator').classList.remove('hidden');
-
                 let response = await fetch(WEB_APP_URL + '?action=getCustomers');
                 let data = await response.json();
 
-                // ตรวจสอบว่าข้อมูลที่ได้รับเป็นอาร์เรย์
                 if (Array.isArray(data)) {
-                    // กรองข้อมูลตาม useridline ของผู้ใช้ที่ล็อกอิน
                     allCustomers = data.filter(customer => customer.userIdline === useridlineFilter)
                                        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 } else {
                     allCustomers = [];
                 }
 
-                currentPage = 1; // รีเซ็ตหน้าเป็น 1
-                displayCustomers(); // แสดงลูกค้า
-                updatePagination(); // อัปเดตปุ่มแบ่งหน้า
+                currentPage = 1; 
+                displayCustomers(); 
+                updatePagination(); 
 
             } catch (error) {
                 console.error('Error fetching customer data:', error);
@@ -261,17 +252,14 @@
                     text: 'ไม่สามารถโหลดข้อมูลลูกค้าได้',
                 });
             } finally {
-                // ซ่อน Loading Indicator
                 document.getElementById('loadingIndicator').classList.add('hidden');
             }
         }
 
-        // ฟังก์ชันสำหรับแสดงลูกค้าในตาราง
         function displayCustomers() {
             let customerTable = document.getElementById('customerTable');
             customerTable.innerHTML = '';
 
-            // ค้นหาและกรองข้อมูล
             let filterText = searchInput.value.toLowerCase();
             let filteredCustomers = allCustomers.filter(customer => {
                 let matchesSearch = customer.name.toLowerCase().includes(filterText);
@@ -285,7 +273,6 @@
                 return matchesSearch && matchesStatus;
             });
 
-            // การแบ่งหน้า
             const totalItems = filteredCustomers.length;
             const totalPages = Math.ceil(totalItems / itemsPerPage);
             if (currentPage > totalPages) currentPage = totalPages;
@@ -314,14 +301,12 @@
             nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
         }
 
-        // ฟังก์ชันสำหรับกรองลูกค้าตามการค้นหาและสถานะ
         function filterCustomers() {
-            currentPage = 1; // รีเซ็ตหน้าเป็น 1
+            currentPage = 1;
             displayCustomers();
             updatePagination();
         }
 
-        // ฟังก์ชันสำหรับอัปเดตการแบ่งหน้า
         function updatePagination() {
             let filterText = searchInput.value.toLowerCase();
             let filteredCustomers = allCustomers.filter(customer => {
@@ -342,7 +327,6 @@
             nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
         }
 
-        // ฟังก์ชันสำหรับโหลดรายละเอียดลูกค้าในฟอร์ม
         async function loadCustomerDetails(customer) {
             customerIdField.value = customer.id;
             useridlineID.value = customer.userIdline || '';
@@ -357,85 +341,76 @@
             typeID.value = customer.type || '';
             statusID.value = customer.status || '';
 
-            // เรียกฟังก์ชันแสดงฟิลด์อัปโหลดไฟล์ตามประเภทลูกค้า
             displayFileFields(customer.type);
-
-            // ดึงและแสดงเอกสารที่เกี่ยวข้อง
             await fetchAndDisplayDocuments(customer.id);
         }
 
-   // ฟังก์ชันสำหรับแสดงฟิลด์อัปโหลดไฟล์ตามประเภทลูกค้า
-function displayFileFields(type) {
-    let fileUploadsDiv = document.getElementById('fileUploads');
-    fileUploadsDiv.innerHTML = ''; // ล้างฟิลด์อัปโหลดไฟล์ก่อน
+        function displayFileFields(type) {
+            let fileUploadsDiv = document.getElementById('fileUploads');
+            fileUploadsDiv.innerHTML = '';
 
-    let fileFields = []; // เก็บฟิลด์ที่ต้องการสร้างตามประเภทลูกค้า
+            let fileFields = [];
+            if (type === 'นิติบุคคล') {
+                fileFields = [
+                    { label: 'ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล', name: 'ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล', required: false },
+                    { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+                    { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+                    { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
+                    { label: 'ทะเบียนบ้านกรรมการผู้มีอำนาจ (ถ้ามี)', name: 'ทะเบียนบ้านกรรมการผู้มีอำนาจ', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'คลินิก') {
+                fileFields = [
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
+                    { label: 'สำเนาบัตรประจำตัวประชาชนผู้ประกอบ', name: 'สำเนาบัตรประจำตัวประชาชนผู้ประกอบ', required: false },
+                    { label: 'ทะเบียนบ้านของผู้ประกอบ (ถ้ามี)', name: 'ทะเบียนบ้านของผู้ประกอบ', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'ร้านยา') {
+                fileFields = [
+                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน ที่เป็นปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
+                    { label: 'สำเนาบัตรประชาชนและทะเบียนบ้านของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนและทะเบียนบ้าน', required: false },
+                    { label: 'สำเนาทะเบียนบ้านผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านผู้รับอนุญาต', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'โรงพยาบาลรัฐบาล') {
+                fileFields = [
+                    { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
+                ];
+            } else if (type === 'โรงพยาบาลเอกชน') {
+                fileFields = [
+                    { label: 'ใบอนุญาตประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
+                    { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+                    { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20) (ถ้ามี)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+                    { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
+                ];
+            }
 
-    if (type === 'นิติบุคคล') { // บริษัท นิติบุคคล
-        fileFields = [
-            { label: 'ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล', name: 'ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล', required: false },
-            { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
-            { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-            { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
-            { label: 'ทะเบียนบ้านกรรมการผู้มีอำนาจ (ถ้ามี)', name: 'ทะเบียนบ้านกรรมการผู้มีอำนาจ', required: false },
-            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'คลินิก') { // คลินิก
-        fileFields = [
-            { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
-            { label: 'สำเนาบัตรประจำตัวประชาชนของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาบัตรประจำตัวประชาชนผู้ประกอบ', required: false },
-            { label: 'ทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', name: 'ทะเบียนบ้านของผู้ประกอบ', required: false },
-            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'ร้านยา') { // ร้านยา
-        fileFields = [
-            { label: 'ใบอนุญาตขายยาแผนปัจจุบัน ที่เป็นปัจจุบัน', name: 'ใบอนุญาตขายยาแผนปัจจุบัน', required: false },
-            { label: 'สำเนาบัตรประชาชน และ/หรือ สำเนาทะเบียนบ้าน ของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนและทะเบียนบ้าน', required: false },
-            { label: 'สำเนาทะเบียนบ้านผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านผู้รับอนุญาต', required: false },
-            { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'โรงพยาบาลรัฐบาล') { // โรงพยาบาลรัฐบาล
-        fileFields = [
-            { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
-        ];
-    } else if (type === 'โรงพยาบาลเอกชน') { // โรงพยาบาลเอกชน
-        fileFields = [
-            { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ที่เป็นปัจจุบัน', name: 'ใบอนุญาตประกอบกิจการสถานพยาบาล', required: false },
-            { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-            { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20) (ถ้ามี)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
-            { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
-        ];
-    }
+            fileFields.forEach(field => {
+                let fieldDiv = document.createElement('div');
+                fieldDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
+                fieldDiv.innerHTML = `
+                    <label>${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}
+                        <input type="file" name="${field.name}" ${field.required ? 'required' : ''} multiple class="mt-2 w-full">
+                    </label>
+                `;
+                fileUploadsDiv.appendChild(fieldDiv);
+            });
 
-    // แสดงฟิลด์อัปโหลดไฟล์ตามประเภทที่เลือก
-    fileFields.forEach(field => {
-        let fieldDiv = document.createElement('div');
-        fieldDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
-
-        fieldDiv.innerHTML = `
-            <label>${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}
-                <input type="file" name="${field.name}" ${field.required ? 'required' : ''} multiple class="mt-2 w-full">
-            </label>
-        `;
-
-        fileUploadsDiv.appendChild(fieldDiv);
-    });
-
-    // เพิ่มฟิลด์ "เอกสารแนบอื่นๆ" ในทุกประเภท
-    let additionalFileDiv = document.createElement('div');
-    additionalFileDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
-
-    additionalFileDiv.innerHTML = `
-        <label>เอกสารแนบอื่นๆ
-            <input type="file" name="เอกสารแนบอื่นๆ" multiple class="mt-2 w-full">
-        </label>
-    `;
-
-    fileUploadsDiv.appendChild(additionalFileDiv);
-}
+            // เพิ่มฟิลด์ "เอกสารแนบอื่นๆ" พร้อมช่องแก้ไขชื่อไฟล์
+            let additionalFileDiv = document.createElement('div');
+            additionalFileDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
+            additionalFileDiv.innerHTML = `
+                <label>เอกสารแนบอื่นๆ
+                    <input type="file" name="เอกสารแนบอื่นๆ" multiple class="mt-2 w-full">
+                </label>
+                <!-- เพิ่มช่องแก้ไขชื่อไฟล์สำหรับเอกสารแนบอื่นๆ -->
+                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
+            `;
+            fileUploadsDiv.appendChild(additionalFileDiv);
+        }
 
 
-        // ฟังก์ชันสำหรับดึงและแสดงเอกสารที่เกี่ยวข้อง
         async function fetchAndDisplayDocuments(customerId) {
             try {
                 let response = await fetch(`${WEB_APP_URL}?action=getDocumentsByCustomerId&id=${customerId}`);
@@ -451,7 +426,6 @@ function displayFileFields(type) {
                         let listItem = document.createElement('li');
                         listItem.className = 'mb-2';
 
-                        // สร้างลิงก์ไปยังเอกสาร
                         let link = document.createElement('a');
                         link.href = doc.fileLink;
                         link.target = '_blank';
@@ -467,9 +441,7 @@ function displayFileFields(type) {
             }
         }
 
-        // ฟังก์ชันสำหรับอัปเดตข้อมูลลูกค้า
         async function updateCustomerData() {
-            // ตรวจสอบความถูกต้องของฟอร์ม
             if (!nameID.value.trim() || !contactID.value.trim()) {
                 Swal.fire({
                     icon: 'error',
@@ -479,7 +451,6 @@ function displayFileFields(type) {
                 return;
             }
 
-            // ตรวจสอบไฟล์ที่จำเป็นต้องอัปโหลด
             let requiredFiles = document.querySelectorAll('#fileUploads input[type="file"][required]');
             for (let fileInput of requiredFiles) {
                 if (fileInput.files.length === 0) {
@@ -508,35 +479,36 @@ function displayFileFields(type) {
                 files: []
             };
 
-            // รวบรวมไฟล์ที่อัปโหลดใหม่
-                let fileInputs = document.querySelectorAll('#fileUploads input[type="file"]');
-                for (let fileInput of fileInputs) {
-                    if (fileInput.files.length > 0) {
-                        for (let i = 0; i < fileInput.files.length; i++) {
-                            let file = fileInput.files[i];
-                            let base64 = await getBase64(file);
-                
-                            // ใช้ชื่อเอกสารตามฟิลด์ name ของ input และเพิ่มลำดับไฟล์ เช่น เอกสารแนบอื่นๆ_1
-                            let fileName = `${fileInput.name}_${i + 1}`;
-                
-                            // รักษานามสกุลไฟล์
-                            let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
-                
-                            // รวมชื่อไฟล์กับนามสกุล
-                            let finalFileName = fileName + fileExtension;
-                
-                            obj.files.push({
-                                base64: base64,
-                                type: file.type,
-                                name: finalFileName
-                            });
+            let fileInputs = document.querySelectorAll('#fileUploads input[type="file"]');
+            for (let fileInput of fileInputs) {
+                let parentDiv = fileInput.closest('.bg-slate-100');
+                let customNameInput = parentDiv ? parentDiv.querySelector('.file-name-input') : null;
+
+                if (fileInput.files.length > 0) {
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        let file = fileInput.files[i];
+                        let base64 = await getBase64(file);
+
+                        let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+                        let baseName = fileInput.name;
+
+                        // หากไฟล์เป็น "เอกสารแนบอื่นๆ" และมีการกรอกชื่อใหม่ ใช้ชื่อนั้นแทน
+                        if (fileInput.name === "เอกสารแนบอื่นๆ" && customNameInput && customNameInput.value.trim() !== '') {
+                            baseName = customNameInput.value.trim();
                         }
+
+                        let finalFileName = `${baseName}_${i + 1}${fileExtension}`;
+
+                        obj.files.push({
+                            base64: base64,
+                            type: file.type,
+                            name: finalFileName
+                        });
                     }
                 }
-
+            }
 
             try {
-                // แสดง Loading Indicator โดยใช้ SweetAlert2
                 Swal.fire({
                     title: 'กำลังอัปเดตข้อมูล...',
                     allowOutsideClick: false,
@@ -558,13 +530,10 @@ function displayFileFields(type) {
                         title: 'อัปเดตข้อมูลสำเร็จ',
                         text: 'ข้อมูลลูกค้าถูกอัปเดตเรียบร้อยแล้ว',
                     }).then(() => {
-                        // รีเฟรชรายการลูกค้า
                         fetchCustomerData();
-                        // เคลียร์ฟอร์ม
                         document.getElementById('editForm').reset();
                         document.getElementById('fileUploads').innerHTML = '';
                         document.getElementById('documents').innerHTML = '';
-                        // สลับกลับไปยังแท็บรายชื่อลูกค้า
                         switchTab('customers');
                     });
                 } else {
@@ -582,12 +551,9 @@ function displayFileFields(type) {
                     title: 'เกิดข้อผิดพลาด',
                     text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
                 });
-            } finally {
-                // ซ่อน Loading Indicator (SweetAlert2 จะซ่อนเองหลังจาก Swal.fire())
             }
         }
 
-        // ฟังก์ชันสำหรับแปลงไฟล์เป็น base64
         function getBase64(file) {
             return new Promise((resolve, reject) => {
                 let reader = new FileReader();
@@ -597,7 +563,6 @@ function displayFileFields(type) {
             });
         }
 
-        // ฟังก์ชันสำหรับสลับแท็บ
         function switchTab(tab) {
             if (tab === 'customers') {
                 contentCustomers.classList.add('active');
@@ -619,11 +584,9 @@ function displayFileFields(type) {
             }
         }
 
-        // กำหนดเหตุการณ์เมื่อคลิกแท็บ
         tabCustomers.addEventListener('click', () => switchTab('customers'));
         tabEdit.addEventListener('click', () => switchTab('edit'));
 
-        // กำหนดเหตุการณ์เมื่อคลิกปุ่มแก้ไขในตาราง
         document.addEventListener('click', function(event) {
             if (event.target && event.target.classList.contains('editBtn')) {
                 const customerId = event.target.getAttribute('data-id');
@@ -635,22 +598,15 @@ function displayFileFields(type) {
             }
         });
 
-        // กำหนดเหตุการณ์เมื่อเปลี่ยนประเภทลูกค้า
         typeID.addEventListener('change', function() {
             displayFileFields(this.value);
         });
 
-        // กำหนดเหตุการณ์เมื่อกดปุ่มอัปเดตข้อมูล
         updateBtn.addEventListener('click', updateCustomerData);
-
-        // กำหนดเหตุการณ์เมื่อค้นหา
         searchInput.addEventListener('keyup', filterCustomers);
-
-        // กำหนดเหตุการณ์เมื่อเปลี่ยนสถานะกรอง
         filterApproved.addEventListener('change', filterCustomers);
         filterPending.addEventListener('change', filterCustomers);
 
-        // กำหนดเหตุการณ์เมื่อกดปุ่มแบ่งหน้า
         prevPageBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
@@ -680,9 +636,9 @@ function displayFileFields(type) {
                 updatePagination();
             }
         });
+
         window.onload = function () {
              initializeLiff();
-             fetchCustomerData;
         };
     </script>
 </body>
