@@ -57,8 +57,7 @@
                 <textarea type="text" id="Note" name="Note" class="w-full p-2 border rounded-md"
                     placeholder="หมายเหตุ"></textarea>
                 <input type="hidden" id="userIdline" name="userIdline" required/>
-
-
+                <input type="hidden" id="displayName" name="displayName"/>
             </div>
         </div>
         <!-- ฟอร์มเลือกประเภทและอัพโหลดไฟล์ -->
@@ -76,7 +75,6 @@
                             <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
                             <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
                             <option value="อื่นๆ">อื่นๆ</option>
-
                         </select>
                     </div>
 
@@ -96,8 +94,7 @@
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6
-                                    เดือน
+                                <label><span class="text-red-400">ต้องมี**</span>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน
                                     <input type="file" name="สำเนาหนังสือรับรองบริษัท" required multiple>
                                 </label>
                             </div>
@@ -116,10 +113,13 @@
                                     <input type="file" name="แผนที่สถานที่จัดส่ง" multiple>
                                 </label>
                             </div>
+                            <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
                                     <input type="file" name="เอกสารแนบอื่นๆ" multiple>
                                 </label>
+                                <!-- เพิ่มฟิลด์แก้ไขชื่อไฟล์เฉพาะในไฟล์แนบอื่นๆ -->
+                                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
                             </div>
                         </div>
 
@@ -131,8 +131,7 @@
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label><span
-                                        class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนของผู้ประกอบกิจการสถานพยาบาล
+                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนผู้ประกอบกิจการสถานพยาบาล
                                     <input type="file" name="สำเนาบัตรประชาชนผู้ประกอบการ" required multiple>
                                 </label>
                             </div>
@@ -146,10 +145,12 @@
                                     <input type="file" name="แผนที่สถานที่จัดส่ง" multiple>
                                 </label>
                             </div>
+                            <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
                                     <input type="file" name="เอกสารแนบอื่นๆ" multiple>
                                 </label>
+                                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
                             </div>
                         </div>
 
@@ -161,7 +162,7 @@
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนผู้รับอนุญาต
+                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนของผู้รับอนุญาต
                                     <input type="file" name="สำเนาบัตรประชาชนของผู้รับอนุญาต" required multiple>
                                 </label>
                             </div>
@@ -176,10 +177,12 @@
                                     <input type="file" name="แผนที่สถานที่จัดส่ง" multiple>
                                 </label>
                             </div>
+                            <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
                                     <input type="file" name="เอกสารแนบอื่นๆ" multiple>
                                 </label>
+                                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
                             </div>
                         </div>
 
@@ -190,10 +193,12 @@
                                     <input type="file" name="สถานที่จัดส่ง" multiple>
                                 </label>
                             </div>
+                            <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
                                     <input type="file" name="เอกสารแนบอื่นๆ" multiple>
                                 </label>
+                                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
                             </div>
                         </div>
 
@@ -205,8 +210,7 @@
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6
-                                    เดือน
+                                <label><span class="text-red-400">ต้องมี**</span>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน
                                     <input type="file" name="สำเนาหนังสือรับรองบริษัท" required multiple>
                                 </label>
                             </div>
@@ -218,23 +222,26 @@
 
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label>ระบบสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE (ถ้ามี)
-                                    <input type="file" name="สถานที่จัดส่ง"multiple>
+                                    <input type="file" name="สถานที่จัดส่ง" multiple>
                                 </label>
                             </div>
+                            <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
                                     <input type="file" name="เอกสารแนบอื่นๆ" multiple>
                                 </label>
+                                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
                             </div>
                         </div>
-                        <!-- สำหรับเอกสารแนบอื่นๆ -->
+                        <!-- สำหรับอื่นๆ -->
                         <div class="file-group" data-type="อื่นๆ" style="display: none;">
+                            <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
                                     <input type="file" name="เอกสารแนบอื่นๆ" multiple>
                                 </label>
+                                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
                             </div>
-
                         </div>
 
                     </div>
@@ -265,7 +272,6 @@
 
         window.onload = function () {
             initializeLiff();
-            generateKeyAndDate();
         };
 
         async function initializeLiff() {
@@ -287,9 +293,6 @@
                 console.error('Error getting profile data:', error);
             }
         }
-
-
-
 
         // ฟังก์ชันสำหรับแสดงหรือซ่อนช่องอัพโหลดไฟล์ตามประเภท
         typeID.addEventListener('change', function () {
@@ -325,7 +328,6 @@
             return true;
         }
 
-
         // ฟังก์ชันสำหรับจัดการคลิกปุ่มส่งข้อมูล
         submitBtn.addEventListener('click', async (event) => {
             event.preventDefault();
@@ -352,8 +354,6 @@
                 }
             }
 
-
-
             const isConfirmed = await Swal.fire({
                 title: 'ยืนยันการส่งข้อมูล',
                 text: 'แน่ใจว่าคุณต้องการส่งข้อมูล?',
@@ -371,7 +371,6 @@
 
             try {
                 let obj = {
-                    
                     userIdline: userIDline.value,
                     name: nameID.value,
                     contact: contactID.value,
@@ -387,32 +386,35 @@
                 };
 
                 // รวบรวมไฟล์ที่อัปโหลด
-let allFileInputs = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"]');
-for (let fileInput of allFileInputs) {
-    if (fileInput.files.length > 0) {
-        for (let i = 0; i < fileInput.files.length; i++) {
-            let file = fileInput.files[i];
-            let base64 = await getBase64(file);
+                let allFileInputs = document.querySelectorAll('.file-group[data-type="' + typeID.value + '"] input[type="file"]');
+                for (let fileInput of allFileInputs) {
+                    let parentDiv = fileInput.closest('.bg-slate-100');
+                    let customNameInput = parentDiv ? parentDiv.querySelector('.file-name-input') : null;
 
-            // ใช้ชื่อของไฟล์ตามที่ระบุใน name ของ input แต่ละประเภทและเพิ่มลำดับไฟล์ในกรณีที่มีหลายไฟล์
-            let documentNumber = i + 1; // ลำดับไฟล์
-            let desiredFileName = `${fileInput.name}_${documentNumber}`; // เช่น ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล_1, ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล_2
+                    if (fileInput.files.length > 0) {
+                        for (let i = 0; i < fileInput.files.length; i++) {
+                            let file = fileInput.files[i];
+                            let base64 = await getBase64(file);
 
-            // รักษานามสกุลไฟล์
-            let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+                            let documentNumber = i + 1; 
+                            // หากไฟล์ปัจจุบันคือ "เอกสารแนบอื่นๆ" และมีการกรอกชื่อไฟล์ใหม่ใน customNameInput ให้ใช้ชื่อนั้น
+                            // ไม่เช่นนั้นให้ใช้ชื่อ fileInput.name ตามเดิม
+                            let baseName = fileInput.name; 
+                            if (fileInput.name === "เอกสารแนบอื่นๆ" && customNameInput && customNameInput.value.trim() !== '') {
+                                baseName = customNameInput.value.trim();
+                            }
+                            
+                            let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+                            let finalFileName = `${baseName}_${documentNumber}${fileExtension}`;
 
-            // รวมชื่อไฟล์ที่ต้องการกับนามสกุล
-            let finalFileName = desiredFileName + fileExtension;
-
-            obj.files.push({
-                base64: base64,
-                type: file.type,
-                name: finalFileName
-            });
-        }
-    }
-}
-
+                            obj.files.push({
+                                base64: base64,
+                                type: file.type,
+                                name: finalFileName
+                            });
+                        }
+                    }
+                }
 
                 Swal.fire({
                     title: '<div class="text-md">กำลังบันทึก, กรุณารอสักครู่...</div>',
@@ -440,7 +442,6 @@ for (let fileInput of allFileInputs) {
                     if (result.isConfirmed) {
                         document.querySelector('form').reset();
                         liff.closeWindow(); // ปิดหน้าต่าง LIFF หลังจากปิด Swal
-
                     }
                 });
                 console.log(data);
