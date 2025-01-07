@@ -14,9 +14,9 @@
 </head>
 
 <body class="bg-slate-50 h-screen">
-    <div class="max-w-md mx-auto p-4 mt-4">
+    <div class="max-w-md w-full mx-auto p-4 mt-4">
         <div class="flex text-center mb-2">
-            <div class="w-full bg-green-800 text-white rounded-md mr-2 py-2 hover:bg-green-700">
+            <div class="w-full bg-green-900 text-white rounded-md mr-2 py-2 hover:bg-green-700">
                 <a href="https://liff.line.me/2000460029-BQzqDkv1">เพิ่มข้อมูลลูกค้า</a>
             </div>
             <div class="w-full bg-green-500 text-white rounded-md py-2 hover:bg-green-400">
@@ -25,12 +25,12 @@
         </div>
         <!-- ฟอร์มข้อมูลลูกค้า -->
         <div class="">
-            <div class="bg-green-50 border border-green-400 rounded-md shadow-xl p-6">
+            <div class="bg-white border border-green-500 rounded-md shadow p-6">
                 <div class="flex justify-between mb-4">
                     <div class="text-xl text-slate-800 my-auto">เพิ่มข้อมูลลูกค้า</div>
                     <div class="my-auto">
                         <input id="status" name="status" placeholder="status"
-                            class="p-2  text-right text-yellow-500 bg-white bg-opacity-0  " value="รอการอนุมัติ"
+                            class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-sm text-center font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20" value="รอการอนุมัติ"
                             readonly>
                     </div>
                 </div>
@@ -63,15 +63,16 @@
         <!-- ฟอร์มเลือกประเภทและอัพโหลดไฟล์ -->
         <div class="max-w-md mx-auto py-4">
             <form>
-                <div class="bg-white border border-green-400  p-5 shadow-xl rounded-md w-6/6 mx-auto">
+                <div class="bg-white border border-green-400  p-6 shadow-xl rounded-md w-6/6 mx-auto">
 
                     <!-- ส่วนเลือกประเภทลูกค้า -->
-                    <div class="w-full border mb-5">
+                    <div class="w-full border mb-10">
                         <select id="Type" name="Type" class="w-full p-2 rounded-md">
                             <option value="" disabled selected>เลือกประเภทลูกค้า</option>
-                            <option value="นิติบุคคล">บริษัท นิติบุคคล</option>
-                            <option value="คลินิก">คลินิก</option>
-                            <option value="ร้านยา">ร้านยา</option>
+                            <option value="คลินิก-บุคคล">คลินิก-บุคคล</option>
+                            <option value="คลินิก-นิติบุคคล">คลินิก-นิติบุคคล</option>
+                            <option value="ร้านยา-บุคคล">ร้านยา-บุคคล</option>
+                            <option value="ร้านยา-นิติบุคคล">ร้านยา-นิติบุคคล</option>
                             <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
                             <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
                             <option value="อื่นๆ">อื่นๆ</option>
@@ -80,19 +81,76 @@
 
                     <!-- กลุ่มช่องอัพโหลดไฟล์สำหรับแต่ละประเภทลูกค้า -->
                     <div id="fileUploads">
+                        <!-- สำหรับบริษัท คลินิก-บุคคล -->
+                        <div class="file-group" data-type="คลินิก-บุคคล" style="display: none;">
+                            <div class="border border-red-400 rounded p-2"><span class="text-red-400" text-sm>ต้องมี**ใบอนุญาติ</span>
 
-                        <!-- สำหรับบริษัท นิติบุคคล -->
-                        <div class="file-group" data-type="นิติบุคคล" style="display: none;">
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล
-                                    <input type="file" name="ใบอนุญาตขายยาฯ/ใบอนุญาตสถานพยาบาล" required multiple>
+                                <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7
+                                    <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7" required multiple>
                                 </label>
                             </div>
+
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)
-                                    <input type="file" name="สำเนาทะเบียนภาษีมูลค่าเพิ่ม" required multiple>
+                                <label>ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19
+                                    <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.19"  multiple>
                                 </label>
                             </div>
+
+                        </div>
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label><span class="text-red-400">ต้องมี**</span>เสาเนาบัตรประชาชนของของผู้ประกอบกิจการสถานพยาบาล
+                                    <input type="file" name="เสาเนาบัตรประชาชนของของผู้ประกอบกิจการสถานพยาบาล" required multiple>
+                                </label>
+                            </div>
+
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label><span class="text-red-400">ต้องมี**</span>ที่อยู่ เบอร์ติดต่อ ที่สามารถติตด่อได้
+                                    <input type="file" name="ที่อยู่เบอร์ติดต่อ" required multiple>
+                                </label>
+                            </div>
+
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                <label>สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล
+                                    <input type="file" name="สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล" multiple>
+                                </label>
+                            </div>
+
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label>แผนที่สถานที่จัดส่ง
+                                    <input type="file" name="แผนที่สถานที่จัดส่ง" multiple>
+                                </label>
+                            </div>
+
+                            <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                <label>เอกสารแนบอื่นๆ
+                                    <input type="file" name="เอกสารแนบอื่นๆ" multiple>
+                                </label>
+                                <!-- เพิ่มฟิลด์แก้ไขชื่อไฟล์เฉพาะในไฟล์แนบอื่นๆ -->
+                                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
+                            </div>
+
+                    </div>
+
+                        <!-- สำหรับบริษัท คลินิก-นิติบุคคล -->
+                    <div class="file-group" data-type="คลินิก-นิติบุคคล" style="display: none;">
+                        <div class="border border-red-400 rounded p-2"><span class="text-red-400" text-sm>ต้องมี**ใบอนุญาติ</span>
+                            
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7
+                                    <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7" required multiple>
+                                </label>
+                            </div>
+
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                <label>ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19
+                                    <input type="file" name="ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19" multiple>
+                                </label>
+                            </div>
+
+                        </div>
+                        
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label><span class="text-red-400">ต้องมี**</span>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน
                                     <input type="file" name="สำเนาหนังสือรับรองบริษัท" required multiple>
@@ -100,12 +158,22 @@
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ
-                                    <input type="file" name="สำเนาบัตรประชาชนและทะเบียนบ้านกรรมการ" required multiple>
+                                    <input type="file" name="สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ" required multiple>
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label>สำเนาทะเบียนบ้านของกรรมการผู้มีอำนาจ
-                                    <input type="file" name="ทะเบียนบ้านกรรมการผู้มีอำนาจ" multiple>
+                                <label>สำเนาทะเบียนภาษีมูลค่าเพิ่ม ภพ.20
+                                    <input type="file" name="สำเนาทะเบียนภาษีมูลค่าเพิ่ม" multiple>
+                                </label>
+                            </div>
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label>สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล
+                                    <input type="file" name="สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล" multiple>
+                                </label>
+                            </div>
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label>ที่อยู่ เบอร์ติดต่อ ที่สามารถติตด่อได้
+                                    <input type="file" name="สำเนาหนังสือรับรองบริษัท" required multiple>
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
@@ -123,23 +191,36 @@
                             </div>
                         </div>
 
-                        <!-- สำหรับคลินิก -->
-                        <div class="file-group" data-type="คลินิก" style="display: none;">
+                        <!-- สำหรับ ร้านยา-บุคคล -->
+                        <div class="file-group" data-type="ร้านยา-บุคคล" style="display: none;">
+                            
+                            <div class="border border-red-400 rounded p-2"><span class="text-red-400" text-sm>ต้องมี**ใบอนุญาติ</span>
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตให้ประกอบกิจการสถานพยาบาล
-                                    <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล" required multiple>
+                                <label>ใบอนุญาตขายยาแผนปัจจุบัน (ข.ย.5)
+                                    <input type="file" name="ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)"  multiple>
+                                </label>
+                            </div>
+                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                <label>ใบอนุญาตขายยาแผนปัจจุบัน (ข.ย.8)
+                                    <input type="file" name="ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)"  multiple>
+                                </label>
+                            </div>
+                            </div>
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนของผู้รับอนุญาต
+                                    <input type="file" name="สำเนาบัตรประชาชนของผู้รับอนุญาต" required multiple>
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนผู้ประกอบกิจการสถานพยาบาล
-                                    <input type="file" name="สำเนาบัตรประชาชนผู้ประกอบการ" required multiple>
+                                <label>สำเนาทะเบียนบ้านของผู้รับอนุญาต
+                                    <input type="file" name="สำเนาทะเบียนบ้านของผู้รับอนุญาต" multiple>
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label>สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล (ถ้ามี)
-                                    <input type="file" name="สำเนาทะเบียนบ้านของผู้ประกอบ" multiple>
+                                <label>ที่อยู่ เบอร์ติดต่อ ที่สามารถติตด่อได้
+                                    <input type="file" name="ที่อยู่เบอร์ติดต่อ" required multiple>
                                 </label>
-                            </div>
+                            </div>    
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label>แผนที่สถานที่จัดส่ง (ถ้ามี)
                                     <input type="file" name="แผนที่สถานที่จัดส่ง" multiple>
@@ -154,24 +235,46 @@
                             </div>
                         </div>
 
-                        <!-- สำหรับร้านยา -->
-                        <div class="file-group" data-type="ร้านยา" style="display: none;">
+                        <!-- สำหรับ ร้านยา-นิติบุคคล -->
+                        <div class="file-group" data-type="ร้านยา-นิติบุคคล" style="display: none;">
+                            <div class="border border-red-400 rounded p-2"><span class="text-red-400" text-sm>ต้องมี**ใบอนุญาติ</span>
+                                <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                    <label>ใบอนุญาตขายยาแผนปัจจุบัน (ข.ย.5)
+                                        <input type="file" name="ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)"  multiple>
+                                    </label>
+                                </div>
+                                <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                    <label>ใบอนุญาตขายยาแผนปัจจุบัน (ข.ย.8)
+                                        <input type="file" name="ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)"  multiple>
+                                    </label>
+                                </div>
+                            </div>
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตขายยาแผนปัจจุบัน
-                                    <input type="file" name="ใบอนุญาตขายยาแผนปัจจุบัน" required multiple>
+                                <label><span class="text-red-400">ต้องมี**</span>หนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน
+                                    <input type="file" name="หนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน" required multiple>
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนของผู้รับอนุญาต
-                                    <input type="file" name="สำเนาบัตรประชาชนของผู้รับอนุญาต" required multiple>
+                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ
+                                    <input type="file" name="สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ" required multiple>
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
-                                <label>สำเนาทะเบียนบ้านผู้รับอนุญาต
-                                    <input type="file" name="สำเนาทะเบียนบ้านผู้รับอนุญาต" multiple>
+                                <label><span class="text-red-400">ต้องมี**</span>ที่อยู่ เบอร์ติดต่อ ที่สามารถติตด่อได้
+                                    <input type="file" name="ที่อยู่เบอร์ติดต่อ" required multiple>
+                                </label>
+                            </div>  
+                            
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label>สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20) (ถ้ามี)
+                                    <input type="file" name="สำเนาทะเบียนภาษีมูลค่าเพิ่ม" multiple>
                                 </label>
                             </div>
-
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label>สำเนาทะเบียนบ้านของผู้รับอนุญาต(ถ้ามี)
+                                    <input type="file" name="สำเนาทะเบียนบ้านของผู้รับอนุญาต" multiple>
+                                </label>
+                            </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label>แผนที่สถานที่จัดส่ง (ถ้ามี)
                                     <input type="file" name="แผนที่สถานที่จัดส่ง" multiple>
@@ -193,6 +296,7 @@
                                     <input type="file" name="สถานที่จัดส่ง" multiple>
                                 </label>
                             </div>
+                            
                             <!-- เฉพาะไฟล์แนบอื่น ๆ เท่านั้นที่จะมีฟิลแก้ไขชื่อไฟล์ -->
                             <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
                                 <label>เอกสารแนบอื่นๆ
@@ -204,10 +308,20 @@
 
                         <!-- สำหรับโรงพยาบาลเอกชน -->
                         <div class="file-group" data-type="โรงพยาบาลเอกชน" style="display: none;">
-                            <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
-                                <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตให้ประกอบกิจการสถานพยาบาล
-                                    <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล" required multiple>
-                                </label>
+                            <div class="border border-red-400 rounded p-2"><span class="text-red-400" text-sm>ต้องมี**ใบอนุญาติ</span>
+
+                                <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                    <label><span class="text-red-400">ต้องมี**</span>ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7
+                                        <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.7)" required multiple>
+                                    </label>
+                                </div>
+    
+                                <div class="bg-slate-100 text-sm rounded-md my-5 p-4">
+                                    <label>ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19
+                                        <input type="file" name="ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.19)"  multiple>
+                                    </label>
+                                </div>
+    
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label><span class="text-red-400">ต้องมี**</span>สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน
@@ -215,11 +329,21 @@
                                 </label>
                             </div>
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label><span class="text-red-400">ต้องมี**</span>สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ
+                                    <input type="file" name="สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ" required multiple>
+                                </label>
+                            </div>
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label>สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20) (ถ้ามี)
                                     <input type="file" name="สำเนาทะเบียนภาษีมูลค่าเพิ่ม">
                                 </label>
                             </div>
-
+                            <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
+                                <label>สำเนาทะเบียนบ้านของผู้รับอนุญาต(ถ้ามี)
+                                    <input type="file" name="สำเนาทะเบียนบ้านของผู้รับอนุญาต" multiple>
+                                </label>
+                            </div>
+                             
                             <div class="bg-slate-100 rounded-md text-sm my-5 p-4">
                                 <label>ระบบสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE (ถ้ามี)
                                     <input type="file" name="สถานที่จัดส่ง" multiple>
