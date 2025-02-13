@@ -135,13 +135,14 @@
         <div class="mb-5">
           <label for="Type" class="block text-gray-700 text-sm font-bold mb-2">ประเภทลูกค้า</label>
           <select id="Type" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" disabled>
-            <option value="" disabled selected>เลือกประเภทลูกค้า</option>
-            <option value="นิติบุคคล">บริษัท นิติบุคคล</option>
-            <option value="คลินิก">คลินิก</option>
-            <option value="ร้านยา">ร้านยา</option>
-            <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
-            <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
-            <option value="อื่นๆ">อื่นๆ</option>
+           <option value="" disabled selected>เลือกประเภทลูกค้า</option>
+                <option value="คลินิก-บุคคล">คลินิก-บุคคล</option>
+                <option value="คลินิก-นิติบุคคล">คลินิก-นิติบุคคล</option>
+                <option value="ร้านยา-บุคคล">ร้านยา-บุคคล</option>
+                <option value="ร้านยา-นิติบุคคล">ร้านยา-นิติบุคคล</option>
+                <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
+                <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                <option value="อื่นๆ">อื่นๆ</option>
           </select>
           <!-- input แบบ hidden สำหรับส่งค่า -->
           <input type="hidden" id="hiddenType" name="Type" />
