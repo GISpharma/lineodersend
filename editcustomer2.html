@@ -1,675 +1,676 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>จัดการข้อมูลลูกค้า</title>
-  <!-- นำเข้า Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- นำเข้า SweetAlert2 สำหรับแสดงกล่องข้อความ -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!-- นำเข้า LIFF SDK -->
-  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-  <style>
-    /* เพิ่มการแสดงแท็บที่เลือก */
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>จัดการข้อมูลลูกค้า</title>
+    <!-- นำเข้า Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- นำเข้า SweetAlert2 สำหรับแสดงกล่องข้อความ -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- นำเข้า LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <style>
+        /* เพิ่มการแสดงแท็บที่เลือก */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans leading-normal tracking-normal">
-  <div class="max-w-md mx-auto px-4 py-4">
-    <div class="flex text-center mb-2">
-      <div class="w-full bg-green-800 text-white rounded-md mr-2 py-2 hover:bg-green-700">
-        <a href="https://liff.line.me/2000460029-BQzqDkv1">เพิ่มข้อมูลลูกค้า</a>
-      </div>
-      <div class="w-full bg-green-500 text-white rounded-md py-2 hover:bg-green-400">
-        <a href="https://liff.line.me/2000460029-5gdVaOXe">ตรวจสอบข้อมูลลูกค้า</a>
-      </div>
+    <div class="max-w-md mx-auto px-4 py-4">
+        <div class="flex text-center mb-2">
+            <div class="w-full bg-green-800 text-white rounded-md mr-2 py-2 hover:bg-green-700">
+                <a href="https://liff.line.me/2000460029-BQzqDkv1">เพิ่มข้อมูลลูกค้า</a>
+            </div>
+            <div class="w-full bg-green-500 text-white rounded-md py-2 hover:bg-green-400">
+                <a href="https://liff.line.me/2000460029-5gdVaOXe">ตรวจสอบข้อมูลลูกค้า</a>
+            </div>
+        </div>
+        <!-- แถบแท็บ -->
+        <div class="my-4">
+            <nav class="flex space-x-4">
+                <button id="tabCustomers" class="hidden px-4 py-2 bg-slate-700 text-white rounded">รายชื่อลูกค้า</button>
+                <button id="tabEdit" class="hidden px-4 py-2 bg-slate-300 text-gray-100 rounded" disabled>แก้ไขข้อมูลลูกค้า</button>
+            </nav>
+        </div>
+        
+        <!-- เนื้อหาแท็บรายชื่อลูกค้า -->
+        <div id="contentCustomers" class="tab-content active relative">
+            <!-- ช่องค้นหาและกรองสถานะ -->
+            <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                <input type="text" id="searchInput" placeholder="ค้นหารายชื่อลูกค้า..." class="w-full md:w-1/2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 md:mb-0">
+                <div class="flex items-center space-x-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="filterApproved" class="form-checkbox h-5 w-5 text-blue-600">
+                        <span class="ml-2 text-sm text-gray-700">อนุมัติแล้ว</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="filterPending" class="form-checkbox h-5 w-5 text-blue-600">
+                        <span class="ml-2 text-sm text-gray-700">รอการอนุมัติ</span>
+                    </label>
+                </div>
+            </div>
+            <!-- ตารางลูกค้า -->
+            <div class="bg-white shadow-md rounded-md my-6 overflow-x-auto relative">
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
+                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTable">
+                        <!-- รายการลูกค้าจะแสดงที่นี่ -->
+                    </tbody>
+                    <div id="loadingIndicator" class="flex justify-center items-center absolute inset-0 bg-gray-200 hidden">
+                        <div class="text-sm text-slate-500">กำลังโหลดข้อมูล...</div>
+                    </div>
+                </table>
+            </div>
+            <!-- การแบ่งหน้า -->
+            <div class="flex justify-between items-center mt-4">
+                <button id="prevPage" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l disabled:opacity-50" disabled>ย้อนกลับ</button>
+                <span id="pageInfo" class="text-gray-700"></span>
+                <button id="nextPage" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r" disabled>ถัดไป</button>
+            </div>
+        </div>
+        
+        <!-- เนื้อหาแท็บแก้ไขข้อมูลลูกค้า -->
+        <div id="contentEdit" class="tab-content">
+            <h2 class="text-xl font-bold mb-6 text-gray-800">รายละเอียดลูกค้า</h2>
+            <form id="editForm" class="bg-green-50 border border-green-400 p-6 rounded-lg shadow-md">
+                <!-- ฟอร์มข้อมูลลูกค้า -->
+                <input type="hidden" id="customerId">
+                <div class="mb-4">
+                    <label for="useridline" class="block text-gray-700 text-sm font-bold mb-2">UserID Line</label>
+                    <input type="hidden" id="useridline" name="useridline" placeholder="UserID Line" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" readonly>
+                </div>
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 text-sm font-bold mb-2">ชื่อ สกุล</label>
+                    <input type="text" id="name" name="name" placeholder="ชื่อ สกุล" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div class="flex justify-between -mx-1">
+                    <div class="mb-4 mr-2">
+                        <label for="contact" class="block text-gray-700 text-sm font-bold mb-2">เบอร์ติดต่อ</label>
+                        <input type="tel" pattern="[0-9]{10}" title="กรุณากรอกเบอร์โทรศัพท์ที่มี 10 หลัก" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" id="contact" name="contact" placeholder="เบอร์ติดต่อ" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="Fax" class="block text-gray-700 text-sm font-bold mb-2">แฟกซ์</label>
+                        <input type="text" id="Fax" name="Fax" placeholder="แฟกซ์" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="Tex" class="block text-gray-700 text-sm font-bold mb-2">เลขประจำตัวผู้เสียภาษี</label>
+                    <input type="text" id="Tex" name="Tex" placeholder="Tex" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div class="w-1/2 mb-4">
+                    <label for="Payment" class="block text-gray-700 text-sm font-bold mb-2">เครดิต/การชำระเงิน</label>
+                    <input type="text" id="Payment" name="Payment" placeholder="การชำระเงิน" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">              
+                </div>
+                <div class="mb-4">
+                    <label for="Address" class="block text-gray-700 text-sm font-bold mb-2">ที่อยู่</label>
+                    <textarea type="text" id="Address" name="Address" placeholder="ที่อยู่" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="Shipping" class="block text-gray-700 text-sm font-bold mb-2">สถานที่จัดส่ง</label>
+                    <textarea type="text" id="Shipping" name="Shipping" placeholder="สถานที่จัดส่ง" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="Note" class="block text-gray-700 text-sm font-bold mb-2">หมายเหตุ</label>
+                    <textarea type="text" id="Note" name="Note" placeholder="หมายเหตุ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="status" class="block text-gray-700 text-sm font-bold mb-2">สถานะ</label>
+                    <input type="text" id="status" name="status" placeholder="สถานะ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" readonly>
+                </div>
+
+                <!-- ส่วนเลือกประเภทลูกค้า -->
+                <div class="mb-5">
+                    <label for="Type" class="block text-gray-700 text-sm font-bold mb-2">ประเภทลูกค้า</label>
+                    <select id="Type" name="Type" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <option value="คลินิก-บุคคล">คลินิก-บุคคล</option>
+                        <option value="คลินิก-นิติบุคคล">คลินิก-นิติบุคคล</option>
+                        <option value="ร้านยา-บุคคล">ร้านยา-บุคคล</option>
+                        <option value="ร้านยา-นิติบุคคล">ร้านยา-นิติบุคคล</option>
+                        <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
+                        <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
+                </div>
+                <!-- ส่วนแสดงเอกสารที่อัปโหลดแล้ว -->
+                <div id="documentList" class="mt-4">
+                    <h3 class="text-lg font-bold mb-2 text-gray-800">เอกสารที่อัปโหลดแล้ว</h3>
+                    <ul id="documents" class="list-disc list-inside text-blue-600">
+                        <!-- รายการเอกสารจะแสดงที่นี่ -->
+                    </ul>
+                </div>
+                <!-- ส่วนอัปโหลดไฟล์ -->
+                <div id="fileUploads" class="mb-4">
+                    <!-- ฟิลด์อัปโหลดไฟล์จะถูกเติมเมื่อเลือกประเภทลูกค้า -->
+                </div>
+            
+                <!-- ปุ่มบันทึก -->
+                <div class="mt-6 text-right">
+                    <button type="button" id="updateBtn" class="w-full bg-green-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        อัปเดตข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <!-- แถบแท็บ -->
-    <div class="my-4">
-      <nav class="flex space-x-4">
-        <button id="tabCustomers" class="hidden px-4 py-2 bg-slate-700 text-white rounded">รายชื่อลูกค้า</button>
-        <button id="tabEdit" class="hidden px-4 py-2 bg-slate-300 text-gray-100 rounded" disabled>แก้ไขข้อมูลลูกค้า</button>
-      </nav>
-    </div>
 
-    <!-- เนื้อหาแท็บรายชื่อลูกค้า -->
-    <div id="contentCustomers" class="tab-content active relative">
-      <!-- ช่องค้นหาและกรองสถานะ -->
-      <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
-        <input type="text" id="searchInput" placeholder="ค้นหารายชื่อลูกค้า..." class="w-full md:w-1/2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 md:mb-0" />
-        <div class="flex items-center space-x-4">
-          <label class="flex items-center">
-            <input type="checkbox" id="filterApproved" class="form-checkbox h-5 w-5 text-blue-600" />
-            <span class="ml-2 text-sm text-gray-700">อนุมัติแล้ว</span>
-          </label>
-          <label class="flex items-center">
-            <input type="checkbox" id="filterPending" class="form-checkbox h-5 w-5 text-blue-600" />
-            <span class="ml-2 text-sm text-gray-700">รอการอนุมัติ</span>
-          </label>
-        </div>
-      </div>
-      <!-- ตารางลูกค้า -->
-      <div class="bg-white shadow-md rounded-md my-6 overflow-x-auto relative">
-        <table class="min-w-full leading-normal">
-          <thead>
-            <tr>
-              <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">ชื่อ สกุล</th>
-              <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">เบอร์ติดต่อ</th>
-              <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">สถานะ</th>
-              <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-700 text-center text-xs font-semibold text-gray-100 uppercase tracking-wider">ดำเนินการ</th>
-            </tr>
-          </thead>
-          <tbody id="customerTable">
-            <!-- รายการลูกค้าจะแสดงที่นี่ -->
-          </tbody>
-          <div id="loadingIndicator" class="flex justify-center items-center absolute inset-0 bg-gray-200 hidden">
-            <div class="text-sm text-slate-500">กำลังโหลดข้อมูล...</div>
-          </div>
-        </table>
-      </div>
-      <!-- การแบ่งหน้า -->
-      <div class="flex justify-between items-center mt-4">
-        <button id="prevPage" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l disabled:opacity-50" disabled>ย้อนกลับ</button>
-        <span id="pageInfo" class="text-gray-700"></span>
-        <button id="nextPage" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r" disabled>ถัดไป</button>
-      </div>
-    </div>
+    <script>
+        const LIFF_ID = '2000460029-5gdVaOXe'; // แทนที่ด้วย LIFF ID ของคุณ
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyCg71Mnj8KPYv0WvS1eZ9k6kf4gyQc3s84F6fAoT0sTvu001Y-V3EgNJVom8gUmqVgWA/exec'; // แทนที่ด้วย URL ของคุณ
 
-    <!-- เนื้อหาแท็บแก้ไขข้อมูลลูกค้า -->
-    <div id="contentEdit" class="tab-content">
-      <h2 class="text-xl font-bold mb-6 text-gray-800">รายละเอียดลูกค้า</h2>
-      <form id="editForm" class="bg-green-50 border border-green-400 p-6 rounded-lg shadow-md">
-        <!-- ฟอร์มข้อมูลลูกค้า -->
-        <input type="hidden" id="customerId" />
-        <div class="mb-4">
-          <label for="useridline" class="block text-gray-700 text-sm font-bold mb-2">UserID Line</label>
-          <input type="hidden" id="useridline" name="useridline" placeholder="UserID Line" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" readonly />
-        </div>
-        <div class="mb-4">
-          <label for="name" class="block text-gray-700 text-sm font-bold mb-2">ชื่อ สกุล</label>
-          <input type="text" id="name" name="name" placeholder="ชื่อ สกุล" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
-        </div>
-        <div class="flex justify-between -mx-1">
-          <div class="mb-4 mr-2">
-            <label for="contact" class="block text-gray-700 text-sm font-bold mb-2">เบอร์ติดต่อ</label>
-            <input type="tel" pattern="[0-9]{10}" title="กรุณากรอกเบอร์โทรศัพท์ที่มี 10 หลัก" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" id="contact" name="contact" placeholder="เบอร์ติดต่อ" required />
-          </div>
-          <div class="mb-4">
-            <label for="Fax" class="block text-gray-700 text-sm font-bold mb-2">แฟกซ์</label>
-            <input type="text" id="Fax" name="Fax" placeholder="แฟกซ์" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-        </div>
-        <div class="mb-4">
-          <label for="Tex" class="block text-gray-700 text-sm font-bold mb-2">เลขประจำตัวผู้เสียภาษี</label>
-          <input type="text" id="Tex" name="Tex" placeholder="Tex" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
-        </div>
-        <div class="w-1/2 mb-4">
-          <label for="Payment" class="block text-gray-700 text-sm font-bold mb-2">เครดิต/การชำระเงิน</label>
-          <input type="text" id="Payment" name="Payment" placeholder="การชำระเงิน" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
-        </div>
-        <div class="mb-4">
-          <label for="Address" class="block text-gray-700 text-sm font-bold mb-2">ที่อยู่</label>
-          <textarea id="Address" name="Address" placeholder="ที่อยู่" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-        </div>
-        <div class="mb-4">
-          <label for="Shipping" class="block text-gray-700 text-sm font-bold mb-2">สถานที่จัดส่ง</label>
-          <textarea id="Shipping" name="Shipping" placeholder="สถานที่จัดส่ง" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-        </div>
-        <div class="mb-4">
-          <label for="Note" class="block text-gray-700 text-sm font-bold mb-2">หมายเหตุ</label>
-          <textarea id="Note" name="Note" placeholder="หมายเหตุ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-        </div>
-        <div class="mb-4">
-          <label for="status" class="block text-gray-700 text-sm font-bold mb-2">สถานะ</label>
-          <input type="text" id="status" name="status" placeholder="สถานะ" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" readonly />
-        </div>
+        let customerIdField = document.getElementById('customerId');
+        let nameID = document.getElementById("name");
+        let contactID = document.getElementById("contact");
+        let paymentID = document.getElementById("Payment");
+        let texID = document.getElementById("Tex");
+        let faxID = document.getElementById("Fax");
+        let addressID = document.getElementById("Address");
+        let shippingID = document.getElementById("Shipping");
+        let noteID = document.getElementById("Note");
+        let typeID = document.getElementById("Type");
+        let statusID = document.getElementById("status");
+        let updateBtn = document.getElementById("updateBtn");
+        let searchInput = document.getElementById("searchInput");
+        let filterApproved = document.getElementById("filterApproved");
+        let filterPending = document.getElementById("filterPending");
+        let useridlineID = document.getElementById("useridline");
+        let useridlineFilter = ''; // เก็บ useridline ของผู้ใช้
 
-        <!-- ส่วนเลือกประเภทลูกค้า (แสดงผล แต่ไม่ให้แก้ไข) -->
-        <div class="mb-5">
-          <label for="Type" class="block text-gray-700 text-sm font-bold mb-2">ประเภทลูกค้า</label>
-          <select id="Type" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" >
-           <option value="" disabled selected>เลือกประเภทลูกค้า</option>
-                <option value="คลินิก-บุคคล">คลินิก-บุคคล</option>
-                <option value="คลินิก-นิติบุคคล">คลินิก-นิติบุคคล</option>
-                <option value="ร้านยา-บุคคล">ร้านยา-บุคคล</option>
-                <option value="ร้านยา-นิติบุคคล">ร้านยา-นิติบุคคล</option>
-                <option value="โรงพยาบาลรัฐบาล">โรงพยาบาลรัฐบาล</option>
-                <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
-                <option value="อื่นๆ">อื่นๆ</option>
-          </select>
-          <!-- input แบบ hidden สำหรับส่งค่า -->
-          <input type="hidden" id="hiddenType" name="Type" />
-        </div>
+        let allCustomers = []; // เก็บข้อมูลลูกค้าทั้งหมด
+        let currentPage = 1;
+        const itemsPerPage = 10;
 
-        <!-- ส่วนแสดงเอกสารที่อัปโหลดแล้ว -->
-        <div id="documentList" class="mt-4">
-          <h3 class="text-lg font-bold mb-2 text-gray-800">เอกสารที่อัปโหลดแล้ว</h3>
-          <ul id="documents" class="list-disc list-inside text-blue-600">
-            <!-- รายการเอกสารจะแสดงที่นี่ -->
-          </ul>
-        </div>
-        <!-- ส่วนอัปโหลดไฟล์ -->
-        <div id="fileUploads" class="mb-4">
-          <!-- ฟิลด์อัปโหลดไฟล์จะถูกเติมเมื่อเลือกประเภทลูกค้า -->
-        </div>
+        // แท็บ
+        const tabCustomers = document.getElementById('tabCustomers');
+        const tabEdit = document.getElementById('tabEdit');
+        const contentCustomers = document.getElementById('contentCustomers');
+        const contentEdit = document.getElementById('contentEdit');
 
-        <!-- ปุ่มบันทึก -->
-        <div class="mt-6 text-right">
-          <button type="button" id="updateBtn" class="w-full bg-green-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            อัปเดตข้อมูล
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+        // ปุ่มแบ่งหน้า
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
 
-  <script>
-    const LIFF_ID = '2000460029-5gdVaOXe'; // แทนที่ด้วย LIFF ID ของคุณ
-    const WEB_APP_URL =
-      'https://script.google.com/macros/s/AKfycbyCg71Mnj8KPYv0WvS1eZ9k6kf4gyQc3s84F6fAoT0sTvu001Y-V3EgNJVom8gUmqVgWA/exec'; // แทนที่ด้วย URL ของคุณ
 
-    let customerIdField = document.getElementById('customerId');
-    let nameID = document.getElementById('name');
-    let contactID = document.getElementById('contact');
-    let paymentID = document.getElementById('Payment');
-    let texID = document.getElementById('Tex');
-    let faxID = document.getElementById('Fax');
-    let addressID = document.getElementById('Address');
-    let shippingID = document.getElementById('Shipping');
-    let noteID = document.getElementById('Note');
-    let typeID = document.getElementById('Type');
-    let statusID = document.getElementById('status');
-    let updateBtn = document.getElementById('updateBtn');
-    let searchInput = document.getElementById('searchInput');
-    let filterApproved = document.getElementById('filterApproved');
-    let filterPending = document.getElementById('filterPending');
-    let useridlineID = document.getElementById('useridline');
-    let useridlineFilter = ''; // เก็บ useridline ของผู้ใช้
-
-    let allCustomers = []; // เก็บข้อมูลลูกค้าทั้งหมด
-    let currentPage = 1;
-    const itemsPerPage = 10;
-
-    // แท็บ
-    const tabCustomers = document.getElementById('tabCustomers');
-    const tabEdit = document.getElementById('tabEdit');
-    const contentCustomers = document.getElementById('contentCustomers');
-    const contentEdit = document.getElementById('contentEdit');
-
-    // ปุ่มแบ่งหน้า
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const pageInfo = document.getElementById('pageInfo');
-
-    async function initializeLiff() {
-      try {
-        await liff.init({ liffId: `${LIFF_ID}` });
-        if (liff.isLoggedIn()) {
-          getUserProfile();
-        } else {
-          liff.login();
-        }
-      } catch (error) {
-        console.error('LIFF Initialization failed', error);
-      }
-    }
-
-    async function getUserProfile() {
-      try {
-        const profile = await liff.getProfile();
-        useridlineFilter = profile.userId;
-        fetchCustomerData();
-      } catch (error) {
-        console.error('Error getting profile data:', error);
-      }
-    }
-
-    async function fetchCustomerData() {
-      try {
-        document.getElementById('loadingIndicator').classList.remove('hidden');
-        let response = await fetch(WEB_APP_URL + '?action=getCustomers');
-        let data = await response.json();
-
-        if (Array.isArray(data)) {
-          allCustomers = data
-            .filter((customer) => customer.userIdline === useridlineFilter)
-            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        } else {
-          allCustomers = [];
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: `${LIFF_ID}` });
+                if (liff.isLoggedIn()) {
+                    getUserProfile();
+                } else {
+                    liff.login();
+                }
+            } catch (error) {
+                console.error('LIFF Initialization failed', error);
+            }
         }
 
-        currentPage = 1;
-        displayCustomers();
-        updatePagination();
-      } catch (error) {
-        console.error('Error fetching customer data:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: 'ไม่สามารถโหลดข้อมูลลูกค้าได้',
-        });
-      } finally {
-        document.getElementById('loadingIndicator').classList.add('hidden');
-      }
-    }
-
-    function displayCustomers() {
-      let customerTable = document.getElementById('customerTable');
-      customerTable.innerHTML = '';
-
-      let filterText = searchInput.value.toLowerCase();
-      let filteredCustomers = allCustomers.filter((customer) => {
-        let matchesSearch = customer.name.toLowerCase().includes(filterText);
-        let matchesStatus = true;
-        if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
-          matchesStatus = false;
+        async function getUserProfile() {
+            try {
+                const profile = await liff.getProfile();
+                useridlineFilter = profile.userId;
+                fetchCustomerData();
+            } catch (error) {
+                console.error('Error getting profile data:', error);
+            }
         }
-        if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
-          matchesStatus = false;
+
+        async function fetchCustomerData() {
+            try {
+                document.getElementById('loadingIndicator').classList.remove('hidden');
+                let response = await fetch(WEB_APP_URL + '?action=getCustomers');
+                let data = await response.json();
+
+                if (Array.isArray(data)) {
+                    allCustomers = data.filter(customer => customer.userIdline === useridlineFilter)
+                                       .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                } else {
+                    allCustomers = [];
+                }
+
+                currentPage = 1; 
+                displayCustomers(); 
+                updatePagination(); 
+
+            } catch (error) {
+                console.error('Error fetching customer data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถโหลดข้อมูลลูกค้าได้',
+                });
+            } finally {
+                document.getElementById('loadingIndicator').classList.add('hidden');
+            }
         }
-        return matchesSearch && matchesStatus;
-      });
 
-      const totalItems = filteredCustomers.length;
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      if (currentPage > totalPages) currentPage = totalPages;
+        function displayCustomers() {
+            let customerTable = document.getElementById('customerTable');
+            customerTable.innerHTML = '';
 
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const customersToDisplay = filteredCustomers.slice(startIndex, endIndex);
+            let filterText = searchInput.value.toLowerCase();
+            let filteredCustomers = allCustomers.filter(customer => {
+                let matchesSearch = customer.name.toLowerCase().includes(filterText);
+                let matchesStatus = true;
+                if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
+                    matchesStatus = false;
+                }
+                if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
+                    matchesStatus = false;
+                }
+                return matchesSearch && matchesStatus;
+            });
 
-      customersToDisplay.forEach((customer) => {
-        let row = document.createElement('tr');
-        row.classList.add('bg-white', 'hover:bg-gray-100');
+            const totalItems = filteredCustomers.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
 
-        row.innerHTML = `
-          <td class="p-2 border-b border-gray-200 text-sm">${customer.name}</td>
-          <td class="p-2 border-b border-gray-200 text-sm">${customer.contact}</td>
-          <td class="p-2 border-b border-gray-200 text-sm">${customer.status}</td>
-          <td class="p-2 border-b border-gray-200 text-center text-sm">
-            <button class="editBtn bg-yellow-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded" data-id="${customer.id}">แก้ไข</button>
-          </td>
-        `;
-        customerTable.appendChild(row);
-      });
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const customersToDisplay = filteredCustomers.slice(startIndex, endIndex);
 
-      pageInfo.textContent = `หน้า ${currentPage} จาก ${totalPages}`;
-      prevPageBtn.disabled = currentPage === 1;
-      nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-    }
+            customersToDisplay.forEach(customer => {
+                let row = document.createElement('tr');
+                row.classList.add('bg-white', 'hover:bg-gray-100');
 
-    function filterCustomers() {
-      currentPage = 1;
-      displayCustomers();
-      updatePagination();
-    }
+                row.innerHTML = `
+                    <td class="p-2 border-b border-gray-200 text-sm">${customer.name}</td>
+                    <td class="p-2 border-b border-gray-200 text-sm">${customer.contact}</td>
+                    <td class="p-2 border-b border-gray-200 text-sm">${customer.status}</td>
+                    <td class="p-2 border-b border-gray-200 text-center text-sm">
+                        <button class="editBtn bg-yellow-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded" data-id="${customer.id}">แก้ไข</button>
+                    </td>
+                `;
+                customerTable.appendChild(row);
+            });
 
-    function updatePagination() {
-      let filterText = searchInput.value.toLowerCase();
-      let filteredCustomers = allCustomers.filter((customer) => {
-        let matchesSearch = customer.name.toLowerCase().includes(filterText);
-        let matchesStatus = true;
-        if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
-          matchesStatus = false;
+            pageInfo.textContent = `หน้า ${currentPage} จาก ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
         }
-        if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
-          matchesStatus = false;
+
+        function filterCustomers() {
+            currentPage = 1;
+            displayCustomers();
+            updatePagination();
         }
-        return matchesSearch && matchesStatus;
-      });
-      const totalItems = filteredCustomers.length;
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      pageInfo.textContent = `หน้า ${currentPage} จาก ${totalPages}`;
-      prevPageBtn.disabled = currentPage === 1;
-      nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-    }
 
-    async function loadCustomerDetails(customer) {
-      customerIdField.value = customer.id;
-      useridlineID.value = customer.userIdline || '';
-      nameID.value = customer.name || '';
-      contactID.value = customer.contact || '';
-      paymentID.value = customer.payment || '';
-      texID.value = customer.tex || '';
-      faxID.value = customer.fax || '';
-      addressID.value = customer.address || '';
-      shippingID.value = customer.shipping || '';
-      noteID.value = customer.note || '';
-
-      // กำหนดค่าให้กับประเภทลูกค้า (แสดงผลใน select ที่ disabled)
-      typeID.value = customer.type || '';
-      document.getElementById('hiddenType').value = customer.type || '';
-
-      statusID.value = customer.status || '';
-
-      displayFileFields(customer.type);
-      await fetchAndDisplayDocuments(customer.id);
-    }
-
-    function displayFileFields(type) {
-      let fileUploadsDiv = document.getElementById('fileUploads');
-      fileUploadsDiv.innerHTML = '';
-
-      let fileFields = [];
-      if (type === 'คลินิก-บุคคล') {
-        fileFields = [
-          { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', required: false },
-          { label: 'ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19', name: 'ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19', required: false },
-          { label: 'เสาเนาบัตรประชาชนของของผู้ประกอบกิจการสถานพยาบาล', name: 'เสาเนาบัตรประชาชนของของผู้ประกอบกิจการสถานพยาบาล', required: false },
-          { label: 'ที่อยู่เบอร์ติดต่อ', name: 'ที่อยู่เบอร์ติดต่อ', required: false },
-          { label: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', required: false },
-          { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-          { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
-        ];
-      } else if (type === 'คลินิก-นิติบุคคล') {
-        fileFields = [
-          { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', required: false },
-          { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.19', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.19', required: false },
-          { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-          { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
-          { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
-          { label: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', required: false },
-          { label: 'สำเนาหนังสือรับรองบริษัท', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-          { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-          { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
-        ];
-      } else if (type === 'ร้านยา-บุคคล') {
-        fileFields = [
-          { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', required: false },
-          { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', required: false },
-          { label: 'สำเนาบัตรประชาชนของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนของผู้รับอนุญาต', required: false },
-          { label: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', required: false },
-          { label: 'ที่อยู่เบอร์ติดต่อ', name: 'ที่อยู่เบอร์ติดต่อ', required: false },
-          { label: 'แผนที่สถานที่จัดส่ง', name: 'แผนที่สถานที่จัดส่ง', required: false },
-          { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
-        ];
-      } else if (type === 'ร้านยา-นิติบุคคล') {
-        fileFields = [
-          { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', required: false },
-          { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', required: false },
-          { label: 'หนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'หนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', required: false },
-          { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
-          { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
-          { label: 'ที่อยู่เบอร์ติดต่อ', name: 'ที่อยู่เบอร์ติดต่อ', required: false },
-          { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
-          { label: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', required: false },
-          { label: 'แผนที่สถานที่จัดส่ง', name: 'แผนที่สถานที่จัดส่ง', required: false },
-          { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
-        ];
-      } else if (type === 'โรงพยาบาลรัฐบาล') {
-        fileFields = [
-          { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
-          { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
-        ];
-      } else if (type === 'โรงพยาบาลเอกชน') {
-        fileFields = [
-          { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.7)', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.7)', required: false },
-          { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.19)', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.19)', required: false },
-          { label: 'สำเนาหนังสือรับรองบริษัท', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
-          { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
-          { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
-          { label: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', required: false },
-          { label: 'สถานที่จัดส่ง', name: 'สถานที่จัดส่ง', required: false },
-          { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
-        ];
-      }
-
-      fileFields.forEach((field) => {
-        let fieldDiv = document.createElement('div');
-        fieldDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
-        fieldDiv.innerHTML = `
-          <label>${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}
-            <input type="file" name="${field.name}" ${field.required ? 'required' : ''} multiple class="mt-2 w-full">
-          </label>
-        `;
-        fileUploadsDiv.appendChild(fieldDiv);
-      });
-
-      // เพิ่มฟิลด์ "เอกสารแนบอื่นๆ" พร้อมช่องแก้ไขชื่อไฟล์
-      let additionalFileDiv = document.createElement('div');
-      additionalFileDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
-      additionalFileDiv.innerHTML = `
-        <label>เอกสารแนบอื่นๆ
-          <input type="file" name="เอกสารแนบอื่นๆ" multiple class="mt-2 w-full">
-        </label>
-        <!-- เพิ่มช่องแก้ไขชื่อไฟล์สำหรับเอกสารแนบอื่นๆ -->
-        <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
-      `;
-      fileUploadsDiv.appendChild(additionalFileDiv);
-    }
-
-    async function fetchAndDisplayDocuments(customerId) {
-      try {
-        let response = await fetch(`${WEB_APP_URL}?action=getDocumentsByCustomerId&id=${customerId}`);
-        let documents = await response.json();
-
-        let documentsList = document.getElementById('documents');
-        documentsList.innerHTML = '';
-
-        if (documents.length === 0) {
-          documentsList.innerHTML = '<li>ไม่มีเอกสารที่อัปโหลด</li>';
-        } else {
-          documents.forEach((doc) => {
-            let listItem = document.createElement('li');
-            listItem.className = 'mb-2';
-
-            let link = document.createElement('a');
-            link.href = doc.fileLink;
-            link.target = '_blank';
-            link.textContent = doc.fileName;
-            link.className = 'text-blue-600 underline';
-
-            listItem.appendChild(link);
-            documentsList.appendChild(listItem);
-          });
+        function updatePagination() {
+            let filterText = searchInput.value.toLowerCase();
+            let filteredCustomers = allCustomers.filter(customer => {
+                let matchesSearch = customer.name.toLowerCase().includes(filterText);
+                let matchesStatus = true;
+                if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
+                    matchesStatus = false;
+                }
+                if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
+                    matchesStatus = false;
+                }
+                return matchesSearch && matchesStatus;
+            });
+            const totalItems = filteredCustomers.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            pageInfo.textContent = `หน้า ${currentPage} จาก ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
         }
-      } catch (error) {
-        console.error('Error fetching documents:', error);
-      }
-    }
 
-    async function updateCustomerData() {
-      if (!nameID.value.trim() || !contactID.value.trim()) {
-        Swal.fire({
-          icon: 'error',
-          title: 'กรอกข้อมูลไม่ครบ',
-          text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-        });
-        return;
-      }
+        async function loadCustomerDetails(customer) {
+            customerIdField.value = customer.id;
+            useridlineID.value = customer.userIdline || '';
+            nameID.value = customer.name || '';
+            contactID.value = customer.contact || '';
+            paymentID.value = customer.payment || '';
+            texID.value = customer.tex || '';
+            faxID.value = customer.fax || '';
+            addressID.value = customer.address || '';
+            shippingID.value = customer.shipping || '';
+            noteID.value = customer.note || '';
+            typeID.value = customer.type || '';
+            statusID.value = customer.status || '';
 
-      let requiredFiles = document.querySelectorAll('#fileUploads input[type="file"][required]');
-      for (let fileInput of requiredFiles) {
-        if (fileInput.files.length === 0) {
-          Swal.fire({
-            icon: 'error',
-            title: 'กรอกข้อมูลไม่ครบ',
-            text: 'กรุณาอัปโหลดไฟล์ ' + fileInput.name,
-          });
-          return;
+            displayFileFields(customer.type);
+            await fetchAndDisplayDocuments(customer.id);
         }
-      }
 
-      let obj = {
-        id: customerIdField.value,
-        userIdline: useridlineID.value,
-        name: nameID.value,
-        contact: contactID.value,
-        payment: paymentID.value,
-        tex: texID.value,
-        fax: faxID.value,
-        address: addressID.value,
-        shipping: shippingID.value,
-        note: noteID.value,
-        // ใช้ค่าจาก hidden input แทนการเปลี่ยนแปลงประเภทลูกค้า
-        type: document.getElementById('hiddenType').value,
-        status: statusID.value,
-        files: []
-      };
+        function displayFileFields(type) {
+            let fileUploadsDiv = document.getElementById('fileUploads');
+            fileUploadsDiv.innerHTML = '';
 
-      let fileInputs = document.querySelectorAll('#fileUploads input[type="file"]');
-      for (let fileInput of fileInputs) {
-        let parentDiv = fileInput.closest('.bg-slate-100');
-        let customNameInput = parentDiv ? parentDiv.querySelector('.file-name-input') : null;
+            let fileFields = [];
+            if (type === 'คลินิก-บุคคล') {
+                fileFields = [
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', required: false },
+                    { label: 'ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19', name: 'ใบอนุญาตให้ดำเนินกิจการสถานพยาบาล ส.พ.19', required: false },
+                    { label: 'เสาเนาบัตรประชาชนของของผู้ประกอบกิจการสถานพยาบาล', name: 'เสาเนาบัตรประชาชนของของผู้ประกอบกิจการสถานพยาบาล', required: false },
+                    { label: 'ที่อยู่เบอร์ติดต่อ', name: 'ที่อยู่เบอร์ติดต่อ', required: false },
+                    { label: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                    { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
 
-        if (fileInput.files.length > 0) {
-          for (let i = 0; i < fileInput.files.length; i++) {
-            let file = fileInput.files[i];
-            let base64 = await getBase64(file);
+                ];
+            } else if (type === 'คลินิก-นิติบุคคล'){
+                fileFields = [
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.7', required: false },
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.19', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล ส.พ.19', required: false },
+                    { label: 'สำเนาหนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+                    { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
+                    { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20)', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+                    { label: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', name: 'สำเนาทะเบียนบ้านของผู้ประกอบกิจการสถานพยาบาล', required: false },
+                    { label: 'สำเนาหนังสือรับรองบริษัท', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                    { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
 
-            let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
-            let baseName = fileInput.name;
+                ];
+            } else if (type === 'ร้านยา-บุคคล') {
+                fileFields = [
+                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', required: false },
+                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', required: false },
+                    { label: 'สำเนาบัตรประชาชนของผู้รับอนุญาต', name: 'สำเนาบัตรประชาชนของผู้รับอนุญาต', required: false },
+                    { label: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', required: false },
+                    { label: 'ที่อยู่เบอร์ติดต่อ', name: 'ที่อยู่เบอร์ติดต่อ', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                    { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
+                ];
+            } else if (type === 'ร้านยา-นิติบุคคล') {
+                fileFields = [
+                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.5)', required: false },
+                    { label: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', name: 'ใบอนุญาตขายยาแผนปัจจุบัน(ข.ย.8)', required: false },
+                    { label: 'หนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', name: 'หนังสือรับรองบริษัทอายุไม่เกิน 6 เดือน', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง (ถ้ามี)', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                    { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
+                    { label: 'ที่อยู่เบอร์ติดต่อ', name: 'ที่อยู่เบอร์ติดต่อ', required: false },
+                    { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+                    { label: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', required: false },
+                    { label: 'แผนที่สถานที่จัดส่ง', name: 'แผนที่สถานที่จัดส่ง', required: false },
+                    { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
+                ];
+            } else if (type === 'โรงพยาบาลรัฐบาล') {
+                fileFields = [
+                    { label: 'ระบุสถานที่จัดส่ง ที่ไหน ถึงฝ่ายไหน และ INVOICE', name: 'สถานที่จัดส่ง', required: false },
+                    { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
 
-            // หากไฟล์เป็น "เอกสารแนบอื่นๆ" และมีการกรอกชื่อใหม่ ใช้ชื่อนั้นแทน
-            if (fileInput.name === "เอกสารแนบอื่นๆ" && customNameInput && customNameInput.value.trim() !== '') {
-              baseName = customNameInput.value.trim();
+                ];
+            } else if (type === 'โรงพยาบาลเอกชน') {
+                fileFields = [
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.7)', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.7)', required: false },
+                    { label: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.19)', name: 'ใบอนุญาตให้ประกอบกิจการสถานพยาบาล(ส.พ.19)', required: false },
+                    { label: 'สำเนาหนังสือรับรองบริษัท', name: 'สำเนาหนังสือรับรองบริษัท', required: false },
+                    { label: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', name: 'สำเนาบัตรประชาชนของกรรมการผู้มีอำนาจ', required: false },
+                    { label: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', name: 'สำเนาทะเบียนภาษีมูลค่าเพิ่ม', required: false },
+                    { label: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', name: 'สำเนาทะเบียนบ้านของผู้รับอนุญาต', required: false },
+                    { label: 'สถานที่จัดส่ง', name: 'สถานที่จัดส่ง', required: false },
+                    { label: 'เอกสารแนบอื่นๆ', name: 'เอกสารแนบอื่นๆ', required: false },
+                ];
             }
 
-            let finalFileName = `${baseName}_${i + 1}${fileExtension}`;
-
-            obj.files.push({
-              base64: base64,
-              type: file.type,
-              name: finalFileName
+            fileFields.forEach(field => {
+                let fieldDiv = document.createElement('div');
+                fieldDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
+                fieldDiv.innerHTML = `
+                    <label>${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}
+                        <input type="file" name="${field.name}" ${field.required ? 'required' : ''} multiple class="mt-2 w-full">
+                    </label>
+                `;
+                fileUploadsDiv.appendChild(fieldDiv);
             });
-          }
-        }
-      }
 
-      try {
-        Swal.fire({
-          title: 'กำลังอัปเดตข้อมูล...',
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          }
+            // เพิ่มฟิลด์ "เอกสารแนบอื่นๆ" พร้อมช่องแก้ไขชื่อไฟล์
+            let additionalFileDiv = document.createElement('div');
+            additionalFileDiv.className = 'bg-slate-100 rounded-lg text-sm my-5 p-4';
+            additionalFileDiv.innerHTML = `
+                <label>เอกสารแนบอื่นๆ
+                    <input type="file" name="เอกสารแนบอื่นๆ" multiple class="mt-2 w-full">
+                </label>
+                <!-- เพิ่มช่องแก้ไขชื่อไฟล์สำหรับเอกสารแนบอื่นๆ -->
+                <input type="text" class="file-name-input mt-2 w-full p-1 border rounded-md" placeholder="แก้ไขชื่อไฟล์ (ไม่ใส่ไม่เป็นไร)">
+            `;
+            fileUploadsDiv.appendChild(additionalFileDiv);
+        }
+
+
+        async function fetchAndDisplayDocuments(customerId) {
+            try {
+                let response = await fetch(`${WEB_APP_URL}?action=getDocumentsByCustomerId&id=${customerId}`);
+                let documents = await response.json();
+
+                let documentsList = document.getElementById('documents');
+                documentsList.innerHTML = '';
+
+                if (documents.length === 0) {
+                    documentsList.innerHTML = '<li>ไม่มีเอกสารที่อัปโหลด</li>';
+                } else {
+                    documents.forEach(doc => {
+                        let listItem = document.createElement('li');
+                        listItem.className = 'mb-2';
+
+                        let link = document.createElement('a');
+                        link.href = doc.fileLink;
+                        link.target = '_blank';
+                        link.textContent = doc.fileName;
+                        link.className = 'text-blue-600 underline';
+
+                        listItem.appendChild(link);
+                        documentsList.appendChild(listItem);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching documents:', error);
+            }
+        }
+
+        async function updateCustomerData() {
+            if (!nameID.value.trim() || !contactID.value.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'กรอกข้อมูลไม่ครบ',
+                    text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                });
+                return;
+            }
+
+            let requiredFiles = document.querySelectorAll('#fileUploads input[type="file"][required]');
+            for (let fileInput of requiredFiles) {
+                if (fileInput.files.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'กรอกข้อมูลไม่ครบ',
+                        text: 'กรุณาอัปโหลดไฟล์ ' + fileInput.name,
+                    });
+                    return;
+                }
+            }
+
+            let obj = {
+                id: customerIdField.value,
+                userIdline: useridlineID.value,
+                name: nameID.value,
+                contact: contactID.value,
+                payment: paymentID.value,
+                tex: texID.value,
+                fax: faxID.value,
+                address: addressID.value,
+                shipping: shippingID.value,
+                note: noteID.value,
+                type: typeID.value,
+                status: statusID.value,
+                files: []
+            };
+
+            let fileInputs = document.querySelectorAll('#fileUploads input[type="file"]');
+            for (let fileInput of fileInputs) {
+                let parentDiv = fileInput.closest('.bg-slate-100');
+                let customNameInput = parentDiv ? parentDiv.querySelector('.file-name-input') : null;
+
+                if (fileInput.files.length > 0) {
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        let file = fileInput.files[i];
+                        let base64 = await getBase64(file);
+
+                        let fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+                        let baseName = fileInput.name;
+
+                        // หากไฟล์เป็น "เอกสารแนบอื่นๆ" และมีการกรอกชื่อใหม่ ใช้ชื่อนั้นแทน
+                        if (fileInput.name === "เอกสารแนบอื่นๆ" && customNameInput && customNameInput.value.trim() !== '') {
+                            baseName = customNameInput.value.trim();
+                        }
+
+                        let finalFileName = `${baseName}_${i + 1}${fileExtension}`;
+
+                        obj.files.push({
+                            base64: base64,
+                            type: file.type,
+                            name: finalFileName
+                        });
+                    }
+                }
+            }
+
+            try {
+                Swal.fire({
+                    title: 'กำลังอัปเดตข้อมูล...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                let response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(obj)
+                });
+
+                let result = await response.json();
+
+                if (result.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'อัปเดตข้อมูลสำเร็จ',
+                        text: 'ข้อมูลลูกค้าถูกอัปเดตเรียบร้อยแล้ว',
+                    }).then(() => {
+                        fetchCustomerData();
+                        document.getElementById('editForm').reset();
+                        document.getElementById('fileUploads').innerHTML = '';
+                        document.getElementById('documents').innerHTML = '';
+                        switchTab('customers');
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: result.message || 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error updating customer data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                });
+            }
+        }
+
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                let reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function switchTab(tab) {
+            if (tab === 'customers') {
+                contentCustomers.classList.add('active');
+                contentEdit.classList.remove('active');
+                tabCustomers.classList.add('bg-slate-700', 'text-white');
+                tabEdit.classList.remove('bg-slate-400', 'text-white');
+                tabEdit.classList.add('bg-slate-300', 'text-gray-100');
+                tabEdit.disabled = true;
+                tabCustomers.disabled = false;
+            } else if (tab === 'edit') {
+                contentCustomers.classList.remove('active');
+                contentEdit.classList.add('active');
+                tabEdit.classList.add('bg-slate-400', 'text-white');
+                tabEdit.classList.remove('bg-slate-300', 'text-gray-100');
+                tabCustomers.classList.remove('bg-slate-700', 'text-white');
+                tabCustomers.classList.add('bg-slate-400', 'text-white');
+                tabEdit.disabled = false;
+                tabCustomers.disabled = false;
+            }
+        }
+
+        tabCustomers.addEventListener('click', () => switchTab('customers'));
+        tabEdit.addEventListener('click', () => switchTab('edit'));
+
+        document.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('editBtn')) {
+                const customerId = event.target.getAttribute('data-id');
+                const customer = allCustomers.find(c => c.id == customerId);
+                if (customer) {
+                    loadCustomerDetails(customer);
+                    switchTab('edit');
+                }
+            }
         });
 
-        let response = await fetch(WEB_APP_URL, {
-          method: 'POST',
-          body: JSON.stringify(obj)
+        typeID.addEventListener('change', function() {
+            displayFileFields(this.value);
         });
 
-        let result = await response.json();
+        updateBtn.addEventListener('click', updateCustomerData);
+        searchInput.addEventListener('keyup', filterCustomers);
+        filterApproved.addEventListener('change', filterCustomers);
+        filterPending.addEventListener('change', filterCustomers);
 
-        if (result.status === 'success') {
-          Swal.fire({
-            icon: 'success',
-            title: 'อัปเดตข้อมูลสำเร็จ',
-            text: 'ข้อมูลลูกค้าถูกอัปเดตเรียบร้อยแล้ว',
-          }).then(() => {
-            fetchCustomerData();
-            document.getElementById('editForm').reset();
-            document.getElementById('fileUploads').innerHTML = '';
-            document.getElementById('documents').innerHTML = '';
-            switchTab('customers');
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: result.message || 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
-          });
-        }
-      } catch (error) {
-        console.error('Error updating customer data:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayCustomers();
+                updatePagination();
+            }
         });
-      }
-    }
 
-    function getBase64(file) {
-      return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(file);
-      });
-    }
+        nextPageBtn.addEventListener('click', () => {
+            let filterText = searchInput.value.toLowerCase();
+            let filteredCustomers = allCustomers.filter(customer => {
+                let matchesSearch = customer.name.toLowerCase().includes(filterText);
+                let matchesStatus = true;
+                if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
+                    matchesStatus = false;
+                }
+                if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
+                    matchesStatus = false;
+                }
+                return matchesSearch && matchesStatus;
+            });
+            const totalItems = filteredCustomers.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayCustomers();
+                updatePagination();
+            }
+        });
 
-    function switchTab(tab) {
-      if (tab === 'customers') {
-        contentCustomers.classList.add('active');
-        contentEdit.classList.remove('active');
-        tabCustomers.classList.add('bg-slate-700', 'text-white');
-        tabEdit.classList.remove('bg-slate-400', 'text-white');
-        tabEdit.classList.add('bg-slate-300', 'text-gray-100');
-        tabEdit.disabled = true;
-        tabCustomers.disabled = false;
-      } else if (tab === 'edit') {
-        contentCustomers.classList.remove('active');
-        contentEdit.classList.add('active');
-        tabEdit.classList.add('bg-slate-400', 'text-white');
-        tabEdit.classList.remove('bg-slate-300', 'text-gray-100');
-        tabCustomers.classList.remove('bg-slate-700', 'text-white');
-        tabCustomers.classList.add('bg-slate-400', 'text-white');
-        tabEdit.disabled = false;
-        tabCustomers.disabled = false;
-      }
-    }
-
-    tabCustomers.addEventListener('click', () => switchTab('customers'));
-    tabEdit.addEventListener('click', () => switchTab('edit'));
-
-    document.addEventListener('click', function (event) {
-      if (event.target && event.target.classList.contains('editBtn')) {
-        const customerId = event.target.getAttribute('data-id');
-        const customer = allCustomers.find((c) => c.id == customerId);
-        if (customer) {
-          loadCustomerDetails(customer);
-          switchTab('edit');
-        }
-      }
-    });
-
-    updateBtn.addEventListener('click', updateCustomerData);
-    searchInput.addEventListener('keyup', filterCustomers);
-    filterApproved.addEventListener('change', filterCustomers);
-    filterPending.addEventListener('change', filterCustomers);
-
-    prevPageBtn.addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage--;
-        displayCustomers();
-        updatePagination();
-      }
-    });
-
-    nextPageBtn.addEventListener('click', () => {
-      let filterText = searchInput.value.toLowerCase();
-      let filteredCustomers = allCustomers.filter((customer) => {
-        let matchesSearch = customer.name.toLowerCase().includes(filterText);
-        let matchesStatus = true;
-        if (filterApproved.checked && customer.status !== 'อนุมัติแล้ว') {
-          matchesStatus = false;
-        }
-        if (filterPending.checked && customer.status !== 'รอการอนุมัติ') {
-          matchesStatus = false;
-        }
-        return matchesSearch && matchesStatus;
-      });
-      const totalItems = filteredCustomers.length;
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      if (currentPage < totalPages) {
-        currentPage++;
-        displayCustomers();
-        updatePagination();
-      }
-    });
-
-    window.onload = function () {
-      initializeLiff();
-    };
-  </script>
+        window.onload = function () {
+             initializeLiff();
+        };
+    </script>
 </body>
 </html>
