@@ -129,14 +129,63 @@ html {
             <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
             <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
           </div>
-          <div>
-            <label for="provinceInput" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
-            <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required />
-            <datalist id="provinces">
-              <option value="กรุงเทพมหานคร"><option value="กระบี่"><option value="กาญจนบุรี">
-              <!-- …etc… -->
-            </datalist>
-          </div>
+ <div>
+                        <label for="provinceInput" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
+                        <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
+                        <datalist id="provinces">
+                            <script>
+                                // List of available provinces
+                                const provinces = [
+                                    "กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี",
+                                    "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง",
+                                    "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช",
+                                    "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี",
+                                    "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา", "พะเยา", "พังงา",
+                                    "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "ภูเก็ต", "มหาสารคาม",
+                                    "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร", "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี",
+                                    "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ",
+                                    "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี",
+                                    "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อำนาจเจริญ",
+                                    "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี", "อ่างทอง", "เบญจลักษ์",
+                                    "นครสวรรค์", "สระแก้ว", "ราชบุรี"
+                                ];
+                        
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    const input = document.getElementById('provinceInput');
+                                    const maxOptionsToShow = 3;
+                        
+                                    input.addEventListener('input', function() {
+                                        const inputValue = input.value.toLowerCase();
+                                        const matchingProvinces = provinces
+                                            .filter(province => province.toLowerCase().includes(inputValue))
+                                            .slice(0, maxOptionsToShow);
+                        
+                                        // Remove any existing datalist
+                                        const existingDatalist = document.getElementById('datalist-provinces');
+                                        if (existingDatalist) {
+                                            existingDatalist.remove();
+                                        }
+                        
+                                        // Create a new datalist if there are matching items
+                                        if (matchingProvinces.length > 0) {
+                                            const dataList = document.createElement('datalist');
+                                            dataList.id = 'datalist-provinces';
+                        
+                                            matchingProvinces.forEach(province => {
+                                                const optionElement = document.createElement('option');
+                                                optionElement.value = province;
+                                                dataList.appendChild(optionElement);
+                                            });
+                        
+                                            document.body.appendChild(dataList);
+                                            input.setAttribute('list', 'datalist-provinces');
+                                        } else {
+                                            input.removeAttribute('list');
+                                        }
+                                    });
+                                });
+                            </script>
+                    </div>
         </div>
 
         <!-- ลูกค้า + ลูกค้าใหม่ -->
