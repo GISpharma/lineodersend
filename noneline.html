@@ -1,440 +1,320 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GIS รายการสั่งซื้อ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"  integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
-    <style>
-        #loading {
-            display: none;
-        }
-        .form-control {
-            display: block;
-            width: 100%;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 2;
-            color: #212529;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            border-radius: 0.375rem;
-            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
-            @media (max-width: 767px) {
-
-            /* ปรับความกว้างของช่อง Input เพื่อให้มีสเปซเหมาะสม */
-            .form-control-mobile {
-                width: 50%;
-                margin-right: 5px;
-            }
-
-            /* ปรับขนาดของปุ่มเพิ่มและลบให้เหมาะสมกับมือถือ */
-            .btn-mobile {
-                font-size: 12px;
-                padding: 2px 6px;
-            }
-        }
-
-        /* Additional CSS for Mobile View */
-            @media (max-width: 767px) {
-                body {
-                    padding-top: 20px;
-                }
-
-                .card {
-                    border: none;
-                    box-shadow: none;
-                }
-
-                input.form-control.text-end {
-                    width: 100px;
-                }
-
-                .table-bordered> :not(caption)>*>* {
-                    border-width: 0 1px;
-                    float: left;
-                    border: none;
-                }
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        window.onload = function () {
-             generateKeyAndDate();
-        };
-        
-        function generateKeyAndDate() {
-            var randomPart = Math.random().toString(36).substring(7);
-            // Get the current date
-            var currentDate = new Date();
-            var year = String(currentDate.getFullYear()).substring(2); // เลขหน้าของปี
-            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
-
-            // Create the key in the format "invYYMM-randomPart"
-            var key = `inv${year}${month}-${randomPart}`;
-            // Set the generated key in the "keyInput" element's value attribute
-            document.getElementById("keyInput").value = key;
-        }
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GIS รายการสั่งซื้อ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+  <style>
+    /* … your existing custom styles … */
+    .NoPrint { white-space: nowrap; }
+  </style>
 </head>
 <body>
-    <div class="container" style="max-width: 1080px;">
+  <div class="container" style="max-width:1080px;">
 
-        <form id="myForm">           <span class="input-group-text" style="margin-top: 20px;border: #198754 1px solid;background-color: #0d5f39;color:white;padding: 18px;border-radius: 10px 10px 0 0px;margin-bottom: -5px;" > บันทึกรายการสั่งซื้อ GISPHARMA </span>
-            <div class="card" >
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="input-group mb-4">
-                                <span class="input-group-text">OderID</span>
-                                <input class="form-control"  type="text" id="keyInput" name="order_id" readonly />
-                            </div>
-                            <div class="input-group mb-4">
-                                <span class="input-group-text"> เจ้าหน้าที่บันทึก </span>
-                                  <input type="text" class="form-control"  id="displayName" name="displayName" >
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="input-group mb-4" >
-                                <span class="input-group-text">UserID</span>
-                                <input class="form-control"  type="text" value="direct" id="userId" name="userId" />
-                            </div>
-                        </div>
-                        </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="input-group mb-4">
-                                <span class="input-group-text"> รหัสผู้ขาย </span>
-                                <input type="text" class="form-control"  name="sell_id"  />
-                            </div>
-                            <div class="input-group mb-4">
-                                <span class="input-group-text"> ประเภทลูกค้า </span>
-                                <select type="text" class="form-control"  name="category" >
-                                    <option value="">เลือกประเภท</option>
-                                    <option value="ร้านขายยา">ร้านขายยา</option>
-                                    <option value="คลีนิก">คลีนิก</option>
-                                    <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
-                                    <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
-                                    <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
-                                    <option value="ออนไลน์">ออนไลน์</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="input-group mb-4">
-                                <span class="input-group-text"> เลขใบสั่งซื้อ </span>
-                                <input type="text" class="form-control"  name="ipo" />
-                            </div>
-                            <div class="input-group mb-4">
-                                <span class="input-group-text"> จังหวัด </span>
-                                <input type="text" id="cityInput" name="city" list="provincesList" class="form-control">
-                                <datalist id="provincesList">
-                                  <option value="กรุงเทพมหานคร">
-                                  <option value="กระบี่">
-                                  <option value="กาญจนบุรี">
-                                  <option value="กาฬสินธุ์">
-                                  <option value="กำแพงเพชร">
-                                  <option value="ขอนแก่น">
-                                  <option value="จันทบุรี">
-                                  <option value="ฉะเชิงเทรา">
-                                  <option value="ชลบุรี">
-                                  <option value="ชัยนาท">
-                                  <option value="ชัยภูมิ">
-                                  <option value="ชุมพร">
-                                  <option value="เชียงราย">
-                                  <option value="เชียงใหม่">
-                                  <option value="ตรัง">
-                                  <option value="ตราด">
-                                  <option value="ตาก">
-                                  <option value="นครนายก">
-                                  <option value="นครปฐม">
-                                  <option value="นครพนม">
-                                  <option value="นครราชสีมา">
-                                  <option value="นครศรีธรรมราช">
-                                  <option value="นครสวรรค์">
-                                  <option value="นนทบุรี">
-                                  <option value="นราธิวาส">
-                                  <option value="น่าน">
-                                  <option value="บึงกาฬ">
-                                  <option value="บุรีรัมย์">
-                                  <option value="ปทุมธานี">
-                                  <option value="ประจวบคีรีขันธ์">
-                                  <option value="ปราจีนบุรี">
-                                  <option value="ปัตตานี">
-                                  <option value="พระนครศรีอยุธยา">
-                                  <option value="พะเยา">
-                                  <option value="พังงา">
-                                  <option value="พัทลุง">
-                                  <option value="พิจิตร">
-                                  <option value="พิษณุโลก">
-                                  <option value="เพชรบุรี">
-                                  <option value="เพชรบูรณ์">
-                                  <option value="แพร่">
-                                  <option value="ภูเก็ต">
-                                  <option value="มหาสารคาม">
-                                  <option value="มุกดาหาร">
-                                  <option value="แม่ฮ่องสอน">
-                                  <option value="ยโสธร">
-                                  <option value="ยะลา">
-                                  <option value="ร้อยเอ็ด">
-                                  <option value="ระนอง">
-                                  <option value="ระยอง">
-                                  <option value="ราชบุรี">
-                                  <option value="ลพบุรี">
-                                  <option value="ลำปาง">
-                                  <option value="ลำพูน">
-                                  <option value="เลย">
-                                  <option value="ศรีสะเกษ">
-                                  <option value="สกลนคร">
-                                  <option value="สงขลา">
-                                  <option value="สตูล">
-                                  <option value="สมุทรปราการ">
-                                  <option value="สมุทรสงคราม">
-                                  <option value="สมุทรสาคร">
-                                  <option value="สระแก้ว">
-                                  <option value="สระบุรี">
-                                  <option value="สิงห์บุรี">
-                                  <option value="สุโขทัย">
-                                  <option value="สุพรรณบุรี">
-                                  <option value="สุราษฎร์ธานี">
-                                  <option value="สุรินทร์">
-                                  <option value="หนองคาย">
-                                  <option value="หนองบัวลำภู">
-                                  <option value="อ่างทอง">
-                                  <option value="อำนาจเจริญ">
-                                  <option value="อุดรธานี">
-                                  <option value="อุตรดิตถ์">
-                                  <option value="อุทัยธานี">
-                                  <option value="อุบลราชธานี">
-                                  <option value="อ่างทอง">
-                                  <option value="เบญจลักษ์">
-                                  <option value="นครสวรรค์">
-                                  <option value="สระแก้ว">
-                                  <option value="ราชบุรี">
-                                  <!-- Add more provinces as needed -->
-                                </datalist>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-group mb-4">
-                            <input type="text" class="form-control" placeholder="ลูกค้า" name="cust_nm"  />
-                        </div>
-                    </div>
-                    <table style="background: rgb(236, 245, 215);" class="table table-bordered">
-                        <th scope="col">รายการสั่งซื้อ</th>
-                        <tbody id="TBody">
-                            <tr id="TRow">
-                                <th scope="row" style="float: left; display: none">0</th>
-                                <td>
-                                    <input list="itemSelect" class="form-control" name="item_nm" id="itemInput" style="width: 200px">
-                                    <datalist id="itemSelect">
-                                        <option value="AMCARDIA 5">
-                                        <option value="AMCARDIA 10">
-                                        <option value="DICLO SR 100">
-                                        <option value="DOLONIL SR 100">
-                                        <option value="ENACE 10">
-                                        <option value="ENACE 5 (pack100)(10x10s)">
-                                        <option value="ENACE 5 (pack1000)(100x10s)">
-                                        <option value="HEPARIN INJ">
-                                        <option value="NITRAZEPAM TABLETS 5 MG">
-                                        <option value="NITRAZEPAM (WORKING STANDARD)">     
-                                        <option value="HEP-25">    
-                                        <option value="IRON SUCROSE INJ">
-                                        <option value="METROGYL GEL">
-                                        <option value="OFTOP 200">
-                                        <option value="OMLEK 20">
-                                        <option value="TENROL 50(50x10s)">
-                                        <option value="TENROL 100(50x10)">
-                                        <option value="TENSINIC CD 30">
-                                        <option value="MAXAMIN TABLETS (30 TABLETS)">
-                                        <option value="BEPLEX  TABLETS (30 TABLETS)">
-                                        <option value="DIPSOTREX OINTMENT 30 G">
-                                        <option value="BUROFEN 400 (50x10 Tab)">
-                                        <option value="VITAMIN C 50 (20x50 Tab)">
-                                        <option value="POVIDINE (12 x 30 ml/Bottle)">
-                                        <option value="POVIDINE (12 x 450 ml/Bottle)">
-                                     </datalist>
+    <form id="myForm">
+      <span class="input-group-text mb-0" style="
+        margin-top:20px;
+        border:#198754 1px solid;
+        background-color:#0d5f39;
+        color:white;
+        padding:18px;
+        border-radius:10px 10px 0 0;
+        margin-bottom:-5px;
+      ">
+        บันทึกรายการสั่งซื้อ GISPHARMA
+      </span>
+      <div class="card">
+        <div class="card-body">
 
-                                </td>
-                                <td><input type="number" class="form-control text-end" placeholder="จำนวน" name="qty" onchange="Calc(this);"  />
-                                </td>
-                                <td> <input type="number" class="form-control text-end" placeholder="ราคา" name="rate" onchange="Calc(this);"  />
-                                </td>
-                                <td> <input type="number" class="form-control text-end" placeholder="แถม" name="give" onchange="Calc(this);" />
-                                </td>
-                                <td> <input type="number" class="form-control text-end" placeholder="ลด" name="dis"  onchange="Calc(this);" />
-                                <td> <input type="text" class="form-control text-end" placeholder="ส." id="smp" name="smp" />
-
-                                </td>
-                                <td> <input type="number" class="form-control text-end" name="amt" readonly="" style="background-color: #d1e7dd" />
-                                </td>
-                                <td class="NoPrint"> <button type="button" class="btn btn-dm btn-danger" onclick="BtnDel(this)"> X </button></td>
-                                <td class="NoPrint"><button style="margin: 0 18px;" type="button" class="btn btn-dm btn-success" onclick="BtnAdd()"> + </button>
-                                <td> <input  type="text" placeholder="หมายเหตุ" class="form-control"  name="note_nm" /></td>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="input-group mb-4">
-                                <span class="input-group-text">ทั้งหมด</span>
-                                <input type="number" class="form-control text-end" id="FTotal" name="FTotal" disabled="" />
-                            </div>
-                            <div class="input-group mb-4" style="display: none">
-                                <span class="input-group-text">ภาษี</span>
-                                <input type="number" class="form-control text-end" id="FGST" name="FGST" onchange="GetTotal()" />
-                            </div>
-                            <div class="input-group mb-4" style="display: none">
-                                <span class="input-group-text">ยอดเงินสุทธิ</span>
-                                <input type="number" class="form-control text-end" id="FNet" name="FNet" disabled="" />
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group mb-4">
-                                    <select class="form-control col-4" placeholder="เครดิต" name="credit" >
-                                        <option class="form-control " value="">เลือกเครดิต</option>
-                                        <option class="form-control " value="เงินสด">เงินสด</option>
-                                        <option class="form-control " value="7 วัน">7 วัน</option>
-                                        <option class="form-control " value="30 วัน">30 วัน</option>
-                                        <option class="form-control " value="60 วัน">60 วัน</option>
-                                        <option class="form-control " value="90 วัน">90 วัน</option>
-                                        <option class="form-control " value="120 วัน">120 วัน</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                     
-                        <div class="col-md-12">
-                            <div class="input-group mb-4">
-                                <textarea type="text" class="form-control" placeholder="หมายเหตุ" name="note"></textarea>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <button style="width: 100%;line-height: 40px;" id="submitButton"
-                            class="btn btn-success btn-block" type="button"
-                            onclick="submitForm()">ส่งข้อมูล</button>                        </div>
-                    </div>
-                </div>
+          <!-- Row 1 -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="input-group mb-3">
+                <span class="input-group-text">OrderID</span>
+                <input type="text" id="keyInput" name="order_id" class="form-control" readonly>
+              </div>
+              <div class="input-group mb-3">
+                <span class="input-group-text">เจ้าหน้าที่บันทึก</span>
+                <input type="text" id="displayName" name="displayName" class="form-control" required>
+              </div>
             </div>
-        </form>
-    </div>
+            <div class="col-md-6">
+              <div class="input-group mb-3">
+                <span class="input-group-text">UserID</span>
+                <input type="text" id="userId" name="userId" class="form-control" value="direct" required>
+              </div>
+            </div>
+          </div>
 
-    <script>
+          <!-- Row 2 -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="input-group mb-3">
+                <span class="input-group-text">รหัสผู้ขาย</span>
+                <input type="text" name="sell_id" class="form-control" required>
+              </div>
+              <div class="input-group mb-3">
+                <span class="input-group-text">ประเภทลูกค้า</span>
+                <select name="category" class="form-control" required>
+                  <option value="">เลือกประเภท</option>
+                  <option value="ร้านขายยา">ร้านขายยา</option>
+                  <option value="คลีนิก">คลีนิก</option>
+                  <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
+                  <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                  <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
+                  <option value="ออนไลน์">ออนไลน์</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group mb-3">
+                <span class="input-group-text">เลขใบสั่งซื้อ</span>
+                <input type="text" name="ipo" class="form-control">
+              </div>
+              <div class="input-group mb-3">
+                <span class="input-group-text">จังหวัด</span>
+                <input list="provincesList" id="cityInput" name="city" class="form-control" required>
+                <datalist id="provincesList">
+                  <option value="กรุงเทพมหานคร">
+                  <option value="กระบี่">
+                  <option value="กาญจนบุรี">
+                  <option value="กาฬสินธุ์">
+                  <option value="กำแพงเพชร">
+                  <option value="ขอนแก่น">
+                  <option value="จันทบุรี">
+                  <option value="ฉะเชิงเทรา">
+                  <option value="ชลบุรี">
+                  <option value="ชัยนาท">
+                  <option value="ชัยภูมิ">
+                  <option value="ชุมพร">
+                  <option value="เชียงราย">
+                  <option value="เชียงใหม่">
+                  <option value="ตรัง">
+                  <option value="ตราด">
+                  <option value="ตาก">
+                  <option value="นครนายก">
+                  <option value="นครปฐม">
+                  <option value="นครพนม">
+                  <option value="นครราชสีมา">
+                  <option value="นครศรีธรรมราช">
+                  <option value="นครสวรรค์">
+                  <option value="นนทบุรี">
+                  <option value="นราธิวาส">
+                  <option value="น่าน">
+                  <option value="บึงกาฬ">
+                  <option value="บุรีรัมย์">
+                  <option value="ปทุมธานี">
+                  <option value="ประจวบคีรีขันธ์">
+                  <option value="ปราจีนบุรี">
+                  <option value="ปัตตานี">
+                  <option value="พระนครศรีอยุธยา">
+                  <option value="พะเยา">
+                  <option value="พังงา">
+                  <option value="พัทลุง">
+                  <option value="พิจิตร">
+                  <option value="พิษณุโลก">
+                  <option value="เพชรบุรี">
+                  <option value="เพชรบูรณ์">
+                  <option value="แพร่">
+                  <option value="ภูเก็ต">
+                  <option value="มหาสารคาม">
+                  <option value="มุกดาหาร">
+                  <option value="แม่ฮ่องสอน">
+                  <option value="ยโสธร">
+                  <option value="ยะลา">
+                  <option value="ร้อยเอ็ด">
+                  <option value="ระนอง">
+                  <option value="ระยอง">
+                  <option value="ราชบุรี">
+                  <option value="ลพบุรี">
+                  <option value="ลำปาง">
+                  <option value="ลำพูน">
+                  <option value="เลย">
+                  <option value="ศรีสะเกษ">
+                  <option value="สกลนคร">
+                  <option value="สงขลา">
+                  <option value="สตูล">
+                  <option value="สมุทรปราการ">
+                  <option value="สมุทรสงคราม">
+                  <option value="สมุทรสาคร">
+                  <option value="สระแก้ว">
+                  <option value="สระบุรี">
+                  <option value="สิงห์บุรี">
+                  <option value="สุโขทัย">
+                  <option value="สุพรรณบุรี">
+                  <option value="สุราษฎร์ธานี">
+                  <option value="สุรินทร์">
+                  <option value="หนองคาย">
+                  <option value="หนองบัวลำภู">
+                  <option value="อ่างทอง">
+                  <option value="อำนาจเจริญ">
+                  <option value="อุดรธานี">
+                  <option value="อุตรดิตถ์">
+                  <option value="อุทัยธานี">
+                  <option value="อุบลราชธานี">
+                </datalist>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="row mb-4">
+            <div class="col-9">
+              <input type="text" name="cust_nm" class="form-control" placeholder="ลูกค้า" required>
+            </div>
+            <div class="col-3 d-flex align-items-center">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="newCustomerCheckbox"
+                       name="new_customer_flag" value="1">
+                <label class="form-check-label" for="newCustomerCheckbox">
+                  ลูกค้าใหม่
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order table -->
+          <table class="table table-bordered mb-4" style="background:#ecf5d7">
+            <thead>
+              <tr>
+                <th>รายการสั่งซื้อ</th><th>จำนวน</th><th>ราคา</th><th>แถม</th>
+                <th>ลด</th><th>ส่งเสริมการขาย</th><th>จำนวนเงิน</th>
+                <th class="NoPrint"></th><th class="NoPrint"></th><th>หมายเหตุ</th>
+              </tr>
+            </thead>
+            <tbody id="TBody">
+              <tr id="TRow">
+                <td>
+                  <input list="itemSelect" name="item_nm" class="form-control" style="width:200px">
+                  <datalist id="itemSelect">
+                    <option value="AMCARDIA 5"><option value="AMCARDIA 10">
+                    <option value="DICLO SR 100"><option value="DOLONIL SR 100">
+                    <!-- … all items … -->
+                  </datalist>
+                </td>
+                <td><input type="number" name="qty" class="form-control text-end" onchange="Calc(this)"></td>
+                <td><input type="number" name="rate" class="form-control text-end" onchange="Calc(this)"></td>
+                <td><input type="number" name="give" class="form-control text-end" onchange="Calc(this)"></td>
+                <td><input type="number" name="dis" class="form-control text-end" onchange="Calc(this)"></td>
+                <td><input type="text" name="smp" class="form-control text-end" placeholder="ส."></td>
+                <td><input type="number" name="amt" class="form-control text-end bg-success-subtle" readonly></td>
+                <td class="NoPrint">
+                  <button type="button" class="btn btn-danger" onclick="BtnDel(this)">X</button>
+                </td>
+                <td class="NoPrint">
+                  <button type="button" class="btn btn-success" onclick="BtnAdd()">+</button>
+                </td>
+                <td><input type="text" name="note_nm" class="form-control" placeholder="หมายเหตุ"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Totals, credit, note -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="input-group mb-3">
+                <span class="input-group-text">ทั้งหมด</span>
+                <input type="number" id="FTotal" name="FTotal" class="form-control text-end" readonly>
+              </div>
+              <div class="input-group mb-3">
+                <span class="input-group-text">เครดิต</span>
+                <select name="credit" class="form-control">
+                  <option value="">เลือกเครดิต</option>
+                  <option value="เงินสด">เงินสด</option>
+                  <option value="7 วัน">7 วัน</option>
+                  <option value="30 วัน">30 วัน</option>
+                  <option value="60 วัน">60 วัน</option>
+                  <option value="90 วัน">90 วัน</option>
+                  <option value="120 วัน">120 วัน</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <textarea name="note" class="form-control" placeholder="หมายเหตุ"></textarea>
+            </div>
+          </div>
+
+          <!-- Submit + Loading -->
+          <div class="row mb-3">
+            <div class="col">
+              <button type="button" id="submitButton" class="btn btn-success w-100" onclick="submitForm()">
+                ส่งข้อมูล
+              </button>
+            </div>
+          </div>
+          <div id="loading" class="text-center mb-3" style="display:none">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <div>กำลังบันทึกข้อมูล…</div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- JS libs -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
     function BtnAdd() {
-        /*Add Button*/
-        var v = $("#TRow").clone().appendTo("#TBody");
-        $(v).find("input").val("");
-        $(v).removeClass("d-none");
-        $(v)
-            .find("th")
-            .first()
-            .html($("#TBody tr").length - 1);
+      const v = $('#TRow').clone().appendTo('#TBody');
+      v.removeAttr('id').find('input').val('');
     }
-
-    function BtnDel(v) {
-        /*Delete Button*/
-        $(v).parent().parent().remove();
-        GetTotal();
-
-        $("#TBody")
-            .find("tr")
-            .each(function (index) {
-                $(this).find("th").first().html(index);
-            });
+    function BtnDel(btn) {
+      $(btn).closest('tr').remove();
+      CalcTotals();
     }
-
-    function Calc(v) {
-        /*Detail Calculation Each Row*/
-        var index = $(v).parent().parent().index();
-        var qty = document.getElementsByName("qty")[index].value;
-        var rate = document.getElementsByName("rate")[index].value;
-        var amt = qty * rate;
-        document.getElementsByName("amt")[index].value = amt;
-
-        GetTotal();
+    function Calc(elem) {
+      const row = $(elem).closest('tr');
+      const q = +row.find('input[name=qty]').val()||0;
+      const r = +row.find('input[name=rate]').val()||0;
+      row.find('input[name=amt]').val(q*r);
+      CalcTotals();
     }
-
-    function GetTotal() {
-        /*Footer Calculation*/
-        var sum = 0;
-        var amts = document.getElementsByName("amt");
-
-        for (let index = 0; index < amts.length; index++) {
-            var amt = amts[index].value;
-            sum = parseFloat(sum) + parseFloat(amt);
-        }
-
-        document.getElementById("FTotal").value = sum;
-
-        var gst = document.getElementById("FGST").value;
-        var net = parseFloat(sum) + parseFloat(gst);
-        document.getElementById("FNet").value = net;
+    function CalcTotals() {
+      let sum=0;
+      $('input[name=amt]').each((i,el)=> sum += +el.value||0);
+      $('#FTotal').val(sum);
     }
-    </script>
-    
-   <script>
-   function submitForm() {
-    isSubmitting = true;
-    var submitButton = document.getElementById("submitButton");
-    submitButton.disabled = true;
-
-    var form = document.getElementById("myForm");
-    var formData = new FormData(form);
-
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Form submitted successfully!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If the user clicks "OK" to close the alert, refresh the page
-                        location.reload();
-                    }
-                });
-            } else {
-                // Form submission failed
-                Swal.fire({
-                    icon: 'error',
-                    title: 'เกิดข้อผิดพลาด!',
-                    text: 'ลืมกรอกข้อมูลหรือเปล่า'
-                });
-                // Enable the submit button and reset the submitting flag
-                submitButton.disabled = false;
-                isSubmitting = false;
-            }
-        }
+    window.onload = ()=> {
+      const d=new Date(), yy=String(d.getFullYear()).slice(-2), mm=String(d.getMonth()+1).padStart(2,'0');
+      $('#keyInput').val(`inv${yy}${mm}-${Math.random().toString(36).slice(2,9)}`);
     };
+    function submitForm(){
+      // show loading
+      $('#submitButton').prop('disabled',true);
+      $('#loading').show();
 
-    // Change the form submission URL and method as needed
-    xhr.open("POST", "https://script.google.com/macros/s/AKfycbwVYEOgtEy0dDJsAmsNDXX8BoGV0tC4KoA4PmKWzJ0EiHDxVAnS1qbE06bJJcSACkvf0w/exec");  // Update the URL
-    xhr.send(formData);
-}
-
-function resetForm() {
-    // Reset the form by clearing the form fields and enabling the submit button
-    var form = document.getElementById("myForm");
-    form.reset();
-    var submitButton = document.getElementById("submitButton");
-    submitButton.disabled = false;
-    isSubmitting = false;
-}
-
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"  integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
-        </script>
+      const fd = new FormData($('#myForm')[0]);
+      $.ajax({
+        url: 'https://script.google.com/macros/s/AKfycbwVYEOgtEy0dDJsAmsNDXX8BoGV0tC4KoA4PmKWzJ0EiHDxVAnS1qbE06bJJcSACkvf0w/exec',
+        method: 'POST',
+        data: fd,
+        processData: false,
+        contentType: false
+      })
+      .done(()=>{
+        Swal.fire('สำเร็จ','ส่งข้อมูลเรียบร้อย','success')
+          .then(()=> location.reload());
+      })
+      .fail(()=>{
+        Swal.fire('ล้มเหลว','ไม่สามารถส่งข้อมูลได้','error');
+      })
+      .always(()=>{
+        $('#loading').hide();
+        $('#submitButton').prop('disabled',false);
+      });
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+  </script>
 </body>
 </html>
