@@ -29,6 +29,51 @@
     .results { border: 1px solid #ccc; max-height: 150px; overflow-y: auto; }
     .result-item { padding: 5px; cursor: pointer; }
     .result-item:hover { background-color: #eee; }
+
+
+/* 1. ปิด native appearance ทั้ง WebKit/Mozilla/Standard */
+input,
+select {
+  -webkit-appearance: none;  /* Safari, Chrome */
+  -moz-appearance: none;     /* Firefox */
+  appearance: none;          /* Standard */
+}
+
+/* 2. กำหนดขอบ/พื้นหลัง/ตัวอักษร ให้เป็นไปตามที่คุณต้องการ */
+input,
+select {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem; /* Tailwind: rounded-md */
+  background-color: #fff;
+  color: #333;
+}
+
+/* 3. กรณี <select> ใส่ลูกศรเอง (เพราะ native arrow ถูกลบไปแล้ว) */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.6rem auto;
+  padding-right: 2.5rem; /* เผื่อพื้นที่ให้ลูกศร */
+}
+
+/* 4. ปิด outline เดิมเมื่อโฟกัส และกำหนดเอง */
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #4285f4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
+}
+
+/* 5. ถ้าต้องการกัน Zoom บน iOS เมื่อ font-size < 16px */
+html {
+  font-size: 16px;
+}
+
   </style>
 
   <!-- jQuery -->
@@ -41,7 +86,7 @@
     <form id="myForm">
       <div class="bg-white px-4 py-2">
         <!-- hidden: order_id -->
-        <div class="flex justify-start p-2 border border-green-800 rounded-lg mb-4"  style="display: none;">
+        <div class="flex justify-start p-2 border-2 border-green-800 rounded-lg mb-4"  style="display: none;">
           <span class="input-group-text">OderID</span>
           <input type="text" id="keyInput" name="order_id"  required />
         </div>
