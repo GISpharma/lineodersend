@@ -161,7 +161,7 @@
           <button
             id="submitButton"
             type="button"
-            class="btn bg-green-800 border-2 border-green-700 text-white py-2 w-full"
+            class="btn bg-green-800 border-2 border-green-700 text-white py-2 w-full hover:bg-green-600"
             onclick="submitForm()"
           >
             ส่งข้อมูล
@@ -249,7 +249,7 @@
               <button type="button" class="w-24 bg-red-200 border-2 border-red-500 p-2 text-red-900 font-bold rounded-md" onclick="removeOrderItem(this)">❌ ลบ</button>
             </div>
           </div>
-        ...
+        
       `;  
       container.appendChild(card);
       attachDatalist(card.querySelector('input[name="item_nm[]"]'));
