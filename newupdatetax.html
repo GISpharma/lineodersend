@@ -1,137 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>รายการสั่งซื้อ</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>รายการสั่งซื้อ</title>
 
-  <!-- Bootstrap & Tailwind -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-    crossorigin="anonymous"
-  />
-  <link
-    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-    rel="stylesheet"
-  />
+    <!-- Bootstrap & Tailwind -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-  <!-- SweetAlert2 -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css"
-  />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <style>
-    #loading { display: none; }
-    .results { border: 1px solid #ccc; max-height: 150px; overflow-y: auto; }
-    .result-item { padding: 5px; cursor: pointer; }
-    .result-item:hover { background-color: #eee; }
+    <style>
+        #loading {
+            display: none;
+        }
 
-/* 1. Override native appearance ยกเว้น checkbox */
-input:not([type=checkbox]),
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
+        .results {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+        }
 
-/* 2. กำหนดขอบ/พื้นหลัง/ตัวอักษร */
-input:not([type=checkbox]),
-select {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border: 1px solid #ccc;
-  border-radius: 0.375rem;
-  background-color: #fff;
-  color: #333;
-}
+        .result-item {
+            padding: 5px;
+            cursor: pointer;
+        }
 
-/* 3. ใส่ลูกศรเองสำหรับ <select> */
-select {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%23666'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 0.6rem auto;
-  padding-right: 2.5rem;
-}
+        .result-item:hover {
+            background-color: #eee;
+        }
 
-/* 4. Focus state */
-input:not([type=checkbox]):focus,
-select:focus {
-  outline: none;
-  border-color: #4285f4;
-  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
-}
+        /* 1. Override native appearance ยกเว้น checkbox */
+        input:not([type=checkbox]),
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
 
-/* 5. ป้องกัน zoom บน iOS */
-html {
-  font-size: 16px;
-}
+        /* 2. กำหนดขอบ/พื้นหลัง/ตัวอักษร */
+        input:not([type=checkbox]),
+        select {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border: 1px solid #ccc;
+            border-radius: 0.375rem;
+            background-color: #fff;
+            color: #333;
+        }
 
+        /* 3. ใส่ลูกศรเองสำหรับ <select> */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%23666'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.6rem auto;
+            padding-right: 2.5rem;
+        }
 
-  </style>
+        /* 4. Focus state */
+        input:not([type=checkbox]):focus,
+        select:focus {
+            outline: none;
+            border-color: #004704;
+            box-shadow: 0 0 0 3px rgba(66, 244, 149, 0.3);
+        }
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- LIFF SDK -->
-  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+        /* 5. ป้องกัน zoom บน iOS */
+        html {
+            font-size: 16px;
+        }
+    </style>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 </head>
-<body class="bg-gray-100">
-  <div class="container mx-auto p-2">
-    <form id="myForm">
-      <div class="bg-white p-3 border rounded-md shadow-sm">
-        <!-- hidden: order_id -->
-        <div class="flex justify-start p-2 border-2 border-green-800 rounded-lg mb-4"  style="display: none;">
-          <span class="input-group-text">OderID</span>
-          <input type="text" id="keyInput" name="order_id"  required />
-        </div>
-        <!-- hidden: userId -->
-        <div class="flex justify-start p-2 border border-green-800 rounded-lg mb-4"  style="display: none;">
-          <span class="input-group-text">UserID</span>
-          <input type="text" id="userId" name="userId" required />
-        </div>
-        <!-- displayName -->
-        <div class="flex justify-start px-2  border-2 border-green-800 rounded-lg mb-4">
-          <span class="text-black pt-2">🔔</span>
-          <input
-            type="text"
-            id="displayName"
-            name="displayName"
-            class="bg-transparent border-white text-black ml-2 w-2/3"
-            required
-          />
-        </div>
 
-        <!-- top‐row inputs -->
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
-            <input type="number" name="sell_id" class="block w-full p-2 border rounded-md" required />
-          </div>
-          <div>
-            <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
-            <select id="category" name="category" class="block w-full p-2 border rounded-md" required>
-              <option value="">เลือกประเภท</option>
-              <option value="ร้านขายยา">ร้านขายยา</option>
-              <option value="คลีนิก">คลีนิก</option>
-              <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
-              <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
-              <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
-              <option value="ออนไลน์">ออนไลน์</option>
-            </select>
-          </div>
-          <div>
-            <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
-            <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
-          </div>
- <div>
+<body class="bg-gray-100">
+    <div class="max-w-md mx-auto p-2">
+        <form id="myForm">
+            <div class="bg-white p-3 border rounded-md shadow-sm">
+                <!-- hidden: order_id -->
+                <div class="flex justify-start p-2 border-2 border-green-800 rounded-lg mb-4" style="display: none;">
+                    <span class="input-group-text">OderID</span>
+                    <input type="text" id="keyInput" name="order_id" required />
+                </div>
+                <!-- hidden: userId -->
+                <div class="flex justify-start p-2 border border-green-800 rounded-lg mb-4" style="display: none;">
+                    <span class="input-group-text">UserID</span>
+                    <input type="text" id="userId" name="userId" required />
+                </div>
+                <!-- displayName -->
+                <div class="flex justify-start px-2 rounded-lg bg-green-800 mb-4">
+                    <span class="text-white pt-2">
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#ffffff" fill="none">
+                            <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="#ffffff" stroke-width="1.5"></path>
+                            <path d="M14.75 9.5C14.75 11.0188 13.5188 12.25 12 12.25C10.4812 12.25 9.25 11.0188 9.25 9.5C9.25 7.98122 10.4812 6.75 12 6.75C13.5188 6.75 14.75 7.98122 14.75 9.5Z" stroke="#ffffff" stroke-width="1.5"></path>
+                            <path d="M5.49994 19.0001L6.06034 18.0194C6.95055 16.4616 8.60727 15.5001 10.4016 15.5001H13.5983C15.3926 15.5001 17.0493 16.4616 17.9395 18.0194L18.4999 19.0001" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                    <input type="text" id="displayName" name="displayName"  class="bg-transparent border-0 text-white font-bold ml-2 w-2/3" required />
+                </div>
+
+                <!-- top‐row inputs -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="sell_id" class="block mb-2 text-sm font-medium text-gray-700">รหัสผู้ขาย</label>
+                        <input type="number" name="sell_id" class="block w-full p-2 border rounded-md" required />
+                    </div>
+                    <div>
+                        <label for="category" class="block mb-2 text-sm font-medium text-gray-700">ประเภทลูกค้า</label>
+                        <select id="category" name="category" class="block w-full p-2 border rounded-md" required>
+                            <option value="">เลือกประเภท</option>
+                            <option value="ร้านขายยา">ร้านขายยา</option>
+                            <option value="คลีนิก">คลีนิก</option>
+                            <option value="โรงพยาบาลรัฐ">โรงพยาบาลรัฐ</option>
+                            <option value="โรงพยาบาลเอกชน">โรงพยาบาลเอกชน</option>
+                            <option value="ร้าน/บริษัท/ขายส่ง">ร้าน/บริษัท/ขายส่ง</option>
+                            <option value="ออนไลน์">ออนไลน์</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ipo" class="block mb-2 text-sm font-medium text-gray-700">เลขใบสั่งซื้อ</label>
+                        <input type="text" id="ipo" name="ipo" class="block w-full p-2 border rounded-md" />
+                    </div>
+                    <div>
                         <label for="provinceInput" class="block mb-2 text-sm font-medium text-gray-700">จังหวัด</label>
-                        <input list="provinces" id="provinceInput" name="city" class="block w-full p-2 border rounded-md" required>
+                        <input list="provinces" id="provinceInput" name="city"
+                            class="block w-full p-2 border rounded-md" required>
                         <datalist id="provinces">
                             <script>
                                 // List of available provinces
@@ -149,34 +154,34 @@ html {
                                     "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี", "อ่างทอง", "เบญจลักษ์",
                                     "นครสวรรค์", "สระแก้ว", "ราชบุรี"
                                 ];
-                        
+
                                 document.addEventListener('DOMContentLoaded', () => {
                                     const input = document.getElementById('provinceInput');
                                     const maxOptionsToShow = 3;
-                        
-                                    input.addEventListener('input', function() {
+
+                                    input.addEventListener('input', function () {
                                         const inputValue = input.value.toLowerCase();
                                         const matchingProvinces = provinces
                                             .filter(province => province.toLowerCase().includes(inputValue))
                                             .slice(0, maxOptionsToShow);
-                        
+
                                         // Remove any existing datalist
                                         const existingDatalist = document.getElementById('datalist-provinces');
                                         if (existingDatalist) {
                                             existingDatalist.remove();
                                         }
-                        
+
                                         // Create a new datalist if there are matching items
                                         if (matchingProvinces.length > 0) {
                                             const dataList = document.createElement('datalist');
                                             dataList.id = 'datalist-provinces';
-                        
+
                                             matchingProvinces.forEach(province => {
                                                 const optionElement = document.createElement('option');
                                                 optionElement.value = province;
                                                 dataList.appendChild(optionElement);
                                             });
-                        
+
                                             document.body.appendChild(dataList);
                                             input.setAttribute('list', 'datalist-provinces');
                                         } else {
@@ -186,133 +191,114 @@ html {
                                 });
                             </script>
                     </div>
-        </div>
+                </div>
 
-        <!-- ลูกค้า + ลูกค้าใหม่ -->
-        <div class="mt-4">
-          <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
-          <input
-            type="text"
-            id="cust_nm"
-            name="cust_nm"
-            class="block w-full p-2 border rounded-md"
-            required
-          />
-          <div class="mt-2 flex items-center">
-            <input
-              type="checkbox"
-              id="newCustomer"
-              name="newCustomer"
-              value="ลูกค้าใหม่"
-              class="form-checkbox h-4 w-4 text-green-600"
-            />
-            <label for="newCustomer" class="ml-2 text-gray-700">ลูกค้าใหม่</label>
-          </div>
-        </div>
+                <!-- ลูกค้า + ลูกค้าใหม่ -->
+                <div class="mt-3">
+                    <label for="cust_nm" class="block mb-2 text-sm font-medium text-gray-700">ลูกค้า</label>
+                    <input type="text" id="cust_nm" name="cust_nm" class="block w-full p-2 border rounded-md"
+                        required />
+                    <div class="mt-2 flex items-center">
+                        <input type="checkbox" id="newCustomer" name="newCustomer" value="ลูกค้าใหม่"
+                            class="form-checkbox h-4 w-4 text-green-600" />
+                        <label for="newCustomer" class="ml-2 text-gray-700">ลูกค้าใหม่</label>
+                    </div>
+                </div>
 
-        <!-- Order items placeholder -->
-        <div id="orderItems" class="mt-4"></div>
-        <div class="mt-4">
-          <button
-            type="button"
-            class="btn border-2 border-green-800 text-green-700 p-2"
-            onclick="addOrderItem()"
-          >
-          ➕เพิ่มรายการสินค้า
-          </button>
-        </div>
+                <!-- Order items placeholder -->
+                <div id="orderItems" class="mt-3"></div>
+                <div class="mt-4">
+                    <button type="button" class="btn bg-green-800 text-white p-2 hover:bg-green-700"
+                        onclick="addOrderItem()">
+                        <span class="flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#ffffff" fill="none">
+                                <path d="M12 8V16M16 12H8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <circle cx="12" cy="12" r="10" stroke="#ffffff" stroke-width="1.5"></circle>
+                            </svg>
+                            <p class="pl-2">เพิ่มรายการสินค้า</p>
+                        </span>
+                    </button>
+                </div>
 
-        <!-- Total, credit, note, submit -->
-        <div class="mt-4">
-          <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">ทั้งหมด</label>
-          <input
-            type="number"
-            id="FTotal"
-            name="FTotal"
-            class="block w-full bg-gray-200 p-2 border rounded-md"
-            readonly
-          />
-        </div>
-        <div class="mt-4">
-          <select name="credit" class="block w-full p-2 border rounded-md" required>
-            <option value="">เลือกเครดิต</option>
-            <option value="เงินสด">เงินสด</option>
-            <option value="7 วัน">7 วัน</option>
-            <option value="30 วัน">30 วัน</option>
-            <option value="60 วัน">60 วัน</option>
-            <option value="90 วัน">90 วัน</option>
-            <option value="120 วัน">120 วัน</option>
-          </select>
-        </div>
-        <div class="mt-4">
-          <textarea
-            name="note"
-            class="block w-full p-2 border rounded-md"
-            placeholder="หมายเหตุ"
-          ></textarea>
-        </div>
-        <div class="mt-4">
-          <button
-            id="submitButton"
-            type="button"
-            class="btn bg-green-800 border-2 border-green-700 text-white py-2 w-full hover:bg-green-600"
-            onclick="submitForm()"
-          >
-            ส่งข้อมูล
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
+                <!-- Total, credit, note, submit -->
+                <div class="mt-3">
+                    <label for="FTotal" class="block mb-2 text-sm font-medium text-gray-700">ทั้งหมด</label>
+                    <input type="number" id="FTotal" name="FTotal"
+                        class="block w-full bg-gray-200 p-2 border rounded-md" readonly />
+                </div>
+                <div class="mt-3">
+                    <select name="credit" class="block w-full p-2 border rounded-md" required>
+                        <option value="">เลือกเครดิต</option>
+                        <option value="เงินสด">เงินสด</option>
+                        <option value="7 วัน">7 วัน</option>
+                        <option value="30 วัน">30 วัน</option>
+                        <option value="60 วัน">60 วัน</option>
+                        <option value="90 วัน">90 วัน</option>
+                        <option value="120 วัน">120 วัน</option>
+                    </select>
+                </div>
+                <div class="mt-4">
+                    <textarea name="note" class="block w-full p-2 border rounded-md" placeholder="หมายเหตุ"></textarea>
+                </div>
+                <div class="mt-4">
+                    <button id="submitButton" type="button"
+                        class="btn bg-green-800 border-2 border-green-800 text-white py-2 w-full hover:bg-green-700"
+                        onclick="submitForm()">
+                        ส่งข้อมูล
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-  <script>
-    // ---------- LIFF & Profile ----------
-    window.onload = () => {
-      initializeLiff();
-      generateKeyAndDate();
-    };
+    <script>
+        // ---------- LIFF & Profile ----------
+        window.onload = () => {
+            initializeLiff();
+            generateKeyAndDate();
+        };
 
-    async function initializeLiff() {
-      await liff.init({ liffId: '2000460029-kvLNmnPE' });
-      if (liff.isLoggedIn()) getUserProfile();
-      else liff.login();
-    }
+        async function initializeLiff() {
+            await liff.init({ liffId: '2000460029-kvLNmnPE' });
+            if (liff.isLoggedIn()) getUserProfile();
+            else liff.login();
+        }
 
-    async function getUserProfile() {
-      try {
-        const profile = await liff.getProfile();
-        document.getElementById('userId').value = profile.userId;
-        document.getElementById('displayName').value = profile.displayName;
-      } catch (e) {
-        console.error(e);
-      }
-    }
+        async function getUserProfile() {
+            try {
+                const profile = await liff.getProfile();
+                document.getElementById('userId').value = profile.userId;
+                document.getElementById('displayName').value = profile.displayName;
+            } catch (e) {
+                console.error(e);
+            }
+        }
 
-    // ---------- OrderID & Date ----------
-    function generateKeyAndDate() {
-      const rnd = Math.random().toString(36).substring(7);
-      const d = new Date();
-      const yy = String(d.getFullYear()).slice(-2);
-      const mm = String(d.getMonth()+1).padStart(2,'0');
-      document.getElementById('keyInput').value = `inv${yy}${mm}-${rnd}`;
-    }
+        // ---------- OrderID & Date ----------
+        function generateKeyAndDate() {
+            const rnd = Math.random().toString(36).substring(7);
+            const d = new Date();
+            const yy = String(d.getFullYear()).slice(-2);
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            document.getElementById('keyInput').value = `inv${yy}${mm}-${rnd}`;
+        }
 
-    // ---------- Dynamic Item List ----------
-    const allItems = [
+        // ---------- Dynamic Item List ----------
+        const allItems = [
             "AMCARDIA 5", "AMCARDIA 10", "DICLO SR 100", "DOLONIL SR 100",
             "ENACE 10", "ENACE 5 (pack100)(10x10s)", "ENACE 5 (pack1000)(100x10s)",
             "HEPARIN INJ", "HEP-25", "IRON SUCROSE INJ", "METROGYL GEL",
             "NITRAZEPAM TABLETS 5 MG", "NITRAZEPAM (WORKING STANDARD)",
-            "OFTOP 200", "OMLEK 20","OVULET 50", "TENROL 50(50x10s)", "TENROL 100(50x10)",
+            "OFTOP 200", "OMLEK 20", "OVULET 50", "TENROL 50(50x10s)", "TENROL 100(50x10)",
             "TENSINIC CD 30", "MAXAMIN TABLETS (30 TABLETS)", "BEPLEX  TABLETS (30 TABLETS)",
             "DIPSOTREX OINTMENT 30 G", "BUROFEN 400 (50x10 Tab)", "VITAMIN C 50 (20x50 Tab)", "POVIDINE (12 x 30 ml/Bottle)", "POVIDINE (6 x 450 ml/Bottle)"
         ];
 
-    function addOrderItem() {
-      const container = document.getElementById('orderItems');
-      const card = document.createElement('div');
-      card.className = 'bg-green-50 p-2 border-2 border-green-800 shadow-md rounded-lg mb-4 order-item';
-      card.innerHTML = `
+        function addOrderItem() {
+            const container = document.getElementById('orderItems');
+            const card = document.createElement('div');
+            card.className = 'bg-green-50 p-2 border-2 border-green-800 shadow-md rounded-lg mb-4 order-item';
+            card.innerHTML = `
         <div class="grid grid-cols-1 gap-4">
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-700">รายการสั่งซื้อ</label>
@@ -349,120 +335,135 @@ html {
             </div>
           </div>
         
-      `;  
-      container.appendChild(card);
-      attachDatalist(card.querySelector('input[name="item_nm[]"]'));
-    }
-
-    function attachDatalist(inputEl) {
-      const maxShow = 3;
-      inputEl.addEventListener('input', () => {
-        const val = inputEl.value.toLowerCase();
-        const matches = allItems.filter(i=>i.toLowerCase().includes(val)).slice(0,maxShow);
-        let dl = document.getElementById('datalist-items'); if(dl) dl.remove();
-        if(matches.length){
-          dl=document.createElement('datalist'); dl.id='datalist-items';
-          matches.forEach(m=>dl.appendChild(new Option(m)));
-          document.body.appendChild(dl);
-          inputEl.setAttribute('list','datalist-items');
-        } else inputEl.removeAttribute('list');
-      });
-    }
-
-    function removeOrderItem(btn){ btn.closest('.order-item').remove(); calculateTotal(); }
-    function calculateAmount(el){
-      const card=el.closest('.order-item');
-      const q=+card.querySelector('input[name="quantity[]"]').value||0;
-      const p=+card.querySelector('input[name="price[]"]').value||0;
-      card.querySelector('input[name="amt[]"]').value=q*p;
-      calculateTotal();
-    }
-    function calculateTotal(){
-      document.getElementById('FTotal').value=
-        [...document.querySelectorAll('input[name="amt[]"]')]
-        .reduce((sum,el)=>sum+(+el.value||0),0);
-    }
-
-    let isSubmitting=false;
-    function submitForm(){
-      if(isSubmitting) return;
-      if(![...document.querySelectorAll('#myForm [required]')].every(f=>f.value.trim())){
-        return Swal.fire({icon:'error',title:'ลืมกรอกข้อมูล!'});
-      }
-      isSubmitting=true; document.getElementById('submitButton').disabled=true;
-      const fd=new FormData(document.getElementById('myForm'));
-      const xhr=new XMLHttpRequest();
-      xhr.onreadystatechange=()=>{
-        if(xhr.readyState===4){
-          if(xhr.status===200){
-            Swal.fire({icon:'success',title:'ส่งสำเร็จ!'});
-            createAndSendFlexMessage(fd);
-            document.getElementById('myForm').reset();
-            document.getElementById('orderItems').innerHTML='';
-            calculateTotal();
-          } else {
-            Swal.fire({icon:'error',title:'มีปัญหา!'});
-            document.getElementById('submitButton').disabled=false;
-            isSubmitting=false;
-          }
+      `;
+            container.appendChild(card);
+            attachDatalist(card.querySelector('input[name="item_nm[]"]'));
         }
-      };
-      xhr.open('POST','https://script.google.com/macros/s/AKfycbwPndil0dR-LJZraU_GWONXAga1PgHPVOtzInwl_6sW8TMMCkIhsBPbA63vTek9Xq5m/exec');
-      xhr.send(fd);
-    }
 
-    function createAndSendFlexMessage(fd){
-      const customer=fd.get('cust_nm');
-      const newCust=fd.get('newCustomer')||'';
-      const fTotal=document.getElementById('FTotal').value;
-      const credit=fd.get('credit');
-      const note=fd.get('note')||'';
-      const items=fd.getAll('item_nm[]');
-      const qtys=fd.getAll('quantity[]');
-      const rates=fd.getAll('price[]');
-      const gives=fd.getAll('give[]');
-      const dis=fd.getAll('dis[]');
-      const smp=fd.getAll('smp[]');
-      const amts=fd.getAll('amt[]');
+        function attachDatalist(inputEl) {
+            const maxShow = 3;
+            inputEl.addEventListener('input', () => {
+                const val = inputEl.value.toLowerCase();
+                const matches = allItems.filter(i => i.toLowerCase().includes(val)).slice(0, maxShow);
+                let dl = document.getElementById('datalist-items'); if (dl) dl.remove();
+                if (matches.length) {
+                    dl = document.createElement('datalist'); dl.id = 'datalist-items';
+                    matches.forEach(m => dl.appendChild(new Option(m)));
+                    document.body.appendChild(dl);
+                    inputEl.setAttribute('list', 'datalist-items');
+                } else inputEl.removeAttribute('list');
+            });
+        }
 
-      const orderBoxes=items.map((it,i)=>(
-        {type:'box',layout:'vertical',spacing:'sm',margin:'md',contents:[
-          {type:'text',text:it,weight:'bold',size:'md'},
-          {type:'box',layout:'horizontal',contents:[
-            {type:'text',text:`จำนวน: ${qtys[i]}`,wrap:true,flex:3},
-            {type:'text',text:`ราคา: ${rates[i]}`,wrap:true,flex:3}
-          ]},
-          {type:'box',layout:'horizontal',contents:[
-            {type:'text',text:`แถม: ${gives[i]}`,wrap:true,flex:3},
-            {type:'text',text:`ลด: ${dis[i]}`,wrap:true,flex:3}
-          ]},
-          {type:'box',layout:'horizontal',contents:[
-            {type:'text',text:`ส่งเสริม: ${smp[i]}`,wrap:true,flex:3}
-          ]},
-          {type:'box',layout:'horizontal',contents:[
-            {type:'text',text:`จำนวนเงิน: ${amts[i]}`,wrap:true,flex:3}
-          ]}
-        ]}
-      ));
+        function removeOrderItem(btn) { btn.closest('.order-item').remove(); calculateTotal(); }
+        function calculateAmount(el) {
+            const card = el.closest('.order-item');
+            const q = +card.querySelector('input[name="quantity[]"]').value || 0;
+            const p = +card.querySelector('input[name="price[]"]').value || 0;
+            card.querySelector('input[name="amt[]"]').value = q * p;
+            calculateTotal();
+        }
+        function calculateTotal() {
+            document.getElementById('FTotal').value =
+                [...document.querySelectorAll('input[name="amt[]"]')]
+                    .reduce((sum, el) => sum + (+el.value || 0), 0);
+        }
 
-      const flex={type:'flex',altText:'มีคำสั่งซื้อใหม่',contents:{
-        type:'bubble',body:{type:'box',layout:'vertical',spacing:'md',contents:[
-          {type:'text',text:'แจ้งการสั่งซื้อ',weight:'bold',size:'lg',color:'#067706'},
-          {type:'text',text:`ลูกค้า: ${customer} ${newCust}`,wrap:true},
-          {type:'separator',margin:'sm'},
-          {type:'text',text:'รายการสินค้า:',weight:'bold',margin:'sm'},
-          ...orderBoxes,
-          {type:'separator',margin:'sm'},
-          {type:'text',text:`ยอดรวมทั้งสิ้น: ${fTotal} บาท`,wrap:true,weight:'bold'},
-          {type:'text',text:`เครดิต: ${credit}`,wrap:true,weight:'bold'},
-          {type:'text',text:`หมายเหตุ: ${note}`,wrap:true,weight:'bold'}
-        ]}
-      }};
+        let isSubmitting = false;
+        function submitForm() {
+            if (isSubmitting) return;
+            if (![...document.querySelectorAll('#myForm [required]')].every(f => f.value.trim())) {
+                return Swal.fire({ icon: 'error', title: 'ลืมกรอกข้อมูล!' });
+            }
+            isSubmitting = true; document.getElementById('submitButton').disabled = true;
+            const fd = new FormData(document.getElementById('myForm'));
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        Swal.fire({ icon: 'success', title: 'ส่งสำเร็จ!' });
+                        createAndSendFlexMessage(fd);
+                        document.getElementById('myForm').reset();
+                        document.getElementById('orderItems').innerHTML = '';
+                        calculateTotal();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'มีปัญหา!' });
+                        document.getElementById('submitButton').disabled = false;
+                        isSubmitting = false;
+                    }
+                }
+            };
+            xhr.open('POST', 'https://script.google.com/macros/s/AKfycbwPndil0dR-LJZraU_GWONXAga1PgHPVOtzInwl_6sW8TMMCkIhsBPbA63vTek9Xq5m/exec');
+            xhr.send(fd);
+        }
 
-      liff.sendMessages([flex])
-        .then(()=>Swal.fire({icon:'success',title:'ส่ง LIFF สำเร็จ!',confirmButtonText:'ปิด'}).then(()=>liff.closeWindow()))
-        .catch(console.error);
-    }
-  </script>
+        function createAndSendFlexMessage(fd) {
+            const customer = fd.get('cust_nm');
+            const newCust = fd.get('newCustomer') || '';
+            const fTotal = document.getElementById('FTotal').value;
+            const credit = fd.get('credit');
+            const note = fd.get('note') || '';
+            const items = fd.getAll('item_nm[]');
+            const qtys = fd.getAll('quantity[]');
+            const rates = fd.getAll('price[]');
+            const gives = fd.getAll('give[]');
+            const dis = fd.getAll('dis[]');
+            const smp = fd.getAll('smp[]');
+            const amts = fd.getAll('amt[]');
+
+            const orderBoxes = items.map((it, i) => (
+                {
+                    type: 'box', layout: 'vertical', spacing: 'sm', margin: 'md', contents: [
+                        { type: 'text', text: it, weight: 'bold', size: 'md' },
+                        {
+                            type: 'box', layout: 'horizontal', contents: [
+                                { type: 'text', text: `จำนวน: ${qtys[i]}`, wrap: true, flex: 3 },
+                                { type: 'text', text: `ราคา: ${rates[i]}`, wrap: true, flex: 3 }
+                            ]
+                        },
+                        {
+                            type: 'box', layout: 'horizontal', contents: [
+                                { type: 'text', text: `แถม: ${gives[i]}`, wrap: true, flex: 3 },
+                                { type: 'text', text: `ลด: ${dis[i]}`, wrap: true, flex: 3 }
+                            ]
+                        },
+                        {
+                            type: 'box', layout: 'horizontal', contents: [
+                                { type: 'text', text: `ส่งเสริม: ${smp[i]}`, wrap: true, flex: 3 }
+                            ]
+                        },
+                        {
+                            type: 'box', layout: 'horizontal', contents: [
+                                { type: 'text', text: `จำนวนเงิน: ${amts[i]}`, wrap: true, flex: 3 }
+                            ]
+                        }
+                    ]
+                }
+            ));
+
+            const flex = {
+                type: 'flex', altText: 'มีคำสั่งซื้อใหม่', contents: {
+                    type: 'bubble', body: {
+                        type: 'box', layout: 'vertical', spacing: 'md', contents: [
+                            { type: 'text', text: 'แจ้งการสั่งซื้อ', weight: 'bold', size: 'lg', color: '#067706' },
+                            { type: 'text', text: `ลูกค้า: ${customer} ${newCust}`, wrap: true },
+                            { type: 'separator', margin: 'sm' },
+                            { type: 'text', text: 'รายการสินค้า:', weight: 'bold', margin: 'sm' },
+                            ...orderBoxes,
+                            { type: 'separator', margin: 'sm' },
+                            { type: 'text', text: `ยอดรวมทั้งสิ้น: ${fTotal} บาท`, wrap: true, weight: 'bold' },
+                            { type: 'text', text: `เครดิต: ${credit}`, wrap: true, weight: 'bold' },
+                            { type: 'text', text: `หมายเหตุ: ${note}`, wrap: true, weight: 'bold' }
+                        ]
+                    }
+                }
+            };
+
+            liff.sendMessages([flex])
+                .then(() => Swal.fire({ icon: 'success', title: 'ส่ง LIFF สำเร็จ!', confirmButtonText: 'ปิด' }).then(() => liff.closeWindow()))
+                .catch(console.error);
+        }
+    </script>
 </body>
+
 </html>
