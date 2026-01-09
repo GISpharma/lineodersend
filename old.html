@@ -10,86 +10,87 @@
   
   <style>
     :root { --primary-color: #0d5f39; --secondary-bg: #f8f9fa; }
-    body { background-color: #e9ecef; font-family: 'Sarabun', sans-serif; font-size: 14px; }
+    body { background-color: #f0f2f5; font-family: 'Sarabun', sans-serif; font-size: 14px; }
     
-    /* Layout */
-    .main-wrapper { max-width: 1300px; margin: 20px auto; }
+    .main-wrapper { max-width: 1400px; margin: 20px auto; padding: 0 15px; }
     .glass-card { 
       background: white; border-radius: 12px; border: none; 
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.1); overflow: hidden;
     }
     
-    /* Header */
     .top-bar { 
       background: var(--primary-color); color: white; 
       padding: 15px 25px; border-bottom: 4px solid #198754;
     }
 
-    /* Sections */
-    .content-section { padding: 20px; border-bottom: 1px solid #eee; }
+    .content-section { padding: 20px; border-bottom: 1px solid #f0f0f0; }
     .section-label { 
       font-weight: 600; color: var(--primary-color); 
       margin-bottom: 15px; display: flex; align-items: center; 
       border-left: 4px solid var(--primary-color); padding-left: 10px;
     }
 
-    /* Form Elements */
-    .form-label-sm { font-size: 12px; color: #666; margin-bottom: 4px; }
-    .form-control-sm, .form-select-sm { border-radius: 6px; border: 1px solid #ddd; padding: 8px; }
-    .input-group-text { background-color: #eee; border-color: #ddd; font-size: 12px; }
+    .form-label-sm { font-size: 12px; color: #666; margin-bottom: 4px; font-weight: 500; }
+    .form-control-sm, .form-select-sm { border-radius: 6px; padding: 7px; }
 
-    /* Table */
-    .table-custom { font-size: 13px; }
-    .table-custom thead { background: #f1f3f5; }
-    .table-custom th { border: none; padding: 12px 8px; font-weight: 600; color: #495057; }
-    .bg-amount { background-color: #f0fff4 !important; font-weight: 700; color: #0d5f39; border: 1px solid #c6f6d5 !important; }
+    /* Table Styling */
+    .table-custom { font-size: 13px; min-width: 1000px; }
+    .table-custom thead { background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
+    .table-custom th { padding: 12px 8px; font-weight: 600; color: #495057; text-align: center; }
+    .bg-amount { background-color: #e8f5e9 !important; font-weight: 700; color: #0d5f39; border: 1px solid #c6f6d5 !important; }
 
-    /* Sidebar / Summary */
-    .summary-box { background: var(--secondary-bg); border-radius: 10px; padding: 20px; position: sticky; top: 20px; }
-    .total-label { font-size: 14px; color: #666; }
-    .total-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+    /* Summary Sidebar */
+    .summary-box { background: #ffffff; border-left: 1px solid #eee; padding: 25px; height: 100%; }
+    .total-display {
+      background: #f8f9fa; border-radius: 10px; padding: 20px;
+      margin-bottom: 20px; border: 1px dashed #ccc;
+    }
+    .total-value { font-size: 32px; font-weight: 700; color: var(--primary-color); line-height: 1; }
     
-    .btn-save { background: var(--primary-color); color: white; padding: 12px; font-weight: 600; border-radius: 8px; transition: 0.3s; }
-    .btn-save:hover { background: #0a4b2d; transform: translateY(-2px); color: white; }
+    .btn-save { background: var(--primary-color); color: white; padding: 14px; font-weight: 600; border-radius: 10px; border: none; width: 100%; transition: 0.3s; }
+    .btn-save:hover { background: #0a4b2d; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(13,95,57,0.3); }
+    
+    .btn-add-row { color: var(--primary-color); border: 1px solid var(--primary-color); font-weight: 600; }
+    .btn-add-row:hover { background: var(--primary-color); color: white; }
   </style>
 </head>
 <body>
 
-<div class="main-wrapper container-fluid">
+<div class="main-wrapper">
   <div class="glass-card">
     <div class="top-bar d-flex justify-content-between align-items-center">
-      <h5 class="mb-0 fw-bold"><i class="bi bi-box-seam me-2"></i>บันทึกรายการสั่งซื้อ GISPHARMA</h5>
-      <div id="dateDisplay" class="small opacity-75"></div>
+      <h5 class="mb-0 fw-bold"><i class="bi bi-cart-plus-fill me-2"></i>ระบบบันทึกรายการสั่งซื้อ GISPHARMA</h5>
+      <span id="dateDisplay" class="badge bg-white text-dark fw-normal p-2"></span>
     </div>
 
     <form id="myForm">
       <div class="row g-0">
-        <div class="col-lg-9 border-end">
+        <div class="col-xl-9">
           
           <div class="content-section bg-light">
             <div class="row g-3">
               <div class="col-md-3">
-                <label class="form-label-sm">OrderID</label>
-                <input type="text" id="keyInput" name="order_id" class="form-control form-control-sm" readonly>
+                <label class="form-label-sm text-primary">Order ID</label>
+                <input type="text" id="keyInput" name="order_id" class="form-control form-control-sm border-primary bg-white" readonly>
               </div>
               <div class="col-md-3">
                 <label class="form-label-sm">เจ้าหน้าที่บันทึก</label>
-                <input type="text" id="displayName" name="displayName" class="form-control form-control-sm" required>
+                <input type="text" id="displayName" name="displayName" class="form-control form-control-sm shadow-sm" required>
               </div>
               <div class="col-md-3">
-                <label class="form-label-sm">UserID</label>
+                <label class="form-label-sm">User ID</label>
                 <input type="text" id="userId" name="userId" class="form-control form-control-sm" value="direct">
               </div>
               <div class="col-md-3">
                 <label class="form-label-sm">เลขใบสั่งซื้อ (IPO)</label>
-                <input type="text" name="ipo" class="form-control form-control-sm" placeholder="ถ้ามี">
+                <input type="text" name="ipo" class="form-control form-control-sm" placeholder="ระบุเลขที่บิล">
               </div>
             </div>
           </div>
 
           <div class="content-section">
-            <div class="section-label">ข้อมูลลูกค้า</div>
-            <div class="row g-3">
+            <div class="section-label">ข้อมูลรายละเอียดลูกค้า</div>
+            <div class="row g-3 align-items-end">
               <div class="col-md-2">
                 <label class="form-label-sm">รหัสผู้ขาย</label>
                 <input type="text" name="sell_id" class="form-control form-control-sm" required>
@@ -107,38 +108,40 @@
                 </select>
               </div>
               <div class="col-md-5">
-                <label class="form-label-sm">ชื่อลูกค้า/ชื่อร้าน</label>
-                <input type="text" name="cust_nm" class="form-control form-control-sm" required placeholder="ระบุชื่อเต็ม">
+                <label class="form-label-sm">ชื่อลูกค้า/บริษัท</label>
+                <input type="text" name="cust_nm" class="form-control form-control-sm" required placeholder="พิมพ์ชื่อร้านหรือชื่อบริษัท">
               </div>
               <div class="col-md-2">
                 <label class="form-label-sm">จังหวัด</label>
-                <input list="provincesList" name="city" class="form-control form-control-sm" required>
+                <input list="provincesList" name="city" class="form-control form-control-sm" required placeholder="เลือกจังหวัด">
               </div>
-              <div class="col-12 mt-2 text-end">
+              <div class="col-12 text-end">
                 <div class="form-check form-switch d-inline-block">
                   <input class="form-check-input" type="checkbox" id="newCustomerCheckbox" name="new_customer_flag" value="1">
-                  <label class="form-check-label" for="newCustomerCheckbox">ลูกค้าใหม่</label>
+                  <label class="form-check-label fw-bold" for="newCustomerCheckbox">เป็นลูกค้าใหม่</label>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="content-section">
-            <div class="section-label d-flex justify-content-between">
-              <span>รายการสินค้า</span>
-              <button type="button" class="btn btn-outline-success btn-sm" onclick="BtnAdd()"><i class="bi bi-plus-circle me-1"></i>เพิ่มแถว</button>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="section-label mb-0">รายการสินค้าและราคา</div>
+              <button type="button" class="btn btn-add-row btn-sm px-3" onclick="BtnAdd()"><i class="bi bi-plus-lg me-1"></i>เพิ่มแถวสินค้า</button>
             </div>
+            
             <div class="table-responsive">
               <table class="table table-custom align-middle">
                 <thead>
-                  <tr class="text-center">
-                    <th style="width: 30%;">ชื่อสินค้า</th>
-                    <th style="width: 10%;">จำนวน</th>
-                    <th style="width: 12%;">ราคา/หน่วย</th>
-                    <th style="width: 8%;">แถม</th>
-                    <th style="width: 8%;">ลด</th>
-                    <th style="width: 15%;">รวมเงิน</th>
-                    <th style="width: 12%;">หมายเหตุ</th>
+                  <tr>
+                    <th style="width: 25%;">ชื่อสินค้า</th>
+                    <th style="width: 8%;">จำนวน</th>
+                    <th style="width: 10%;">ราคา</th>
+                    <th style="width: 7%;">แถม</th>
+                    <th style="width: 7%;">ลด</th>
+                    <th style="width: 12%;">ส่งเสริมการขาย</th>
+                    <th style="width: 12%;">รวมเงิน</th>
+                    <th style="width: 14%;">หมายเหตุรายการ</th>
                     <th style="width: 5%;"></th>
                   </tr>
                 </thead>
@@ -149,10 +152,11 @@
                     <td><input type="number" name="rate" class="form-control form-control-sm text-end" onchange="Calc(this)"></td>
                     <td><input type="number" name="give" class="form-control form-control-sm text-center" onchange="Calc(this)"></td>
                     <td><input type="number" name="dis" class="form-control form-control-sm text-center" onchange="Calc(this)"></td>
+                    <td><input type="text" name="smp" class="form-control form-control-sm" placeholder="ส."></td>
                     <td><input type="number" name="amt" class="form-control form-control-sm text-end bg-amount" readonly></td>
-                    <td><input type="text" name="note_nm" class="form-control form-control-sm" placeholder="..."></td>
+                    <td><input type="text" name="note_nm" class="form-control form-control-sm" placeholder="ระบุ..."></td>
                     <td class="text-center">
-                      <button type="button" class="btn btn-link text-danger p-0" onclick="BtnDel(this)"><i class="bi bi-trash-fill"></i></button>
+                      <button type="button" class="btn btn-link text-danger p-0" onclick="BtnDel(this)"><i class="bi bi-trash3-fill"></i></button>
                     </td>
                   </tr>
                 </tbody>
@@ -161,14 +165,14 @@
           </div>
         </div>
 
-        <div class="col-lg-3">
-          <div class="summary-box h-100">
-            <div class="section-label">สรุปใบสั่งซื้อ</div>
+        <div class="col-xl-3">
+          <div class="summary-box">
+            <div class="section-label">สรุปยอดคำสั่งซื้อ</div>
             
             <div class="mb-4">
-              <label class="form-label-sm">เงื่อนไขเครดิต</label>
-              <select name="credit" class="form-select form-select-sm mb-3">
-                <option value="">เลือกการชำระเงิน...</option>
+              <label class="form-label-sm">เงื่อนไขเครดิต (Payment)</label>
+              <select name="credit" class="form-select mb-3 border-secondary-subtle">
+                <option value="">เลือกเครดิต...</option>
                 <option value="เงินสด">เงินสด</option>
                 <option value="7 วัน">7 วัน</option>
                 <option value="30 วัน">30 วัน</option>
@@ -178,24 +182,23 @@
               </select>
 
               <label class="form-label-sm">หมายเหตุท้ายบิล</label>
-              <textarea name="note" class="form-control form-control-sm" rows="4" placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea>
+              <textarea name="note" class="form-control" rows="4" placeholder="ระบุหมายเหตุรวมสำหรับใบสั่งซื้อนี้..."></textarea>
             </div>
 
-            <hr>
-
-            <div class="text-end mb-4">
-              <div class="total-label">ยอดรวมสุทธิ (Net Total)</div>
-              <div class="total-value" id="displayTotal">0.00</div>
+            <div class="total-display text-center">
+              <div class="text-muted small mb-1">ยอดรวมสุทธิทั้งสิ้น</div>
+              <div class="total-value"><span id="displayTotal">0.00</span></div>
+              <div class="text-muted small mt-1">บาท (THB)</div>
               <input type="hidden" id="FTotal" name="FTotal">
             </div>
 
-            <button type="button" id="submitButton" class="btn btn-save w-100" onclick="submitForm()">
-              <i class="bi bi-check-circle me-2"></i>ยืนยันและบันทึก
+            <button type="button" id="submitButton" class="btn btn-save" onclick="submitForm()">
+              <i class="bi bi-cloud-arrow-up-fill me-2"></i> บันทึกข้อมูลเข้าระบบ
             </button>
 
             <div id="loading" class="text-center mt-3" style="display:none">
               <div class="spinner-border spinner-border-sm text-success" role="status"></div>
-              <span class="ms-2 text-muted">กำลังส่งข้อมูล...</span>
+              <span class="ms-2 text-muted small">กำลังส่งข้อมูล...</span>
             </div>
           </div>
         </div>
@@ -244,10 +247,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // System Functions
+    // System Handlers
     window.onload = () => {
       const d = new Date();
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
       $('#dateDisplay').text(d.toLocaleDateString('th-TH', options));
       
       const yy = String(d.getFullYear()).slice(-2), mm = String(d.getMonth()+1).padStart(2,'0');
@@ -255,8 +258,8 @@
     };
 
     function BtnAdd() {
-      const v = $('#TRow').clone().appendTo('#TBody');
-      v.removeAttr('id').find('input').val('');
+      const v = $('#TRow').clone().removeAttr('id').appendTo('#TBody');
+      v.find('input').val('');
       v.find('.bg-amount').val('0');
     }
 
@@ -283,12 +286,12 @@
     }
 
     function submitForm(){
-      if(!$('input[name="cust_nm"]').val() || !$('input[name="sell_id"]').val()) {
-        Swal.fire('กรุณากรอกข้อมูลสำคัญ', 'รหัสผู้ขาย และชื่อลูกค้า ห้ามว่าง', 'warning');
+      if(!$('input[name="cust_nm"]').val()) {
+        Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุชื่อลูกค้า', 'warning');
         return;
       }
 
-      $('#submitButton').prop('disabled',true).html('<span class="spinner-border spinner-border-sm"></span> บันทึกข้อมูล...');
+      $('#submitButton').prop('disabled',true).html('<span class="spinner-border spinner-border-sm"></span> กำลังบันทึกข้อมูล...');
       $('#loading').show();
 
       const fd = new FormData($('#myForm')[0]);
@@ -301,17 +304,17 @@
       })
       .done(() => {
         Swal.fire({
-          icon: 'success', title: 'บันทึกสำเร็จ',
-          text: 'ข้อมูลถูกบันทึกเรียบร้อย',
+          icon: 'success', title: 'สำเร็จ!',
+          text: 'บันทึกรายการสั่งซื้อเรียบร้อยแล้ว',
           confirmButtonColor: '#0d5f39'
         }).then(() => location.reload());
       })
       .fail(() => {
-        Swal.fire('ล้มเหลว', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่', 'error');
       })
       .always(() => {
         $('#loading').hide();
-        $('#submitButton').prop('disabled',false).html('<i class="bi bi-check-circle me-2"></i>ยืนยันและบันทึก');
+        $('#submitButton').prop('disabled',false).html('<i class="bi bi-cloud-arrow-up-fill me-2"></i> บันทึกข้อมูลเข้าระบบ');
       });
     }
 </script>
