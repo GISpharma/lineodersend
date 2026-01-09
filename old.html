@@ -3,101 +3,173 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GIS Order System</title>
+  <title>GISPHARMA - Order System</title>
+  
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+
   <style>
-    :root { --primary-color: #0d5f39; --secondary-bg: #f8f9fa; }
-    body { background-color: #f0f2f5; font-family: 'Sarabun', sans-serif; font-size: 14px; }
-    
-    .main-wrapper { max-width: 1400px; margin: 20px auto; padding: 0 15px; }
-    .glass-card { 
-      background: white; border-radius: 12px; border: none; 
-      box-shadow: 0 4px 25px rgba(0,0,0,0.1); overflow: hidden;
-    }
-    
-    .top-bar { 
-      background: var(--primary-color); color: white; 
-      padding: 15px 25px; border-bottom: 4px solid #198754;
+    :root {
+      --primary: #0d5f39;
+      --accent: #198754;
+      --bg-body: #f4f7f6;
+      --text-muted: #8898aa;
     }
 
-    .content-section { padding: 20px; border-bottom: 1px solid #f0f0f0; }
-    .section-label { 
-      font-weight: 600; color: var(--primary-color); 
-      margin-bottom: 15px; display: flex; align-items: center; 
-      border-left: 4px solid var(--primary-color); padding-left: 10px;
+    body {
+      background-color: var(--bg-body);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 14px;
+      color: #32325d;
     }
 
-    .form-label-sm { font-size: 12px; color: #666; margin-bottom: 4px; font-weight: 500; }
-    .form-control-sm, .form-select-sm { border-radius: 6px; padding: 7px; }
+    .wrapper { max-width: 1400px; margin: 30px auto; padding: 0 15px; }
 
-    /* Table Styling */
-    .table-custom { font-size: 13px; min-width: 1000px; }
-    .table-custom thead { background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
-    .table-custom th { padding: 12px 8px; font-weight: 600; color: #495057; text-align: center; }
-    .bg-amount { background-color: #e8f5e9 !important; font-weight: 700; color: #0d5f39; border: 1px solid #c6f6d5 !important; }
-
-    /* Summary Sidebar */
-    .summary-box { background: #ffffff; border-left: 1px solid #eee; padding: 25px; height: 100%; }
-    .total-display {
-      background: #f8f9fa; border-radius: 10px; padding: 20px;
-      margin-bottom: 20px; border: 1px dashed #ccc;
+    /* Header Design */
+    .main-card {
+      background: #fff;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 15px 35px rgba(50,50,93,0.1), 0 5px 15px rgba(0,0,0,0.07);
+      overflow: hidden;
     }
-    .total-value { font-size: 32px; font-weight: 700; color: var(--primary-color); line-height: 1; }
-    
-    .btn-save { background: var(--primary-color); color: white; padding: 14px; font-weight: 600; border-radius: 10px; border: none; width: 100%; transition: 0.3s; }
-    .btn-save:hover { background: #0a4b2d; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(13,95,57,0.3); }
-    
-    .btn-add-row { color: var(--primary-color); border: 1px solid var(--primary-color); font-weight: 600; }
-    .btn-add-row:hover { background: var(--primary-color); color: white; }
+
+    .card-header-custom {
+      background: linear-gradient(87deg, var(--primary) 0, var(--accent) 100%);
+      padding: 25px 30px;
+      color: #fff;
+    }
+
+    /* Section Styling */
+    .form-section { padding: 25px 30px; border-bottom: 1px solid #f1f3f9; }
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .section-title i { margin-right: 10px; color: var(--accent); }
+
+    /* Input Styling */
+    .form-label-custom { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #525f7f; }
+    .form-control, .form-select {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 10px 12px;
+      transition: all 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(25,135,84,0.1);
+    }
+
+    /* Table Compact Design */
+    .table-clean { border-collapse: separate; border-spacing: 0 8px; }
+    .table-clean thead th {
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-align: center;
+      padding-bottom: 15px;
+    }
+    .table-clean tbody tr {
+      background-color: #fff;
+      transition: transform 0.2s;
+    }
+    .table-clean td {
+      padding: 12px 6px;
+      vertical-align: middle;
+      border-top: 1px solid #f1f3f9;
+      border-bottom: 1px solid #f1f3f9;
+    }
+    .table-clean td:first-child { border-left: 1px solid #f1f3f9; border-radius: 10px 0 0 10px; padding-left: 15px; }
+    .table-clean td:last-child { border-right: 1px solid #f1f3f9; border-radius: 0 10px 10px 0; padding-right: 15px; }
+
+    .table-input {
+      border: 1px solid #e9ecef !important;
+      background-color: #f8f9fe !important;
+      font-size: 13px !important;
+      padding: 6px 10px !important;
+    }
+    .bg-amt-cell { background-color: #e8f5e9 !important; color: var(--primary); font-weight: bold; border: 1px solid #c6f6d5 !important; }
+
+    /* Summary Panel */
+    .summary-card {
+      background: #f8f9fe;
+      border-radius: 12px;
+      padding: 25px;
+      height: 100%;
+      border: 1px solid #e9ecef;
+    }
+    .total-label { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; }
+    .total-amount { font-size: 36px; font-weight: 700; color: var(--primary); }
+
+    .btn-submit {
+      background-color: var(--primary);
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .btn-submit:hover { background-color: #084328; transform: translateY(-2px); box-shadow: 0 7px 14px rgba(50,50,93,0.1); }
   </style>
 </head>
 <body>
 
-<div class="main-wrapper">
-  <div class="glass-card">
-    <div class="top-bar d-flex justify-content-between align-items-center">
-      <h5 class="mb-0 fw-bold"><i class="bi bi-cart-plus-fill me-2"></i>ระบบบันทึกรายการสั่งซื้อ GISPHARMA</h5>
-      <span id="dateDisplay" class="badge bg-white text-dark fw-normal p-2"></span>
+<div class="wrapper">
+  <div class="main-card">
+    <div class="card-header-custom d-flex justify-content-between align-items-center">
+      <div>
+        <h4 class="mb-0 fw-600"><i class="bi bi-receipt-cutoff me-2"></i>ระบบบันทึกรายการสั่งซื้อ</h4>
+        <small class="opacity-80">GISPHARMA Co., Ltd.</small>
+      </div>
+      <div id="liveDate" class="text-end small d-none d-md-block"></div>
     </div>
 
     <form id="myForm">
       <div class="row g-0">
-        <div class="col-xl-9">
+        <div class="col-xl-9 border-end">
           
-          <div class="content-section bg-light">
+          <div class="form-section bg-light">
             <div class="row g-3">
               <div class="col-md-3">
-                <label class="form-label-sm text-primary">Order ID</label>
-                <input type="text" id="keyInput" name="order_id" class="form-control form-control-sm border-primary bg-white" readonly>
+                <label class="form-label-custom text-success">Order ID</label>
+                <input type="text" id="keyInput" name="order_id" class="form-control bg-white fw-bold" readonly>
               </div>
               <div class="col-md-3">
-                <label class="form-label-sm">เจ้าหน้าที่บันทึก</label>
-                <input type="text" id="displayName" name="displayName" class="form-control form-control-sm shadow-sm" required>
+                <label class="form-label-custom">เจ้าหน้าที่บันทึก</label>
+                <input type="text" id="displayName" name="displayName" class="form-control" required>
               </div>
               <div class="col-md-3">
-                <label class="form-label-sm">User ID</label>
-                <input type="text" id="userId" name="userId" class="form-control form-control-sm" value="direct">
+                <label class="form-label-custom">User ID</label>
+                <input type="text" id="userId" name="userId" class="form-control" value="direct">
               </div>
               <div class="col-md-3">
-                <label class="form-label-sm">เลขใบสั่งซื้อ (IPO)</label>
-                <input type="text" name="ipo" class="form-control form-control-sm" placeholder="ระบุเลขที่บิล">
+                <label class="form-label-custom">เลขใบสั่งซื้อ (IPO)</label>
+                <input type="text" name="ipo" class="form-control" placeholder="ถ้ามี">
               </div>
             </div>
           </div>
 
-          <div class="content-section">
-            <div class="section-label">ข้อมูลรายละเอียดลูกค้า</div>
-            <div class="row g-3 align-items-end">
+          <div class="form-section">
+            <div class="section-title"><i class="bi bi-person-circle"></i>รายละเอียดลูกค้า</div>
+            <div class="row g-3">
               <div class="col-md-2">
-                <label class="form-label-sm">รหัสผู้ขาย</label>
-                <input type="text" name="sell_id" class="form-control form-control-sm" required>
+                <label class="form-label-custom">รหัสผู้ขาย</label>
+                <input type="text" name="sell_id" class="form-control shadow-sm" required>
               </div>
               <div class="col-md-3">
-                <label class="form-label-sm">ประเภทลูกค้า</label>
-                <select name="category" class="form-select form-select-sm" required>
+                <label class="form-label-custom">ประเภทลูกค้า</label>
+                <select name="category" class="form-select shadow-sm" required>
                   <option value="">เลือกประเภท...</option>
                   <option value="ร้านขายยา">ร้านขายยา</option>
                   <option value="คลีนิก">คลีนิก</option>
@@ -108,55 +180,59 @@
                 </select>
               </div>
               <div class="col-md-5">
-                <label class="form-label-sm">ชื่อลูกค้า/บริษัท</label>
-                <input type="text" name="cust_nm" class="form-control form-control-sm" required placeholder="พิมพ์ชื่อร้านหรือชื่อบริษัท">
+                <label class="form-label-custom">ชื่อลูกค้า / บริษัท</label>
+                <input type="text" name="cust_nm" class="form-control shadow-sm" required placeholder="ระบุชื่อเต็มของลูกค้า">
               </div>
               <div class="col-md-2">
-                <label class="form-label-sm">จังหวัด</label>
-                <input list="provincesList" name="city" class="form-control form-control-sm" required placeholder="เลือกจังหวัด">
+                <label class="form-label-custom">จังหวัด</label>
+                <input list="provincesList" name="city" class="form-control shadow-sm" required placeholder="เลือก...">
               </div>
-              <div class="col-12 text-end">
+              <div class="col-12 mt-3 text-end">
                 <div class="form-check form-switch d-inline-block">
                   <input class="form-check-input" type="checkbox" id="newCustomerCheckbox" name="new_customer_flag" value="1">
-                  <label class="form-check-label fw-bold" for="newCustomerCheckbox">เป็นลูกค้าใหม่</label>
+                  <label class="form-check-label ms-2 fw-600" for="newCustomerCheckbox text-muted">เป็นลูกค้าใหม่</label>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="content-section">
+          <div class="form-section">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="section-label mb-0">รายการสินค้าและราคา</div>
-              <button type="button" class="btn btn-add-row btn-sm px-3" onclick="BtnAdd()"><i class="bi bi-plus-lg me-1"></i>เพิ่มแถวสินค้า</button>
+              <div class="section-title mb-0"><i class="bi bi-box-seam"></i>รายการสั่งซื้อและราคา</div>
+              <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="BtnAdd()">
+                <i class="bi bi-plus-circle me-1"></i>เพิ่มสินค้า
+              </button>
             </div>
             
             <div class="table-responsive">
-              <table class="table table-custom align-middle">
+              <table class="table table-clean align-middle">
                 <thead>
                   <tr>
-                    <th style="width: 25%;">ชื่อสินค้า</th>
+                    <th style="width: 28%; text-align: left;">ชื่อสินค้า</th>
                     <th style="width: 8%;">จำนวน</th>
                     <th style="width: 10%;">ราคา</th>
                     <th style="width: 7%;">แถม</th>
                     <th style="width: 7%;">ลด</th>
-                    <th style="width: 12%;">ส่งเสริมการขาย</th>
-                    <th style="width: 12%;">รวมเงิน</th>
-                    <th style="width: 14%;">หมายเหตุรายการ</th>
+                    <th style="width: 10%;">ส่งเสริมฯ</th>
+                    <th style="width: 12%;">ยอดเงิน</th>
+                    <th style="width: 13%;">หมายเหตุ</th>
                     <th style="width: 5%;"></th>
                   </tr>
                 </thead>
                 <tbody id="TBody">
                   <tr id="TRow">
-                    <td><input list="itemSelect" name="item_nm" class="form-control form-control-sm"></td>
-                    <td><input type="number" name="qty" class="form-control form-control-sm text-center" onchange="Calc(this)"></td>
-                    <td><input type="number" name="rate" class="form-control form-control-sm text-end" onchange="Calc(this)"></td>
-                    <td><input type="number" name="give" class="form-control form-control-sm text-center" onchange="Calc(this)"></td>
-                    <td><input type="number" name="dis" class="form-control form-control-sm text-center" onchange="Calc(this)"></td>
-                    <td><input type="text" name="smp" class="form-control form-control-sm" placeholder="ส."></td>
-                    <td><input type="number" name="amt" class="form-control form-control-sm text-end bg-amount" readonly></td>
-                    <td><input type="text" name="note_nm" class="form-control form-control-sm" placeholder="ระบุ..."></td>
+                    <td><input list="itemSelect" name="item_nm" class="form-control table-input" placeholder="เลือกสินค้า..."></td>
+                    <td><input type="number" name="qty" class="form-control table-input text-center" onchange="Calc(this)"></td>
+                    <td><input type="number" name="rate" class="form-control table-input text-end" onchange="Calc(this)"></td>
+                    <td><input type="number" name="give" class="form-control table-input text-center" onchange="Calc(this)"></td>
+                    <td><input type="number" name="dis" class="form-control table-input text-center" onchange="Calc(this)"></td>
+                    <td><input type="text" name="smp" class="form-control table-input" placeholder="ส."></td>
+                    <td><input type="number" name="amt" class="form-control table-input text-end bg-amt-cell" readonly></td>
+                    <td><input type="text" name="note_nm" class="form-control table-input" placeholder="..."></td>
                     <td class="text-center">
-                      <button type="button" class="btn btn-link text-danger p-0" onclick="BtnDel(this)"><i class="bi bi-trash3-fill"></i></button>
+                      <button type="button" class="btn btn-link text-light text-hover-danger p-0" onclick="BtnDel(this)" style="color: #dee2e6 !important;">
+                        <i class="bi bi-dash-circle-fill fs-5"></i>
+                      </button>
                     </td>
                   </tr>
                 </tbody>
@@ -166,12 +242,12 @@
         </div>
 
         <div class="col-xl-3">
-          <div class="summary-box">
-            <div class="section-label">สรุปยอดคำสั่งซื้อ</div>
+          <div class="summary-card">
+            <div class="section-title"><i class="bi bi-calculator"></i>สรุปผลรวม</div>
             
             <div class="mb-4">
-              <label class="form-label-sm">เงื่อนไขเครดิต (Payment)</label>
-              <select name="credit" class="form-select mb-3 border-secondary-subtle">
+              <label class="form-label-custom">เงื่อนไขเครดิต</label>
+              <select name="credit" class="form-select mb-3 shadow-sm">
                 <option value="">เลือกเครดิต...</option>
                 <option value="เงินสด">เงินสด</option>
                 <option value="7 วัน">7 วัน</option>
@@ -181,22 +257,21 @@
                 <option value="120 วัน">120 วัน</option>
               </select>
 
-              <label class="form-label-sm">หมายเหตุท้ายบิล</label>
-              <textarea name="note" class="form-control" rows="4" placeholder="ระบุหมายเหตุรวมสำหรับใบสั่งซื้อนี้..."></textarea>
+              <label class="form-label-custom">หมายเหตุเพิ่มเติม</label>
+              <textarea name="note" class="form-control shadow-sm" rows="4" placeholder="ระบุรายละเอียดท้ายบิล..."></textarea>
             </div>
 
-            <div class="total-display text-center">
-              <div class="text-muted small mb-1">ยอดรวมสุทธิทั้งสิ้น</div>
-              <div class="total-value"><span id="displayTotal">0.00</span></div>
-              <div class="text-muted small mt-1">บาท (THB)</div>
+            <div class="text-center mb-4 pt-3 border-top">
+              <div class="total-label">ยอดรวมสุทธิทั้งสิ้น</div>
+              <div class="total-amount" id="displayTotal">0.00</div>
               <input type="hidden" id="FTotal" name="FTotal">
             </div>
 
-            <button type="button" id="submitButton" class="btn btn-save" onclick="submitForm()">
-              <i class="bi bi-cloud-arrow-up-fill me-2"></i> บันทึกข้อมูลเข้าระบบ
+            <button type="button" id="submitButton" class="btn btn-submit btn-primary w-100 mb-3" onclick="submitForm()">
+              <i class="bi bi-cloud-check-fill me-2"></i>บันทึกข้อมูล
             </button>
 
-            <div id="loading" class="text-center mt-3" style="display:none">
+            <div id="loading" class="text-center" style="display:none">
               <div class="spinner-border spinner-border-sm text-success" role="status"></div>
               <span class="ms-2 text-muted small">กำลังส่งข้อมูล...</span>
             </div>
@@ -245,14 +320,15 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // System Handlers
     window.onload = () => {
       const d = new Date();
       const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
-      $('#dateDisplay').text(d.toLocaleDateString('th-TH', options));
+      $('#liveDate').html('<i class="bi bi-clock me-1"></i> ' + d.toLocaleDateString('th-TH', options));
       
+      // Auto Generate ID
       const yy = String(d.getFullYear()).slice(-2), mm = String(d.getMonth()+1).padStart(2,'0');
       $('#keyInput').val(`INV${yy}${mm}-${Math.random().toString(36).slice(2,8).toUpperCase()}`);
     };
@@ -260,7 +336,7 @@
     function BtnAdd() {
       const v = $('#TRow').clone().removeAttr('id').appendTo('#TBody');
       v.find('input').val('');
-      v.find('.bg-amount').val('0');
+      v.find('.bg-amt-cell').val('0');
     }
 
     function BtnDel(btn) {
@@ -285,13 +361,13 @@
       $('#displayTotal').text(sum.toLocaleString(undefined, {minimumFractionDigits: 2}));
     }
 
-    function submitForm(){
+    function submitForm() {
       if(!$('input[name="cust_nm"]').val()) {
-        Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุชื่อลูกค้า', 'warning');
+        Swal.fire('ข้อมูลไม่ครบ', 'กรุณาระบุชื่อลูกค้า', 'warning');
         return;
       }
 
-      $('#submitButton').prop('disabled',true).html('<span class="spinner-border spinner-border-sm"></span> กำลังบันทึกข้อมูล...');
+      $('#submitButton').prop('disabled',true).html('<span class="spinner-border spinner-border-sm"></span> กำลังบันทึก...');
       $('#loading').show();
 
       const fd = new FormData($('#myForm')[0]);
@@ -303,18 +379,15 @@
         contentType: false
       })
       .done(() => {
-        Swal.fire({
-          icon: 'success', title: 'สำเร็จ!',
-          text: 'บันทึกรายการสั่งซื้อเรียบร้อยแล้ว',
-          confirmButtonColor: '#0d5f39'
-        }).then(() => location.reload());
+        Swal.fire({ icon: 'success', title: 'สำเร็จ', text: 'บันทึกข้อมูลเรียบร้อยแล้ว', confirmButtonColor: '#0d5f39' })
+        .then(() => location.reload());
       })
       .fail(() => {
-        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่', 'error');
+        Swal.fire('ล้มเหลว', 'เกิดข้อผิดพลาดในการส่งข้อมูล', 'error');
       })
       .always(() => {
         $('#loading').hide();
-        $('#submitButton').prop('disabled',false).html('<i class="bi bi-cloud-arrow-up-fill me-2"></i> บันทึกข้อมูลเข้าระบบ');
+        $('#submitButton').prop('disabled',false).html('<i class="bi bi-cloud-check-fill me-2"></i>บันทึกข้อมูล');
       });
     }
 </script>
